@@ -97,7 +97,7 @@ const IndexPage = () => {
               </VStack>
             </Center>
 
-            <Box display="block">
+            <Box>
               <Box
                 style={{
                   animation: "floatAnim 3s ease-in-out infinite",
@@ -179,17 +179,21 @@ const IndexPage = () => {
       </Box>
 
       <Center>
-        <VStack pt="30px" maxW="80vw">
+        <VStack pt="30px" maxW={["85vw", "80vw"]}>
           {/* First Feature */}
 
-          <Stack gridGap="70px" direction="row">
+          <Stack
+            direction={["column", "row"]}
+            gridGap={["0px", "70px"]}
+            pb={!isLargeSize && "30px"}
+          >
             <Center>
               <Box>
-                <Image w="500px" src={Chats} />
+                <Image w={["200px", "500px"]} src={Chats} />
               </Box>
             </Center>
             <Center>
-              <Box maxW="500px">
+              <Box textAlign={!isLargeSize && "center"} maxW="500px">
                 <Heading pb="30px" fontFamily="Raleway-Bold" fontSize="40px">
                   Save time between clients
                 </Heading>
@@ -204,9 +208,24 @@ const IndexPage = () => {
 
           {/* Second Feature */}
 
-          <Stack gridGap="70px" direction="row">
+          <Stack
+            direction={["column", "row"]}
+            gridGap={["0px", "70px"]}
+            pb={!isLargeSize && "50px"}
+          >
+            {!isLargeSize && (
+              <Center>
+                <Box>
+                  <Image w="200px" src={Calendar} />
+                </Box>
+              </Center>
+            )}
             <Center>
-              <Box pl="30px" maxW="500px">
+              <Box
+                textAlign={!isLargeSize && "center"}
+                pl={isLargeSize && "30px"}
+                maxW="500px"
+              >
                 <Heading pb="30px" fontFamily="Raleway-Bold" fontSize="40px">
                   Clear Calendar & Notification System
                 </Heading>
@@ -218,23 +237,29 @@ const IndexPage = () => {
                 </Text>
               </Box>
             </Center>
-            <Center>
-              <Box>
-                <Image w="500px" src={Calendar} />
-              </Box>
-            </Center>
+            {isLargeSize && (
+              <Center>
+                <Box>
+                  <Image w="500px" src={Calendar} />
+                </Box>
+              </Center>
+            )}
           </Stack>
 
           {/* Third Feature */}
 
-          <Stack gridGap="70px" direction="row">
+          <Stack
+            direction={["column", "row"]}
+            gridGap={["0px", "70px"]}
+            pb={!isLargeSize && "30px"}
+          >
             <Center>
               <Box>
-                <Image w="500px" src={Analytics} />
+                <Image w={["200px", "500px"]} src={Analytics} />
               </Box>
             </Center>
             <Center>
-              <Box maxW="500px">
+              <Box textAlign={!isLargeSize && "center"} maxW="500px">
                 <Heading pb="30px" fontFamily="Raleway-Bold" fontSize="40px">
                   Business and Sales Analytics
                 </Heading>
@@ -250,9 +275,20 @@ const IndexPage = () => {
 
           {/* Fourth Feature */}
 
-          <Stack gridGap="70px" direction="row">
+          <Stack direction={["column", "row"]} gridGap={["0px", "70px"]}>
+            {!isLargeSize && (
+              <Center>
+                <Box>
+                  <Image w="200px" src={Mobile} />
+                </Box>
+              </Center>
+            )}
             <Center>
-              <Box pl="30px" maxW="500px">
+              <Box
+                textAlign={!isLargeSize && "center"}
+                pl={isLargeSize && "30px"}
+                maxW="500px"
+              >
                 <Heading pb="30px" fontFamily="Raleway-Bold" fontSize="40px">
                   Mobile CRM
                 </Heading>
@@ -262,11 +298,13 @@ const IndexPage = () => {
                 </Text>
               </Box>
             </Center>
-            <Center>
-              <Box>
-                <Image w="500px" src={Mobile} />
-              </Box>
-            </Center>
+            {isLargeSize && (
+              <Center>
+                <Box>
+                  <Image w="500px" src={Mobile} />
+                </Box>
+              </Center>
+            )}
           </Stack>
 
           <Box h="100px" w="100vw"></Box>
