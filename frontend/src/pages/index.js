@@ -23,7 +23,6 @@ import {
   Text,
   HStack,
   VStack,
-  Spacer,
   Stack,
   Button,
   Center,
@@ -37,107 +36,147 @@ const IndexPage = () => {
     <Layout>
       <Seo title="Home" />
 
-      <Box bgColor="ripple.100" h="90vh" w="100vw" justifyContent="center">
+      <Box
+        overflow="hidden"
+        bgColor="ripple.100"
+        w="100vw"
+        justifyContent="center"
+      >
         <Center>
-          <HStack gridGap="200px">
-            <VStack maxW="35vw" pl="100px" alignItems="left">
-              <Heading pb="10px" fontSize="50px" color="ripple.200">
-                RippleDEX
-              </Heading>
-              <Text fontSize="20px" color="white">
-                Manage clients and close deals with our state of the art CRM
-              </Text>
-              <br />
-              <HStack gridGap={15}>
-                <Button
-                  bgColor="ripple.200"
-                  color="white"
-                  fontFamily="Raleway-Bold"
-                  borderRadius="30px"
-                  variant="solid"
-                  size="lg"
-                  _hover={{
-                    bgColor: "white",
-                    color: "ripple.200",
-                    transform: "scale(1.05)",
-                    boxShadow:
-                      "rgba(22, 138, 168, 1) 5px 5px, rgba(22, 138, 168, 0.6) 10px 10px, rgba(22, 138, 168, 0.3) 15px 15px",
-                  }}
-                >
-                  Sign Up
-                </Button>
-                <Button
+          <Stack direction={["column", "row"]}>
+            <Center>
+              <VStack
+                textAlign={!isLargeSize && "center"}
+                maxW={["100vw", "35vw"]}
+                p="50px"
+                alignItems="left"
+              >
+                <Heading
+                  pb="10px"
+                  fontSize={["40px", "50px"]}
                   color="ripple.200"
-                  fontFamily="Raleway-Bold"
-                  borderRadius="20px"
-                  variant="ghost"
-                  size="lg"
-                  rightIcon={<IoIosArrowForward />}
-                  _hover={{
-                    transform: "scale(1.08)",
-                  }}
                 >
-                  Learn More
-                </Button>
-              </HStack>
-            </VStack>
+                  RippleDEX
+                </Heading>
+                <Text fontSize="20px" color="white">
+                  Manage clients and close deals with our state of the art CRM
+                </Text>
+                <br />
+                <HStack gridGap={15}>
+                  <Button
+                    bgColor="ripple.200"
+                    color="white"
+                    fontFamily="Raleway-Bold"
+                    borderRadius="30px"
+                    variant="solid"
+                    size="lg"
+                    _hover={{
+                      bgColor: "white",
+                      color: "ripple.200",
+                      transform: "scale(1.05)",
+                      boxShadow:
+                        "rgba(22, 138, 168, 1) 5px 5px, rgba(22, 138, 168, 0.6) 10px 10px, rgba(22, 138, 168, 0.3) 15px 15px",
+                    }}
+                  >
+                    Sign Up
+                  </Button>
+                  <Button
+                    color="ripple.200"
+                    fontFamily="Raleway-Bold"
+                    borderRadius="20px"
+                    variant="ghost"
+                    size="lg"
+                    rightIcon={<IoIosArrowForward />}
+                    _hover={{
+                      transform: "scale(1.08)",
+                    }}
+                  >
+                    Learn More
+                  </Button>
+                </HStack>
+              </VStack>
+            </Center>
 
-            <Box
-              style={{
-                animation: "floatAnim 3s ease-in-out infinite",
-              }}
-            >
-              <Image
-                style={{ transform: "rotate(10deg)" }}
-                h="500px"
-                src={Img1}
-              />
+            <Box display="block">
+              <Box
+                style={{
+                  animation: "floatAnim 3s ease-in-out infinite",
+                }}
+              >
+                <Image
+                  style={{ transform: "rotate(10deg)" }}
+                  w="500px"
+                  src={Img1}
+                />
+              </Box>
+              <Box
+                style={{
+                  animation: "floatAnim2 2s ease-in-out infinite",
+                }}
+                float="left"
+                marginTop="-150px"
+              >
+                <Image
+                  style={{ transform: "rotate(10deg)" }}
+                  h="80px"
+                  src={Donut}
+                />
+              </Box>
+              <Box
+                style={{
+                  animation: "floatAnim2 2.5s ease-in-out infinite",
+                }}
+                float="right"
+                marginTop="-400px"
+              >
+                <Image
+                  style={{ transform: "rotate(10deg)" }}
+                  h="130px"
+                  src={Spring}
+                />
+              </Box>
             </Box>
-            <Box
-              style={{
-                animation: "floatAnim2 2s ease-in-out infinite",
-              }}
-              left="760px"
-              top="250px"
-              pos="absolute"
-            >
-              <Image
-                style={{ transform: "rotate(10deg)" }}
-                h="80px"
-                src={Donut}
-              />
-            </Box>
-            <Box
-              style={{
-                animation: "floatAnim2 2.5s ease-in-out infinite",
-              }}
-              right="230px"
-              top="100px"
-              pos="absolute"
-            >
-              <Image
-                style={{ transform: "rotate(10deg)" }}
-                h="130px"
-                src={Spring}
-              />
-            </Box>
-          </HStack>
+          </Stack>
         </Center>
+        <div>
+          <svg
+            class="waves"
+            xmlns="http://www.w3.org/2000/svg"
+            xmlnsXlink="http://www.w3.org/1999/xlink"
+            viewBox="0 24 150 28"
+            preserveAspectRatio="none"
+            shape-rendering="auto"
+          >
+            <defs>
+              <path
+                id="gentle-wave"
+                d="M-160 44c30 0 58-18 88-18s 58 18 88 18 58-18 88-18 58 18 88 18 v44h-352z"
+              />
+            </defs>
+            <g class="parallax">
+              <use
+                xlinkHref="#gentle-wave"
+                x="48"
+                y="0"
+                fill="rgba(255,255,255,0.7"
+              />
+              <use
+                xlinkHref="#gentle-wave"
+                x="48"
+                y="3"
+                fill="rgba(255,255,255,0.5)"
+              />
+              <use
+                xlinkHref="#gentle-wave"
+                x="48"
+                y="5"
+                fill="rgba(255,255,255,0.3)"
+              />
+              <use xlinkHref="#gentle-wave" x="48" y="7" fill="#fff" />
+            </g>
+          </svg>
+        </div>
       </Box>
-
-      <div class="custom-shape-divider-bottom">
-        <svg
-          data-name="Layer 1"
-          xmlns="http://www.w3.org/2000/svg"
-          viewBox="0 0 1200 120"
-          preserveAspectRatio="none"
-        >
-          <path
-            d="M985.66,92.83C906.67,72,823.78,31,743.84,14.19c-82.26-17.34-168.06-16.33-250.45.39-57.84,11.73-114,31.07-172,41.86A600.21,600.21,0,0,1,0,27.35V120H1200V95.8C1132.19,118.92,1055.71,111.31,985.66,92.83Z"
-            class="shape-fill"
-          ></path>
-        </svg>
-      </div>
 
       <Center>
         <VStack pt="30px" maxW="80vw">
@@ -146,12 +185,12 @@ const IndexPage = () => {
           <Stack gridGap="70px" direction="row">
             <Center>
               <Box>
-                <Image h="500px" src={Chats} />
+                <Image w="500px" src={Chats} />
               </Box>
             </Center>
             <Center>
               <Box maxW="500px">
-                <Heading pb="30px" fontFamily="Raleway-Bold" fontSize="50px">
+                <Heading pb="30px" fontFamily="Raleway-Bold" fontSize="40px">
                   Save time between clients
                 </Heading>
                 <Text fontSize="20px">
@@ -168,7 +207,7 @@ const IndexPage = () => {
           <Stack gridGap="70px" direction="row">
             <Center>
               <Box pl="30px" maxW="500px">
-                <Heading pb="30px" fontFamily="Raleway-Bold" fontSize="50px">
+                <Heading pb="30px" fontFamily="Raleway-Bold" fontSize="40px">
                   Clear Calendar & Notification System
                 </Heading>
                 <Text fontSize="20px">
@@ -181,7 +220,7 @@ const IndexPage = () => {
             </Center>
             <Center>
               <Box>
-                <Image h="500px" src={Calendar} />
+                <Image w="500px" src={Calendar} />
               </Box>
             </Center>
           </Stack>
@@ -191,12 +230,12 @@ const IndexPage = () => {
           <Stack gridGap="70px" direction="row">
             <Center>
               <Box>
-                <Image h="500px" src={Analytics} />
+                <Image w="500px" src={Analytics} />
               </Box>
             </Center>
             <Center>
               <Box maxW="500px">
-                <Heading pb="30px" fontFamily="Raleway-Bold" fontSize="50px">
+                <Heading pb="30px" fontFamily="Raleway-Bold" fontSize="40px">
                   Business and Sales Analytics
                 </Heading>
                 <Text fontSize="20px">
@@ -214,7 +253,7 @@ const IndexPage = () => {
           <Stack gridGap="70px" direction="row">
             <Center>
               <Box pl="30px" maxW="500px">
-                <Heading pb="30px" fontFamily="Raleway-Bold" fontSize="50px">
+                <Heading pb="30px" fontFamily="Raleway-Bold" fontSize="40px">
                   Mobile CRM
                 </Heading>
                 <Text fontSize="20px">
@@ -225,7 +264,7 @@ const IndexPage = () => {
             </Center>
             <Center>
               <Box>
-                <Image h="500px" src={Mobile} />
+                <Image w="500px" src={Mobile} />
               </Box>
             </Center>
           </Stack>

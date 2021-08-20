@@ -1,15 +1,7 @@
 import * as React from "react"
 import PropTypes from "prop-types"
 
-import {
-  Box,
-  Image,
-  Circle,
-  HStack,
-  Heading,
-  Spacer,
-  Text,
-} from "@chakra-ui/react"
+import { Box, Image, Circle, HStack, Spacer, Text } from "@chakra-ui/react"
 
 import Logo from "../images/RippleDexWhite.svg"
 
