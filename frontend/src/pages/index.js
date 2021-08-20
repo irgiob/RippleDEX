@@ -5,23 +5,117 @@ import Seo from "../components/seo"
 
 import "./index.css"
 
-import { Box, Heading, Text, HStack, VStack } from "@chakra-ui/react"
+import { IoIosArrowForward } from "react-icons/io"
+
+import Img1 from "../images/Img1.png"
+import Char from "../images/Char.png"
+import Donut from "../images/Donut.png"
+import Spring from "../images/Spring.png"
+import Stats from "../images/Stats.png"
+
+import {
+  Box,
+  Heading,
+  Image,
+  Text,
+  HStack,
+  VStack,
+  Spacer,
+  Stack,
+  Button,
+  Center,
+} from "@chakra-ui/react"
 
 const IndexPage = () => (
   <Layout>
     <Seo title="Home" />
 
-    <Box bgColor="ripple.100" h="90vh" w="100vw">
-      <HStack pl="120px" h={["50%", "70%"]}>
-        <VStack alignItems="left">
-          <Heading fontSize="50px" color="ripple.200">
-            RippleDEX
-          </Heading>
-          <Text fontSize="20px" color="white">
-            Manage clients and close deals with our state of the art CRM
-          </Text>
-        </VStack>
-      </HStack>
+    <Box bgColor="ripple.100" h="90vh" w="100vw" justifyContent="center">
+      <Center>
+        <HStack gridGap="200px">
+          <VStack maxW="35vw" pl="100px" alignItems="left">
+            <Heading pb="10px" fontSize="50px" color="ripple.200">
+              RippleDEX
+            </Heading>
+            <Text fontSize="20px" color="white">
+              Manage clients and close deals with our state of the art CRM
+            </Text>
+            <br />
+            <HStack gridGap={15}>
+              <Button
+                bgColor="ripple.200"
+                color="white"
+                fontFamily="Raleway-Bold"
+                borderRadius="30px"
+                variant="solid"
+                size="lg"
+                _hover={{
+                  bgColor: "white",
+                  color: "ripple.200",
+                  transform: "scale(1.05)",
+                  boxShadow:
+                    "rgba(22, 138, 168, 1) 5px 5px, rgba(22, 138, 168, 0.6) 10px 10px, rgba(22, 138, 168, 0.3) 15px 15px",
+                }}
+              >
+                Sign Up
+              </Button>
+              <Button
+                color="ripple.200"
+                fontFamily="Raleway-Bold"
+                borderRadius="20px"
+                variant="ghost"
+                size="lg"
+                rightIcon={<IoIosArrowForward />}
+                _hover={{
+                  transform: "scale(1.08)",
+                }}
+              >
+                Learn More
+              </Button>
+            </HStack>
+          </VStack>
+
+          <Box
+            style={{
+              animation: "floatAnim 3s ease-in-out infinite",
+            }}
+          >
+            <Image
+              style={{ transform: "rotate(10deg)" }}
+              h="500px"
+              src={Img1}
+            />
+          </Box>
+          <Box
+            style={{
+              animation: "floatAnim2 2s ease-in-out infinite",
+            }}
+            left="760px"
+            top="250px"
+            pos="absolute"
+          >
+            <Image
+              style={{ transform: "rotate(10deg)" }}
+              h="80px"
+              src={Donut}
+            />
+          </Box>
+          <Box
+            style={{
+              animation: "floatAnim2 2.5s ease-in-out infinite",
+            }}
+            right="230px"
+            top="100px"
+            pos="absolute"
+          >
+            <Image
+              style={{ transform: "rotate(10deg)" }}
+              h="130px"
+              src={Spring}
+            />
+          </Box>
+        </HStack>
+      </Center>
     </Box>
 
     <div class="custom-shape-divider-bottom">
@@ -38,7 +132,11 @@ const IndexPage = () => (
       </svg>
     </div>
 
-    <Box h="100vh"></Box>
+    <Box pt="70px" h="100vh">
+      <Box bgColor="beige" textAlign="center">
+        <Heading color="ripple.200">Our Features</Heading>
+      </Box>
+    </Box>
   </Layout>
 )
 

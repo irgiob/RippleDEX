@@ -8,24 +8,40 @@
   animation: animate 25s linear infinite;
 }
 
-@keyframes animate {
-  0% {
-    background-position-x: 0;
-  }
-  100% {
-    background-position-x: 1000px;
-  }
-}
-
 .custom-shape-divider-bottom svg {
   position: relative;
   display: block;
   width: calc(100% + 1.3px);
-  height: 200px;
+  transform: rotateY(180deg);
+  height: 150px;
 }
 
 .custom-shape-divider-bottom .shape-fill {
   fill: #fff;
+}
+
+@keyframes floatAnim {
+  0% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(10px);
+  }
+  100% {
+    transform: translateY(0px);
+  }
+}
+
+@keyframes floatAnim2 {
+  0% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+  100% {
+    transform: translateY(0px);
+  }
 }
 
 /** For tablet devices **/
