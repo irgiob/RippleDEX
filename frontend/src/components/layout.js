@@ -22,7 +22,7 @@ const Layout = ({ children }) => {
   return (
     <ChakraProvider theme={theme}>
       <Header siteTitle={data.site.siteMetadata?.title || `Title`} />
-      <main>{children}</main>
+      <main style={{ paddingTop: "60px" }}>{children}</main>
       {/*
         <footer
           style={{

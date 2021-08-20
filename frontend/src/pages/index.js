@@ -5,7 +5,7 @@ import Seo from "../components/seo"
 
 import "./index.css"
 
-import { IoIosArrowForward } from "react-icons/io"
+import { IoIosArrowDown } from "react-icons/io"
 
 import Img1 from "../images/Img1.png"
 import Donut from "../images/Donut.png"
@@ -86,7 +86,7 @@ const IndexPage = () => {
                     borderRadius="20px"
                     variant="ghost"
                     size="lg"
-                    rightIcon={<IoIosArrowForward />}
+                    rightIcon={<IoIosArrowDown />}
                     _hover={{
                       transform: "scale(1.08)",
                     }}
@@ -138,7 +138,7 @@ const IndexPage = () => {
             </Box>
           </Stack>
         </Center>
-        <div>
+        <div id="scroll">
           <svg
             class="waves"
             xmlns="http://www.w3.org/2000/svg"
