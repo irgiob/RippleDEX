@@ -11,7 +11,7 @@ import {
   Text,
 } from "@chakra-ui/react"
 
-import Logo from "../images/RippleDexRect.png"
+import Logo from "../images/RippleDexWhite.svg"
 
 const Header = ({ siteTitle }) => (
   <Box w="100vw" h="60px" bgColor="ripple.100">
