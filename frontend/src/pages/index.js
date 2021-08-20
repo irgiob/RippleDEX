@@ -194,7 +194,11 @@ const IndexPage = () => {
             </Center>
             <Center>
               <Box textAlign={!isLargeSize && "center"} maxW="500px">
-                <Heading pb="30px" fontFamily="Raleway-Bold" fontSize="40px">
+                <Heading
+                  pb="30px"
+                  fontFamily="Raleway-Bold"
+                  fontSize={["35px", "40px"]}
+                >
                   Save time between clients
                 </Heading>
                 <Text fontSize="20px">
@@ -226,7 +230,11 @@ const IndexPage = () => {
                 pl={isLargeSize && "30px"}
                 maxW="500px"
               >
-                <Heading pb="30px" fontFamily="Raleway-Bold" fontSize="40px">
+                <Heading
+                  pb="30px"
+                  fontFamily="Raleway-Bold"
+                  fontSize={["35px", "40px"]}
+                >
                   Clear Calendar & Notification System
                 </Heading>
                 <Text fontSize="20px">
@@ -260,7 +268,11 @@ const IndexPage = () => {
             </Center>
             <Center>
               <Box textAlign={!isLargeSize && "center"} maxW="500px">
-                <Heading pb="30px" fontFamily="Raleway-Bold" fontSize="40px">
+                <Heading
+                  pb="30px"
+                  fontFamily="Raleway-Bold"
+                  fontSize={["35px", "40px"]}
+                >
                   Business and Sales Analytics
                 </Heading>
                 <Text fontSize="20px">
@@ -289,7 +301,11 @@ const IndexPage = () => {
                 pl={isLargeSize && "30px"}
                 maxW="500px"
               >
-                <Heading pb="30px" fontFamily="Raleway-Bold" fontSize="40px">
+                <Heading
+                  pb="30px"
+                  fontFamily="Raleway-Bold"
+                  fontSize={["35px", "40px"]}
+                >
                   Mobile CRM
                 </Heading>
                 <Text fontSize="20px">
