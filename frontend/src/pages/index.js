@@ -7,7 +7,7 @@ import "./index.css"
 
 import { IoIosArrowDown } from "react-icons/io"
 
-import Img1 from "../images/Img1.png"
+import Statistics from "../images/Statistics.png"
 import Donut from "../images/Donut.png"
 import Spring from "../images/Spring.png"
 
@@ -106,7 +106,7 @@ const IndexPage = () => {
                 <Image
                   style={{ transform: "rotate(10deg)" }}
                   w="500px"
-                  src={Img1}
+                  src={Statistics}
                 />
               </Box>
               <Box
@@ -179,8 +179,39 @@ const IndexPage = () => {
       </Box>
 
       <Center>
-        <VStack pt="30px" maxW={["85vw", "80vw"]}>
-          {/* First Feature */}
+        <VStack pt="60px" maxW={["85vw", "80vw"]}>
+          <Stack
+            direction={["column", "row"]}
+            gridGap={["0px", "70px"]}
+            pb={!isLargeSize && "30px"}
+          >
+            <Center>
+              <Box maxW="700px" textAlign={!isLargeSize && "center"}>
+                <Text
+                  fontFamily="Nunito-Bold"
+                  color="ripple.200"
+                  pb={["10px", "20px"]}
+                  pl="2px"
+                >
+                  FEATURES
+                </Text>
+                <Heading
+                  pb="30px"
+                  fontFamily="Raleway-Bold"
+                  fontSize={["35px", "40px"]}
+                >
+                  What's cool about us?
+                </Heading>
+                <Text pb={isLargeSize && "30px"} fontSize="20px">
+                  RippleDEX's features are built with Companies in mind. Your
+                  teams, the tools they need, customer data, are all stored in
+                  one place.
+                </Text>
+              </Box>
+            </Center>
+          </Stack>
+
+          {/* First two Features */}
 
           <Stack
             direction={["column", "row"]}
@@ -188,23 +219,37 @@ const IndexPage = () => {
             pb={!isLargeSize && "30px"}
           >
             <Center>
-              <Box>
-                <Image w={["200px", "500px"]} src={Chats} />
-              </Box>
-            </Center>
-            <Center>
-              <Box textAlign={!isLargeSize && "center"} maxW="500px">
+              <Box textAlign="center" maxW="500px">
+                <Image margin="auto" w={["200px", "300px"]} src={Chats} />
                 <Heading
                   pb="30px"
                   fontFamily="Raleway-Bold"
-                  fontSize={["35px", "40px"]}
+                  fontSize={["30px", "35px"]}
                 >
                   Save time between clients
                 </Heading>
-                <Text fontSize="20px">
+                <Text pb="20px" color="gray" fontSize="20px">
                   RippleDEX allows seamless access to logs kept for each client.
                   Users won't need to depend on third party apps to pull up
                   previous interactions and information.
+                </Text>
+              </Box>
+            </Center>
+            <Center>
+              <Box textAlign="center" maxW="500px">
+                <Image margin="auto" w={["200px", "300px"]} src={Calendar} />
+                <Heading
+                  pb="30px"
+                  fontFamily="Raleway-Bold"
+                  fontSize={["30px", "35px"]}
+                >
+                  Clear Calendar & Notification System
+                </Heading>
+                <Text color="gray" fontSize="20px">
+                  Tired of spam notifications? Our notifications are fully
+                  customizable depending on your preferences. The system also
+                  includes a daily digest of missed notifications so you can get
+                  back on track easily.
                 </Text>
               </Box>
             </Center>
@@ -215,67 +260,19 @@ const IndexPage = () => {
           <Stack
             direction={["column", "row"]}
             gridGap={["0px", "70px"]}
-            pb={!isLargeSize && "50px"}
-          >
-            {!isLargeSize && (
-              <Center>
-                <Box>
-                  <Image w="200px" src={Calendar} />
-                </Box>
-              </Center>
-            )}
-            <Center>
-              <Box
-                textAlign={!isLargeSize && "center"}
-                pl={isLargeSize && "30px"}
-                maxW="500px"
-              >
-                <Heading
-                  pb="30px"
-                  fontFamily="Raleway-Bold"
-                  fontSize={["35px", "40px"]}
-                >
-                  Clear Calendar & Notification System
-                </Heading>
-                <Text fontSize="20px">
-                  Tired of spam notifications? Our notifications are fully
-                  customizable depending on your preferences. The system also
-                  includes a daily digest of missed notifications so you can get
-                  back on track easily.
-                </Text>
-              </Box>
-            </Center>
-            {isLargeSize && (
-              <Center>
-                <Box>
-                  <Image w="500px" src={Calendar} />
-                </Box>
-              </Center>
-            )}
-          </Stack>
-
-          {/* Third Feature */}
-
-          <Stack
-            direction={["column", "row"]}
-            gridGap={["0px", "70px"]}
             pb={!isLargeSize && "30px"}
           >
             <Center>
-              <Box>
-                <Image w={["200px", "500px"]} src={Analytics} />
-              </Box>
-            </Center>
-            <Center>
-              <Box textAlign={!isLargeSize && "center"} maxW="500px">
+              <Box pt={isLargeSize && "70px"} textAlign="center" maxW="500px">
+                <Image margin="auto" w={["200px", "300px"]} src={Analytics} />
                 <Heading
                   pb="30px"
                   fontFamily="Raleway-Bold"
-                  fontSize={["35px", "40px"]}
+                  fontSize={["30px", "35px"]}
                 >
                   Business and Sales Analytics
                 </Heading>
-                <Text fontSize="20px">
+                <Text color="gray" fontSize="20px">
                   Our CRM crunches the numbers and displays highly visual and
                   engaing statistics in real time. Boost productivity by finding
                   out the best customers to follow up with based on varying
@@ -283,44 +280,22 @@ const IndexPage = () => {
                 </Text>
               </Box>
             </Center>
-          </Stack>
-
-          {/* Fourth Feature */}
-
-          <Stack direction={["column", "row"]} gridGap={["0px", "70px"]}>
-            {!isLargeSize && (
-              <Center>
-                <Box>
-                  <Image w="200px" src={Mobile} />
-                </Box>
-              </Center>
-            )}
             <Center>
-              <Box
-                textAlign={!isLargeSize && "center"}
-                pl={isLargeSize && "30px"}
-                maxW="500px"
-              >
+              <Box textAlign="center" maxW="500px">
+                <Image margin="auto" w={["200px", "300px"]} src={Mobile} />
                 <Heading
                   pb="30px"
                   fontFamily="Raleway-Bold"
-                  fontSize={["35px", "40px"]}
+                  fontSize={["30px", "35px"]}
                 >
                   Mobile CRM
                 </Heading>
-                <Text fontSize="20px">
+                <Text color="gray" fontSize="20px">
                   RippleDEX is fully integrated for mobile use. View data and
-                  receive alerts on the go from your mobile device.
+                  receive alerts on the go from your mobile devices.
                 </Text>
               </Box>
             </Center>
-            {isLargeSize && (
-              <Center>
-                <Box>
-                  <Image w="500px" src={Mobile} />
-                </Box>
-              </Center>
-            )}
           </Stack>
 
           <Box h="100px" w="100vw"></Box>

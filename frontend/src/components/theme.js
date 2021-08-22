@@ -5,6 +5,9 @@ const colors = {
     100: "#78cfec",
     200: "#168aa8",
   },
+  trans: {
+    100: "rgba(120, 207, 236, 0.1)",
+  },
 }
 
 const fonts = {

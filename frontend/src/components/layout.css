@@ -25,3 +25,9 @@ body {
   src: local("Nunito"),
     url(../fonts/Nunito/Nunito-SemiBold.ttf) format("truetype");
 }
+
+@font-face {
+  font-family: "Nunito-Bold";
+  src: local("Nunito-Bold"),
+    url(../fonts/Nunito/Nunito-ExtraBold.ttf) format("truetype");
+}
