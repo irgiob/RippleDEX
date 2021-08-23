@@ -263,7 +263,7 @@ const IndexPage = () => {
             pb={!isLargeSize && "30px"}
           >
             <Center>
-              <Box pt={isLargeSize && "70px"} textAlign="center" maxW="500px">
+              <Box pt={isLargeSize && "30px"} textAlign="center" maxW="500px">
                 <Image margin="auto" w={["200px", "300px"]} src={Analytics} />
                 <Heading
                   pb="30px"
@@ -281,7 +281,7 @@ const IndexPage = () => {
               </Box>
             </Center>
             <Center>
-              <Box textAlign="center" maxW="500px">
+              <Box pt={!isLargeSize && "30px"} textAlign="center" maxW="500px">
                 <Image margin="auto" w={["200px", "300px"]} src={Mobile} />
                 <Heading
                   pb="30px"
