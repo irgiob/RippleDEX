@@ -20,7 +20,6 @@ jobs:
       - run: npm run build
       - uses: FirebaseExtended/action-hosting-deploy@v0
         with:
-          args: deploy --only hosting
-        env:
-          FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN }}
-          PROJECT_ID: rippledex-86ac2
+          repoToken: "${{ secrets.GITHUB_TOKEN }}"
+          firebaseServiceAccount: "${{ secrets.FIREBASE_SERVICE_ACCOUNT_RIPPLEDEX_86AC2 }}"
+          projectId: rippledex-86ac2
