@@ -45,18 +45,13 @@ const IndexPage = () => {
         <Center>
           <Stack direction={["column", "row"]}>
             <Center>
-              <VStack
-                textAlign={!isLargeSize && "center"}
-                maxW={["100vw", "35vw"]}
-                p="50px"
-                alignItems="left"
-              >
+              <VStack maxW={["100vw", "35vw"]} p="50px" alignItems="left">
                 <Heading
                   pb="10px"
                   fontSize={["40px", "50px"]}
                   color="ripple.200"
                 >
-                  Fiona
+                  RippleDEX
                 </Heading>
                 <Text fontSize="20px" color="white">
                   Manage clients and close deals with our state of the art CRM
