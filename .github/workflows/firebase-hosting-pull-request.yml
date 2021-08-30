@@ -32,4 +32,4 @@ jobs:
           repoToken: "${{ secrets.GITHUB_TOKEN }}"
           firebaseServiceAccount: "${{ secrets.FIREBASE_SERVICE_ACCOUNT_RIPPLEDEX_86AC2 }}"
           projectId: rippledex-86ac2
-          channelId: `pr${ghContext.payload.pull_request.number}-${branchName}`
+          channelId: "pr${ghContext.payload.pull_request.number}-${branchName}"
