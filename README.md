@@ -8,8 +8,7 @@ Here's what you need to do to get this repo running on your local machine:
 
 1. clone this repo to your device.
 2. run `npm install`, assuming you have node installed on your device.
-3. once you have the dependancies installed, you'll need to download the enviornment files `.env.development` and
-   `firebase.json` from our team Google Drive. These contain the credentials to allow the app to access the database from your local device.
+3. once you have the dependancies installed, you'll need to download the enviornment file `.env.development` from our team Google Drive. This contain the credentials to allow the app to access the database from your local device.
 4. after all that, simply run `npm start`, wait a bit, then you should be able to access the web app at localhost:8000. Happy coding!
 
 ## For Frontend
