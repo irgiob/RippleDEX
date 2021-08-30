@@ -1,7 +1,7 @@
 const firebase = require('firebase-admin');
 const crypto = require('crypto');
 require("dotenv").config({
-  path: `.env.${process.env.NODE_ENV}`,
+  path: `.env`,
 })
 
 const getDigest = id =>
