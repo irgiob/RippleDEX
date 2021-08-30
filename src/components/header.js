@@ -3,7 +3,7 @@ import PropTypes from "prop-types"
 
 import { Box, Image, Circle, HStack, Spacer, Text } from "@chakra-ui/react"
 
-import Logo from "../images/RippleDexWhite.svg"
+import Logo from "../images/RippleDEXWhite.svg"
 
 const Header = ({ siteTitle }) => (
   <Box zIndex={999} position="fixed" w="100vw" h="60px" bgColor="ripple.100">
