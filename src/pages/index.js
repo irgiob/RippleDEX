@@ -56,7 +56,7 @@ const IndexPage = () => {
                   fontSize={["40px", "50px"]}
                   color="ripple.200"
                 >
-                  RippleDEX
+                  Fiona
                 </Heading>
                 <Text fontSize="20px" color="white">
                   Manage clients and close deals with our state of the art CRM
