@@ -1,28 +1,25 @@
 import firebase from "gatsby-plugin-firebase"
 import "firebase/auth";
-import "firebase/firestore";
-//import { Firestore } from "@firebase/firestore"
+import { createNewUser } from "../models/User"
 
-const UserModel = require("../models/User")
-
-export const auth = firebase.auth();
-export const firestore = firebase.firestore();
-
+const auth = firebase.auth();
 
 /**
- * 
- * @param {*} email 
- * @param {*} password 
- * @returns {firebase.User.uid} User ID, if doesnt exists returns null
+ * @param {String} name
+ * @param {String} email 
+ * @param {String} password 
+ * @param {String} phoneNumber
+ * @returns {User} User ID, if doesnt exists returns null
  */
-function signup(name, email, password,phoneNumber) {
-  auth.createUserWithEmailAndPassword(email, password)
+async function signup(name, email, password,phoneNumber) {
+  return auth.createUserWithEmailAndPassword(email, password)
   .then( (userCredential) => {
-    const userID = userCredential.user.uid;
-    UserModel.createNewUser(firebase.firestore(), name, userID, email,phoneNumber);
-    return userID
+    const userID = userCredential.user.uid
+    return createNewUser(name, userID, email, phoneNumber)
   })
-  .catch( () => { return null } )
+  .catch((error) => { 
+    return null 
+  })
 }
 
 /**
@@ -33,11 +30,9 @@ function signup(name, email, password,phoneNumber) {
  * @returns {firebase.User.uid} User ID, if doesnt exists returns null
  */
 function login(email, password) {
-
-  auth.signInWithEmailAndPassword(email, password)
+  return auth.signInWithEmailAndPassword(email, password)
   .then( (userCredential) => {
     const userID = userCredential.user.uid;
-    console.log(userID);
     return userID;
   })
   .catch( (error) => {

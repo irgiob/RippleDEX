@@ -11,15 +11,15 @@ class SignUp extends React.Component {
         password: ``,
     }
 
-    handleSubmit = event => {
+    handleSubmit = async (event) => {
         event.preventDefault()
-        const uid = signup(this.state.name, this.state.email, this.state.password)
+        const uid = await signup(this.state.name, this.state.email, this.state.password, null)
         if ( uid == null ){
             // Fail to signup
             navigate(`/login`)
           }
         else {
-        navigate(`profile`)
+          navigate(`/profile`)
         }
     }
 

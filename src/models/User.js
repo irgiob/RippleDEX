@@ -1,13 +1,11 @@
-import "firebase/firestore"
 import firebase from "gatsby-plugin-firebase"
+import "firebase/firestore"
 
-export const firestore = firebase.firestore()
+const db = firebase.firestore()
 
 /**
  * creates a new user (in the context of Firestore)
  * 
- * @param {Firestore} db Firestore Database Object
-
  * @param {String} userName name of user to be created
  * @param {String} userID ID of user to be created
  * @param {String} userEmail email of user to be created
@@ -15,24 +13,23 @@ export const firestore = firebase.firestore()
  * 
  * @returns {User} new user just created
  */
-export const createNewUser = (db, userName, userID,userEmail,userPhoneNumber) => {
-    console.log("HELLO")
-    firestore.collection("users").doc(userID).set({
+export const createNewUser = (userName, userID, userEmail,userPhoneNumber) => {
+    const docRef = db.collection("users").doc(userID)
+    return docRef.set({
         name: userName,
         email: userEmail,
         phoneNumber: ["Mobile",userPhoneNumber],
         organizations: [],
         lastOpenedOrganization: null,
         profilePicture: null
-    }).then((newUser)=>{
-        console.log(newUser)
-        return newUser
+    }).then(()=>{
+        return docRef.get().then((doc) => {
+            return doc.data()
+        })
     }).catch((error) => {
         console.log("Error adding new user: ", error);
+        throw "Error in createNewUser"
     })
-
-    
-
 }
 
 /**
