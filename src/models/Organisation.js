@@ -11,6 +11,12 @@ import { Firestore } from "@firebase/firestore"
  */
 export const createNewOrganization = (db, userID) => {
 
+    const newOrg = doc(collection(db, "organizations"))
+    
+    await setDoc(newOrg, {
+        admin: userID,
+    });
+    
 }
 
 /**
@@ -18,9 +24,15 @@ export const createNewOrganization = (db, userID) => {
  * 
  * @param {Firestore} db Firestore Database Object
  * @param {String} email email address of invitee
+ * @param {String} orgID ID of organization
  */
-export const inviteToOrganization = (db, email) => {
+export const inviteToOrganization = (db, email,orgID) => {
 
+    const newInvite = doc(collection(db,"invites"));
+    await setDoc(newInvite,{
+          email: email,
+          organizationID: orgID
+      })
 }
 
 /**
@@ -31,6 +43,11 @@ export const inviteToOrganization = (db, email) => {
  * @param {String} userID ID of user
  */
 export const addUserToOrganization = (db, orgID, userID) => {
+
+    const docRef = doc(db,"organizations",orgID);
+    await updateDoc(docRef,{
+        members: arrayUnion(userID)
+      });
 
 }
 
@@ -45,6 +62,9 @@ export const addUserToOrganization = (db, orgID, userID) => {
  */
 export const isUserInOrganization = (db, orgID, userID) => {
 
+    const docRef = doc(db,"organizations",orgID);
+    return (docRef.members.includes(userID))
+
 }
 
 /**
@@ -57,6 +77,9 @@ export const isUserInOrganization = (db, orgID, userID) => {
  * @returns bool
  */
  export const isUserAdmin = (db, orgID, userID) => {
+
+    const docRef = doc(db,"organizations",orgID);
+    return ((docRef.admin) === (userID))
 
 }
 
@@ -74,5 +97,18 @@ export const isUserInOrganization = (db, orgID, userID) => {
  */
  export const updateOrganization = (db, orgID, options) => {
     // note: organizationName, organizationEmail, are profilePicture are all optional
+    
+    const docRef = doc(db, "organizations", orgID);
+    const docSnap = await getDoc(docRef);
+
     // must check if they are present
-}
+    if (docSnap.exists()){
+        await updateDoc(docRef, {
+                name: options.organizationName,
+                email: options.organizationDesc,
+                profilePicture: options.profilePicture
+            })
+        } else {
+            //console.log("No such document!");
+          }
+    }
