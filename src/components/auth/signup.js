@@ -6,13 +6,14 @@ import { navigate } from "gatsby"
 class SignUp extends React.Component {
 
     state = {
+        name: ``,
         email: ``,
         password: ``,
     }
 
     handleSubmit = event => {
         event.preventDefault()
-        const uid = signup(this.state.email, this.state.password)
+        const uid = signup(this.state.name, this.state.email, this.state.password)
         if ( uid == null ){
             // Fail to signup
             navigate(`/login`)
@@ -41,6 +42,10 @@ class SignUp extends React.Component {
               this.handleSubmit(event)
             }}
           >
+            <label>
+              Name
+              <input type="text" name="name" onChange={this.handleUpdate} />
+            </label>
             <label>
               Email
               <input type="text" name="email" onChange={this.handleUpdate} />

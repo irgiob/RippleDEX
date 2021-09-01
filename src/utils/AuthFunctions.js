@@ -1,9 +1,12 @@
 import firebase from "gatsby-plugin-firebase"
 import "firebase/auth";
+import "firebase/firestore";
+//import { Firestore } from "@firebase/firestore"
 
 const UserModel = require("../models/User")
 
 export const auth = firebase.auth();
+export const firestore = firebase.firestore();
 
 
 /**
@@ -12,11 +15,11 @@ export const auth = firebase.auth();
  * @param {*} password 
  * @returns {firebase.User.uid} User ID, if doesnt exists returns null
  */
-function signup(email, password) {
+function signup(name, email, password,phoneNumber) {
   auth.createUserWithEmailAndPassword(email, password)
   .then( (userCredential) => {
     const userID = userCredential.user.uid;
-    UserModel.createNewUser(firebase.database, userID);
+    UserModel.createNewUser(firebase.firestore(), name, userID, email,phoneNumber);
     return userID
   })
   .catch( () => { return null } )

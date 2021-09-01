@@ -1,5 +1,4 @@
-import { collection, doc, addDoc, updateDoc, arrayUnion, DocumentReference } from "@firebase/firestore"
-import { Firestore } from "@firebase/firestore"
+import "@firebase/firestore"
 
 /**
  * creates new organization
@@ -9,13 +8,15 @@ import { Firestore } from "@firebase/firestore"
  * 
  * @return {DocumentReference} newly created organization
  */
-export const createNewOrganization = (db, userID) => {
+export const createNewOrganization =  async (db, userID) => {
 
-    const newOrg = doc(collection(db, "organizations"))
-    
-    await setDoc(newOrg, {
+    db.collection("organizations").doc(userID).set({
         admin: userID,
-    });
+    }).then((newOrg)=>{
+        return newOrg;
+    }).catch((error)=>{
+        console.error("Error adding new organizaitions: ", error);
+    })
     
 }
 
@@ -26,14 +27,18 @@ export const createNewOrganization = (db, userID) => {
  * @param {String} email email address of invitee
  * @param {String} orgID ID of organization
  */
-export const inviteToOrganization = (db, email,orgID) => {
-
-    const newInvite = doc(collection(db,"invites"));
-    await setDoc(newInvite,{
-          email: email,
+export const inviteToOrganization = async (db, email,orgID) => {
+    
+    db.collection("invites").add({
+        email: email,
           organizationID: orgID
-      })
-}
+    }).then((docRef)=>{
+        return docRef;
+    }).catch(error=>{
+        console.error("Error inviting new individual", error);
+    })
+    }
+
 
 /**
  * adds a user to an organization
@@ -45,9 +50,10 @@ export const inviteToOrganization = (db, email,orgID) => {
 export const addUserToOrganization = (db, orgID, userID) => {
 
     const docRef = doc(db,"organizations",orgID);
-    await updateDoc(docRef,{
-        members: arrayUnion(userID)
-      });
+    db.collection("organizations").doc(orgID).update({
+        members: firebase.firestore.FieldValue.arrayUnion(serID)
+    })
+    
 
 }
 
@@ -60,7 +66,7 @@ export const addUserToOrganization = (db, orgID, userID) => {
  * 
  * @returns bool
  */
-export const isUserInOrganization = (db, orgID, userID) => {
+export const isUserInOrganization = async (db, orgID, userID) => {
 
     const docRef = doc(db,"organizations",orgID);
     return (docRef.members.includes(userID))
@@ -76,7 +82,7 @@ export const isUserInOrganization = (db, orgID, userID) => {
  * 
  * @returns bool
  */
- export const isUserAdmin = (db, orgID, userID) => {
+ export const isUserAdmin = async (db, orgID, userID) => {
 
     const docRef = doc(db,"organizations",orgID);
     return ((docRef.admin) === (userID))
@@ -95,7 +101,7 @@ export const isUserInOrganization = (db, orgID, userID) => {
  * 
  * @returns {DocumentReference} updated organization object
  */
- export const updateOrganization = (db, orgID, options) => {
+ export const updateOrganization = async (db, orgID, options) => {
     // note: organizationName, organizationEmail, are profilePicture are all optional
     
     const docRef = doc(db, "organizations", orgID);
