@@ -7,14 +7,14 @@ import "./index.scss"
 
 import { IoIosArrowDown } from "react-icons/io"
 
-import Statistics from "../images/Statistics.png"
-import Donut from "../images/Donut.png"
-import Spring from "../images/Spring.png"
+import Statistics from "../images/HomePage/Statistics.png"
+import Donut from "../images/HomePage/Donut.png"
+import Spring from "../images/HomePage/Spring.png"
 
-import Analytics from "../images/Analytics.png"
-import Chats from "../images/Chats.png"
-import Calendar from "../images/Calendar.png"
-import Mobile from "../images/Mobile.png"
+import Analytics from "../images/HomePage/Analytics.png"
+import Chats from "../images/HomePage/Chats.png"
+import Calendar from "../images/HomePage/Calendar.png"
+import Mobile from "../images/HomePage/Mobile.png"
 
 import {
   Box,

@@ -1,4 +1,7 @@
-exports.onCreateWebpackConfig = ({ plugins, actions }, pluginOptions) => {
+exports.onCreateWebpackConfig = (
+  { stage, loaders, plugins, actions },
+  pluginOptions
+) => {
   const {
     credentials: {
       apiKey,
@@ -8,9 +11,9 @@ exports.onCreateWebpackConfig = ({ plugins, actions }, pluginOptions) => {
       storageBucket,
       messagingSenderId,
       appId,
-      measurementId
-    }
-  } = pluginOptions;
+      measurementId,
+    },
+  } = pluginOptions
 
   actions.setWebpackConfig({
     plugins: [
@@ -23,9 +26,9 @@ exports.onCreateWebpackConfig = ({ plugins, actions }, pluginOptions) => {
           FIREBASE_STORAGE_BUCKET: JSON.stringify(storageBucket),
           FIREBASE_MESSAGING_SENDER_ID: JSON.stringify(messagingSenderId),
           FIREBASE_APP_ID: JSON.stringify(appId),
-          FIREBASE_MEASUREMENT_ID: JSON.stringify(measurementId)
-        }
-      })
-    ]
-  });
-};
+          FIREBASE_MEASUREMENT_ID: JSON.stringify(measurementId),
+        },
+      }),
+    ],
+  })
+}
