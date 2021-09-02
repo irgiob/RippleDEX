@@ -1,8 +1,8 @@
-import firebase from "gatsby-plugin-firebase"
-import "firebase/auth";
+import firebase from "../../plugins/gatsby-plugin-firebase-custom"
+import {getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, GoogleAuthProvider, signInWithPopup, signOut} from "firebase/auth";
 import { createNewUser } from "../models/User"
 
-const auth = firebase.auth();
+const auth = getAuth(firebase);
 
 /**
  * @param {String} name
@@ -11,8 +11,8 @@ const auth = firebase.auth();
  * @param {String} phoneNumber
  * @returns {User} User ID, if doesnt exists returns null
  */
-async function signup(name, email, password,phoneNumber) {
-  return auth.createUserWithEmailAndPassword(email, password)
+export async function signup(name, email, password,phoneNumber) {
+  return createUserWithEmailAndPassword(auth, email, password)
   .then( (userCredential) => {
     const userID = userCredential.user.uid
     return createNewUser(name, userID, email, phoneNumber)
@@ -29,8 +29,8 @@ async function signup(name, email, password,phoneNumber) {
  * 
  * @returns {firebase.User.uid} User ID, if doesnt exists returns null
  */
-function login(email, password) {
-  return auth.signInWithEmailAndPassword(email, password)
+export async function login(email, password) {
+  return signInWithEmailAndPassword(auth, email, password)
   .then( (userCredential) => {
     const userID = userCredential.user.uid;
     return userID;
@@ -40,24 +40,23 @@ function login(email, password) {
     console.log(error.message)
     return null;
   })
-
 }
 
 /**
  * 
  * @returns {firebase.User.uid} current user ID
  */
-function isLoggedIn() {
-  if (auth.currentUser) { return auth.currentUser ; }
+export async function isLoggedIn() {
+  if (await auth.currentUser) { return auth.currentUser ; }
   return null;
 }
 
 /**
  * Signs in using Google Account via popup
 */
-function signInGoogle(){
-  const provider = new firebase.auth.GoogleAuthProvider();
-  auth.signInWithPopup(provider)
+export async function signInGoogle(){
+  const provider = new GoogleAuthProvider();
+  return signInWithPopup(auth, provider)
   .then( (result) => {
     const userID = result.user.uid;
     console.log("Google log in")
@@ -74,33 +73,6 @@ function signInGoogle(){
  * Signs out current user
  * @returns {firebase.auth.signOut}
  */
-function logout() {
-  return auth.signOut()
+export function logout() {
+  return signOut(auth)
 }
-
-function resetPassword(email) {
-  return auth.sendPasswordResetEmail(email)
-}
-
-function updateEmail(email) {
-  return auth.currentUser.updateEmail(email)
-}
-
-function updatePassword(password) {
-  return auth.currentUser.updatePassword(password)
-}
-
-
-
-export {
-  login,
-  signup,
-  logout,
-  resetPassword,
-  isLoggedIn,
-  updateEmail,
-  updatePassword,
-  signInGoogle
-}
-
-

@@ -10,9 +10,9 @@ class Login extends React.Component {
         password: ``
     }
 
-    handleSubmit = event => {
+    handleSubmit = async (event) => {
         event.preventDefault()
-        const uid = login(this.state.email, this.state.password);
+        const uid = await login(this.state.email, this.state.password);
         console.log(uid);
         if (!uid){
           // Fail to login
@@ -20,7 +20,7 @@ class Login extends React.Component {
           navigate(`/login`)
         }
         else {
-          navigate(`profile`)
+          navigate(`/profile`)
         }
         
     }

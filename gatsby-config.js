@@ -36,7 +36,7 @@ module.exports = {
     `gatsby-plugin-gatsby-cloud`,
     `gatsby-plugin-sass`,
     {
-      resolve: "gatsby-plugin-firebase",
+      resolve: "gatsby-plugin-firebase-custom",
       options: {
         credentials: {
           apiKey: process.env.API_KEY,

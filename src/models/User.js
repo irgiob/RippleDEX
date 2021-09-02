@@ -1,7 +1,7 @@
-import firebase from "gatsby-plugin-firebase"
-import "firebase/firestore"
+import firebase from "../../plugins/gatsby-plugin-firebase-custom"
+import {getFirestore, doc, setDoc, getDoc, updateDoc} from "firebase/firestore"
 
-const db = firebase.firestore()
+const db = getFirestore(firebase)
 
 /**
  * creates a new user (in the context of Firestore)
@@ -14,8 +14,8 @@ const db = firebase.firestore()
  * @returns {User} new user just created
  */
 export const createNewUser = (userName, userID, userEmail,userPhoneNumber) => {
-    const docRef = db.collection("users").doc(userID)
-    return docRef.set({
+    const docRef = doc(db, "users", userID)
+    return setDoc(docRef, {
         name: userName,
         email: userEmail,
         phoneNumber: ["Mobile",userPhoneNumber],
@@ -23,7 +23,7 @@ export const createNewUser = (userName, userID, userEmail,userPhoneNumber) => {
         lastOpenedOrganization: null,
         profilePicture: null
     }).then(()=>{
-        return docRef.get().then((doc) => {
+        return getDoc(docRef).then((doc) => {
             return doc.data()
         })
     }).catch((error) => {
@@ -45,24 +45,15 @@ export const createNewUser = (userName, userID, userEmail,userPhoneNumber) => {
  * @returns {DocumentReference} updated user object
  */
 export var updateUser = async (db, userID, options) => {
-    // note: userName, userEmail, are profilePicture are all optional
-    
-    var docRef = db.collection("users").doc(userID);
-    var docSnap = await docRef.get();
+    const docRef = doc(db, "users", userID)
+    const docSnap = await getDoc(docRef)
 
-    // must check if they are present
-    
     if (docSnap.exists()){
-        return docRef.update({
-            name: options.userName,
-            email: options.userEmail,
-            profilePicture: options.profilePicture
-        })
-        } else {
-            //console.log("No such document!");
-          }
+        return updateDoc(docRef, options)
+    } else {
+        console.log("No such document!");
     }
-
+}
 
 /**
  * updates the notification settings for a specific user
@@ -73,10 +64,10 @@ export var updateUser = async (db, userID, options) => {
  */
 export const updateUserNotificationSettings = (db, userID, notificationMode) => {
 
-    var docRef = db.collection("users").doc(userID);
-    docRef.update( {
+    const docRef = doc(db, "users", userID);
+    updateDoc(docRef, {
         notificationMode: notificationMode
-      });
+    });
 
 }
 
@@ -88,11 +79,10 @@ export const updateUserNotificationSettings = (db, userID, notificationMode) => 
  * 
  * @returns {DocumentReference}
  */
-export const getLastOpenedOrganization = (db, userID) => {
-
-    var docRef = db.collection("users").doc(userID).get()
-    .then((user) => {
-        return user.lastOpenedOrganization;
+export const getUser = (db, userID) => {
+    const docRef = doc(db, "users", userID)
+    getDoc(docRef).then((user) => {
+        return user.data();
     }).catch((error) => {
         console.error("Error getting user: ", error);
     });
