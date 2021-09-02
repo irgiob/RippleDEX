@@ -5,30 +5,28 @@ import Layout from "../components/layout"
 import { Button } from "@chakra-ui/react";
 
 import firebase from "../../plugins/gatsby-plugin-firebase-custom"
-import { getAuth } from "firebase/auth"
+import { getAuth, onAuthStateChanged } from "firebase/auth"
 
 
 const Profile = () => {
     const [user, setUser] = useState(null)
     useEffect( () => {
-      if (!user) {
-         getUser()
-      }
-    })
-
-    async function getUser() {
-        const loggedUser = await isLoggedIn()
-        console.log(loggedUser)
-        if ( loggedUser == null ) {
+      const auth = getAuth(firebase)
+      onAuthStateChanged(auth, (user) => {
+        if (user) {
+          setUser(user)
+        } else {
           navigate("/login")
-          return null
         }
-        setUser(loggedUser) 
-    }
+      })
+    }, [])
 
     const clickHandler = () => {
         logout();
         navigate("/login");
+    }
+    if (!user) {
+      return (<Layout><h1>Loading...</h1></Layout>)
     }
 
     return( 

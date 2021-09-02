@@ -2,8 +2,6 @@ import firebase from "../../plugins/gatsby-plugin-firebase-custom"
 import {getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, GoogleAuthProvider, signInWithPopup, signOut} from "firebase/auth";
 import { createNewUser } from "../models/User"
 
-const auth = getAuth(firebase);
-
 /**
  * @param {String} name
  * @param {String} email 
@@ -12,6 +10,7 @@ const auth = getAuth(firebase);
  * @returns {User} User ID, if doesnt exists returns null
  */
 export async function signup(name, email, password,phoneNumber) {
+  const auth = getAuth(firebase)
   return createUserWithEmailAndPassword(auth, email, password)
   .then( (userCredential) => {
     const userID = userCredential.user.uid
@@ -30,6 +29,7 @@ export async function signup(name, email, password,phoneNumber) {
  * @returns {firebase.User.uid} User ID, if doesnt exists returns null
  */
 export async function login(email, password) {
+  const auth = getAuth(firebase)
   return signInWithEmailAndPassword(auth, email, password)
   .then( (userCredential) => {
     const userID = userCredential.user.uid;
@@ -46,15 +46,17 @@ export async function login(email, password) {
  * 
  * @returns {firebase.User.uid} current user ID
  */
-export async function isLoggedIn() {
-  if (await auth.currentUser) { return auth.currentUser ; }
-  return null;
+export function isLoggedIn() {
+  const auth = getAuth(firebase)
+  console.log("A", auth.currentUser)
+  return auth.currentUser
 }
 
 /**
  * Signs in using Google Account via popup
 */
 export async function signInGoogle(){
+  const auth = getAuth(firebase)
   const provider = new GoogleAuthProvider();
   return signInWithPopup(auth, provider)
   .then( (result) => {
@@ -74,5 +76,6 @@ export async function signInGoogle(){
  * @returns {firebase.auth.signOut}
  */
 export function logout() {
+  const auth = getAuth(firebase)
   return signOut(auth)
 }

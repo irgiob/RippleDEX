@@ -1,19 +1,28 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 // import { Form, Button, Card, Alert } from "react-bootstrap";
 import { signup, isLoggedIn } from "../../utils/AuthFunctions";
 import { navigate } from "gatsby"
 
-class SignUp extends React.Component {
+import firebase from "../../../plugins/gatsby-plugin-firebase-custom"
+import { getAuth, onAuthStateChanged } from "firebase/auth"
 
-    state = {
-        name: ``,
-        email: ``,
-        password: ``,
-    }
+const SignUp = () => {
+    const [userName, setUserName] = useState('')
+    const [userEmail, setUserEmail] = useState('')
+    const [userPassword, setUserPassword] = useState('')
 
-    handleSubmit = async (event) => {
+    useEffect( () => {
+      const auth = getAuth(firebase)
+      onAuthStateChanged(auth, (user) => {
+        if (user) {
+          navigate("/profile")
+        } 
+      })
+    }, [])
+
+    const handleSubmit = async (event) => {
         event.preventDefault()
-        const uid = await signup(this.state.name, this.state.email, this.state.password, null)
+        const uid = await signup(userName, userEmail, userPassword, null)
         if ( uid == null ){
             // Fail to signup
             navigate(`/login`)
@@ -23,46 +32,35 @@ class SignUp extends React.Component {
         }
     }
 
-    handleUpdate = event => {
-      this.setState({
-        [event.target.name]: event.target.value,
-      })
-    }
-
-    render() {
-      if (isLoggedIn()) {
-        navigate(`/profile`)
-      }
-      return (
-        <>
-          <h1>Sign Up</h1>
-          <form
-            method="post"
-            onSubmit={event => {
-              this.handleSubmit(event)
-            }}
-          >
-            <label>
-              Name
-              <input type="text" name="name" onChange={this.handleUpdate} />
-            </label>
-            <label>
-              Email
-              <input type="text" name="email" onChange={this.handleUpdate} />
-            </label>
-            <label>
-              Password
-              <input
-                type="password"
-                name="password"
-                onChange={this.handleUpdate}
-              />
-            </label>
-            <input type="submit" value="Sign Up" />
-          </form>
-        </>
-      )
-    }
+    return (
+      <>
+        <h1>Sign Up</h1>
+        <form
+          method="post"
+          onSubmit={event => {
+            handleSubmit(event)
+          }}
+        >
+          <label>
+            Name
+            <input type="text" name="name" onChange={(event) => setUserName(event.target.value)} />
+          </label>
+          <label>
+            Email
+            <input type="text" name="email" onChange={(event) => setUserEmail(event.target.value)} />
+          </label>
+          <label>
+            Password
+            <input
+              type="password"
+              name="password"
+              onChange={(event) => setUserPassword(event.target.value)}
+            />
+          </label>
+          <input type="submit" value="Sign Up" />
+        </form>
+      </>
+    )
 }
 
 export default SignUp;
