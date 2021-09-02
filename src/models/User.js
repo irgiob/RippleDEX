@@ -28,7 +28,7 @@ export const createNewUser = (userName, userID, userEmail,userPhoneNumber) => {
         })
     }).catch((error) => {
         console.log("Error adding new user: ", error);
-        throw "Error in createNewUser"
+        throw "Error in createNewUser";
     })
 }
 
@@ -44,7 +44,7 @@ export const createNewUser = (userName, userID, userEmail,userPhoneNumber) => {
  * 
  * @returns {DocumentReference} updated user object
  */
-export var updateUser = async (db, userID, options) => {
+export const updateUser = async (db, userID, options) => {
     const docRef = doc(db, "users", userID)
     const docSnap = await getDoc(docRef)
 
@@ -62,7 +62,7 @@ export var updateUser = async (db, userID, options) => {
  * @param {String} userID ID of user to be updated
  * @param {Integer} notificationMode new notification mode
  */
-export const updateUserNotificationSettings = (db, userID, notificationMode) => {
+export const updateUserNotificationSettings = (db,userID, notificationMode) => {
 
     const docRef = doc(db, "users", userID);
     updateDoc(docRef, {
