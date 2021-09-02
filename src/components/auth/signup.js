@@ -1,66 +1,115 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react"
 // import { Form, Button, Card, Alert } from "react-bootstrap";
-import { signup, isLoggedIn } from "../../utils/AuthFunctions";
+import { signup, isLoggedIn } from "../../utils/AuthFunctions"
 import { navigate } from "gatsby"
 
 import firebase from "../../../plugins/gatsby-plugin-firebase-custom"
 import { getAuth, onAuthStateChanged } from "firebase/auth"
 
+import {
+  Box,
+  Button,
+  Input,
+  InputGroup,
+  InputRightElement,
+} from "@chakra-ui/react"
+
 const SignUp = () => {
-    const [userName, setUserName] = useState('')
-    const [userEmail, setUserEmail] = useState('')
-    const [userPassword, setUserPassword] = useState('')
+  const [userName, setUserName] = useState("")
+  const [userEmail, setUserEmail] = useState("")
+  const [userPassword, setUserPassword] = useState("")
 
-    useEffect( () => {
-      const auth = getAuth(firebase)
-      onAuthStateChanged(auth, (user) => {
-        if (user) {
-          navigate("/profile")
-        } 
-      })
-    }, [])
+  const [show, setShow] = React.useState(false)
+  const [loading, setLoading] = React.useState(false)
 
-    const handleSubmit = async (event) => {
-        event.preventDefault()
-        const uid = await signup(userName, userEmail, userPassword, null)
-        if ( uid == null ){
-            // Fail to signup
-            navigate(`/login`)
-          }
-        else {
-          navigate(`/profile`)
-        }
+  const handleClick = () => setShow(!show)
+  const handleLoad = () => setLoading(true)
+
+  useEffect(() => {
+    const auth = getAuth(firebase)
+    onAuthStateChanged(auth, user => {
+      if (user) {
+        navigate("/profile")
+      }
+    })
+  }, [])
+
+  const handleSubmit = async event => {
+    handleLoad()
+    event.preventDefault()
+    const uid = await signup(userName, userEmail, userPassword, null)
+    if (uid == null) {
+      // Fail to signup
+      navigate(`/login`)
+    } else {
+      navigate(`/profile`)
     }
+  }
 
-    return (
-      <>
-        <h1>Sign Up</h1>
-        <form
-          method="post"
-          onSubmit={event => {
-            handleSubmit(event)
+  return (
+    <>
+      <form method="post">
+        <Input
+          variant="outline"
+          placeholder="Full Name"
+          type="text"
+          name="name"
+          onChange={event => setUserName(event.target.value)}
+        />
+        <Box h="20px" />
+        <Input
+          variant="outline"
+          placeholder="Email Address"
+          type="text"
+          name="email"
+          onChange={event => setUserEmail(event.target.value)}
+        />
+        <Box h="20px" />
+        <InputGroup>
+          <Input
+            type={show ? "text" : "password"}
+            name="password"
+            placeholder="Enter a Password"
+            onChange={event => setUserPassword(event.target.value)}
+          />
+          <Box h="20px" />
+          <InputRightElement w="5rem">
+            <Button
+              fontFamily="Nunito-Bold"
+              variant="solid"
+              bgColor="white"
+              fontSize="13px"
+              color="ripple.200"
+              h="1.75rem"
+              size="sm"
+              onClick={handleClick}
+            >
+              {show ? "HIDE" : "SHOW"}
+            </Button>
+          </InputRightElement>
+        </InputGroup>
+        <Box h="40px" />
+        <Button
+          bgColor="ripple.200"
+          color="white"
+          fontFamily="Raleway-Bold"
+          borderRadius="30px"
+          variant="solid"
+          size="lg"
+          _hover={{
+            transform: "scale(1.05)",
           }}
+          type="Submit"
+          value="Sign Up"
+          onClick={handleSubmit}
+          isLoading={loading}
+          loadingText="Submitting"
         >
-          <label>
-            Name
-            <input type="text" name="name" onChange={(event) => setUserName(event.target.value)} />
-          </label>
-          <label>
-            Email
-            <input type="text" name="email" onChange={(event) => setUserEmail(event.target.value)} />
-          </label>
-          <label>
-            Password
-            <input
-              type="password"
-              name="password"
-              onChange={(event) => setUserPassword(event.target.value)}
-            />
-          </label>
-          <input type="submit" value="Sign Up" />
-        </form>
-      </>
-    )
+          Sign Up
+        </Button>
+      </form>
+    </>
+  )
 }
 
-export default SignUp;
+export default SignUp
