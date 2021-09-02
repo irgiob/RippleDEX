@@ -64,7 +64,7 @@ const PopUp = ({ isOpen, onClose, type }) => {
           <Image
             w="70px"
             right="40px"
-            bottom="40px"
+            bottom="30px"
             pos="absolute"
             src={SignUpIll}
           />

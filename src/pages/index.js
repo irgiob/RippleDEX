@@ -16,6 +16,8 @@ import Chats from "../images/HomePage/Chats.png"
 import Calendar from "../images/HomePage/Calendar.png"
 import Mobile from "../images/HomePage/Mobile.png"
 
+import PopUp from "../components/popup"
+
 import {
   Box,
   Heading,
@@ -27,10 +29,12 @@ import {
   Button,
   Center,
   useMediaQuery,
+  useDisclosure,
 } from "@chakra-ui/react"
 
 const IndexPage = () => {
   const [isLargeSize] = useMediaQuery("(min-width: 42em)")
+  const { isOpen, onOpen, onClose } = useDisclosure()
 
   return (
     <Layout>
@@ -63,6 +67,7 @@ const IndexPage = () => {
                 <br />
                 <HStack gridGap={15}>
                   <Button
+                    onClick={onOpen}
                     bgColor="ripple.200"
                     color="white"
                     fontFamily="Raleway-Bold"
@@ -79,6 +84,7 @@ const IndexPage = () => {
                   >
                     Sign Up
                   </Button>
+                  <PopUp isOpen={isOpen} onClose={onClose} type="SignUp" />
                   <Button
                     color="ripple.200"
                     fontFamily="Raleway-Bold"
