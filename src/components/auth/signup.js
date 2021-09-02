@@ -21,6 +21,7 @@ const SignUp = () => {
 
   const [show, setShow] = React.useState(false)
   const [loading, setLoading] = React.useState(false)
+
   const handleClick = () => setShow(!show)
   const handleLoad = () => setLoading(true)
 
@@ -72,13 +73,22 @@ const SignUp = () => {
             onChange={event => setUserPassword(event.target.value)}
           />
           <Box h="20px" />
-          <InputRightElement w="4.5rem">
-            <Button h="1.75rem" size="sm" onClick={handleClick}>
-              {show ? "Hide" : "Show"}
+          <InputRightElement w="5rem">
+            <Button
+              fontFamily="Nunito-Bold"
+              variant="solid"
+              bgColor="white"
+              fontSize="13px"
+              color="ripple.200"
+              h="1.75rem"
+              size="sm"
+              onClick={handleClick}
+            >
+              {show ? "HIDE" : "SHOW"}
             </Button>
           </InputRightElement>
         </InputGroup>
-        <Box h="80px" />
+        <Box h="40px" />
         <Button
           bgColor="ripple.200"
           color="white"
@@ -87,11 +97,7 @@ const SignUp = () => {
           variant="solid"
           size="lg"
           _hover={{
-            bgColor: "white",
-            color: "ripple.200",
             transform: "scale(1.05)",
-            boxShadow:
-              "rgba(22, 138, 168, 1) 5px 5px, rgba(22, 138, 168, 0.6) 10px 10px, rgba(22, 138, 168, 0.3) 15px 15px",
           }}
           type="Submit"
           value="Sign Up"

@@ -17,6 +17,12 @@ import Logo from "../images/RippleDEXWhite.svg"
 
 const Header = ({ siteTitle }) => {
   const { isOpen, onOpen, onClose } = useDisclosure()
+  const [type, setType] = React.useState("SignUp")
+
+  const handleOpen = type => {
+    setType(type)
+    onOpen()
+  }
 
   return (
     <Box zIndex={999} position="fixed" w="100vw" h="60px" bgColor="ripple.100">
@@ -42,7 +48,7 @@ const Header = ({ siteTitle }) => {
         </a>
         <Spacer />
         <Button
-          onClick={onOpen}
+          onClick={() => handleOpen("SignUp")}
           variant="ghost"
           fontFamily="Raleway-Bold"
           fontSize="18px"
@@ -53,8 +59,9 @@ const Header = ({ siteTitle }) => {
         >
           Sign Up
         </Button>
-        <PopUp isOpen={isOpen} onClose={onClose} type="SignUp" />
+
         <Button
+          onClick={() => handleOpen("LogIn")}
           variant="ghost"
           fontFamily="Raleway-Bold"
           fontSize="18px"
@@ -65,6 +72,7 @@ const Header = ({ siteTitle }) => {
         >
           Log In
         </Button>
+        <PopUp isOpen={isOpen} onClose={onClose} type={type} />
       </HStack>
     </Box>
   )

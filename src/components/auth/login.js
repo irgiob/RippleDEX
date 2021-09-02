@@ -1,78 +1,146 @@
-import React, { useState, useEffect } from "react";
-import { login, isLoggedIn, signInGoogle } from "../../utils/AuthFunctions";
+import React, { useState, useEffect } from "react"
+import { login, isLoggedIn, signInGoogle } from "../../utils/AuthFunctions"
 import { navigate } from "gatsby"
-import { Button } from "@chakra-ui/react";
 
 import firebase from "../../../plugins/gatsby-plugin-firebase-custom"
 import { getAuth, onAuthStateChanged } from "firebase/auth"
 
+import {
+  Box,
+  Button,
+  Center,
+  Input,
+  InputGroup,
+  InputRightElement,
+} from "@chakra-ui/react"
+
+import { FcGoogle } from "react-icons/fc"
+
 const Login = () => {
-    const [userEmail, setUserEmail] = useState('')
-    const [userPassword, setUserPassword] = useState('')
+  const [userEmail, setUserEmail] = useState("")
+  const [userPassword, setUserPassword] = useState("")
 
-    useEffect( () => {
-      const auth = getAuth(firebase)
-      onAuthStateChanged(auth, (user) => {
-        if (user) {
-          navigate("/profile")
-        } 
-      })
-    }, [])
+  const [show, setShow] = React.useState(false)
+  const [loading, setLoading] = React.useState(false)
 
-    const handleSubmit = async (event) => {
-        event.preventDefault()
-        const uid = await login(userEmail, userPassword);
-        console.log(uid);
-        if (!uid){
-          // Fail to login
-          setUserEmail('')
-          setUserPassword('')
-          navigate(`/login`)
-        }
-        else {
-          navigate(`/profile`)
-        }
-        
-    }
+  const handleClick = () => setShow(!show)
+  const handleLoad = () => setLoading(true)
 
-    const handleGoogleSignIn = async () => {
-      const uid = await signInGoogle()
-      console.log(uid);
-      if ( uid == null ){
-        // Fail to login
-        navigate(`/login`)
+  useEffect(() => {
+    const auth = getAuth(firebase)
+    onAuthStateChanged(auth, user => {
+      if (user) {
+        navigate("/profile")
       }
-      else {
-        navigate(`profile`)
-      }
-    }
+    })
+  }, [])
 
-    return (
-      <>
-        <h1>Log in</h1>
-        <form
-          method="post"
-          onSubmit={event => {
-            handleSubmit(event)
+  const handleSubmit = async event => {
+    event.preventDefault()
+    const uid = await login(userEmail, userPassword)
+    console.log(uid)
+    if (!uid) {
+      // Fail to login
+      setUserEmail("")
+      setUserPassword("")
+      navigate(`/login`)
+    } else {
+      navigate(`/profile`)
+    }
+  }
+
+  const handleGoogleSignIn = async () => {
+    const uid = await signInGoogle()
+    console.log(uid)
+    if (uid == null) {
+      // Fail to login
+      navigate(`/login`)
+    } else {
+      navigate(`profile`)
+    }
+  }
+
+  return (
+    <>
+      <form method="post">
+        <Input
+          variant="outline"
+          placeholder="Email Address"
+          type="text"
+          name="email"
+          onChange={event => setUserEmail(event.target.value)}
+        />
+        <Box h="20px" />
+        <InputGroup>
+          <Input
+            type={show ? "text" : "password"}
+            name="password"
+            placeholder="Enter a Password"
+            onChange={event => setUserPassword(event.target.value)}
+          />
+          <Box h="20px" />
+          <InputRightElement w="5rem">
+            <Button
+              fontFamily="Nunito-Bold"
+              fontSize="13px"
+              variant="solid"
+              bgColor="white"
+              color="ripple.200"
+              h="1.75rem"
+              size="sm"
+              onClick={handleClick}
+            >
+              {show ? "HIDE" : "SHOW"}
+            </Button>
+          </InputRightElement>
+        </InputGroup>
+        <Box h="30px" />
+        <Center>
+          <Button
+            bgColor="ripple.200"
+            color="white"
+            fontFamily="Raleway-Bold"
+            borderRadius="30px"
+            variant="solid"
+            size="lg"
+            w="1000px"
+            _hover={{
+              transform: "scale(1.05)",
+            }}
+            type="Submit"
+            value="Log In"
+            onClick={handleSubmit}
+            isLoading={loading}
+            loadingText="Logging In"
+          >
+            Log In
+          </Button>
+        </Center>
+      </form>
+      <Box h="20px" />
+      <Center>
+        <Button
+          leftIcon={<FcGoogle />}
+          bgColor="gray.100"
+          color="gray.500"
+          fontFamily="Raleway-Bold"
+          borderRadius="30px"
+          variant="solid"
+          size="lg"
+          w="1000px"
+          _hover={{
+            transform: "scale(1.05)",
           }}
+          type="Submit"
+          value="Log In"
+          onClick={handleGoogleSignIn}
+          loadingText="Logging In"
         >
-          <label>
-            Email
-            <input type="text" name="email" onChange={(event) => setUserEmail(event.target.value)} />
-          </label>
-          <label>
-            Password
-            <input
-              type="password"
-              name="password"
-              onChange={(event) => setUserPassword(event.target.value)}
-            />
-          </label>
-          <input type="submit" value="Log In" />
-        </form>
-        <Button onClick={handleGoogleSignIn}>Sign in with Google</Button>
-      </>
-    )
+          Sign In with Google
+        </Button>
+      </Center>
+    </>
+  )
 }
 
-export default Login;
+export default Login

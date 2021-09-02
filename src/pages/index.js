@@ -43,9 +43,13 @@ const IndexPage = () => {
         justifyContent="center"
       >
         <Center>
-          <Stack direction={["column", "row"]}>
+          <Stack direction={["column", "column", "row"]}>
             <Center>
-              <VStack maxW={["100vw", "35vw"]} p="50px" alignItems="left">
+              <VStack
+                maxW={["100vw", "100vw", "35vw"]}
+                p="50px"
+                alignItems="left"
+              >
                 <Heading
                   pb="10px"
                   fontSize={["40px", "50px"]}
