@@ -56,8 +56,8 @@ const SignUp = () => {
     } else {
       navigate(`/dashboard`)
       toast({
-        title: "Account created.",
-        description: "We've created your account for you.",
+        title: "Account created",
+        description: "Welcome to RippleDEX!",
         status: "success",
         duration: 5000,
         isClosable: true,

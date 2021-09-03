@@ -72,7 +72,14 @@ const Login = () => {
     console.log(uid)
     if (uid == null) {
       // Fail to login
-      navigate(`/login`)
+      navigate(`/logerror`)
+      toast({
+        title: "Failed to Login",
+        description: "Please try again",
+        status: "error",
+        duration: 5000,
+        isClosable: true,
+      })
     } else {
       navigate(`/dashboard`)
       toast({
