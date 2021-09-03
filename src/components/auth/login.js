@@ -12,6 +12,7 @@ import {
   Input,
   InputGroup,
   InputRightElement,
+  useToast,
 } from "@chakra-ui/react"
 
 import { FcGoogle } from "react-icons/fc"
@@ -26,16 +27,19 @@ const Login = () => {
   const handleClick = () => setShow(!show)
   const handleLoad = () => setLoading(true)
 
+  const toast = useToast()
+
   useEffect(() => {
     const auth = getAuth(firebase)
     onAuthStateChanged(auth, user => {
       if (user) {
-        navigate("/profile")
+        navigate("/dashboard")
       }
     })
   }, [])
 
   const handleSubmit = async event => {
+    handleLoad()
     event.preventDefault()
     const uid = await login(userEmail, userPassword)
     console.log(uid)
@@ -43,9 +47,23 @@ const Login = () => {
       // Fail to login
       setUserEmail("")
       setUserPassword("")
-      navigate(`/login`)
+      navigate(`/logerror`)
+      toast({
+        title: "Failed to Login",
+        description: "Please try again",
+        status: "error",
+        duration: 5000,
+        isClosable: true,
+      })
     } else {
-      navigate(`/profile`)
+      navigate(`/dashboard`)
+      toast({
+        title: "Login Success",
+        description: "Welcome back!",
+        status: "success",
+        duration: 5000,
+        isClosable: true,
+      })
     }
   }
 
@@ -56,7 +74,14 @@ const Login = () => {
       // Fail to login
       navigate(`/login`)
     } else {
-      navigate(`profile`)
+      navigate(`/dashboard`)
+      toast({
+        title: "Login Success",
+        description: "Welcome back!",
+        status: "success",
+        duration: 5000,
+        isClosable: true,
+      })
     }
   }
 
