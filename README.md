@@ -50,4 +50,5 @@ Feel free to add more
 
 ## Testing
 
-WORK IN PROGRESS
+`npm install`
+`npm test`
