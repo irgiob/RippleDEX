@@ -3,6 +3,7 @@ import PropTypes from "prop-types"
 import { useStaticQuery, graphql } from "gatsby"
 
 import Header from "./header"
+import SideNav from "./sideNav"
 import theme from "./theme"
 import "./layout.css"
 
@@ -22,7 +23,8 @@ const Layout = ({ children }) => {
   return (
     <ChakraProvider theme={theme}>
       <Header siteTitle={data.site.siteMetadata?.title || `Title`} />
-      <main style={{ paddingTop: "60px" }}>{children}</main>
+      <SideNav/>
+      <main style={{ paddingTop: "60px", paddingLeft: "110px" }}>{children}</main>
       {/*
         <footer
           style={{
