@@ -15,14 +15,14 @@ const sampleUser = {
     userPhoneNumber : "0488111222"
 }
 
-const sampleDoc = {
-    name: "Alice123",
-    email: userEmail,
-    phoneNumber: ["Mobile",userPhoneNumber],
-    organizations: [],
-    lastOpenedOrganization: null,
-    profilePicture: null
-}
+// const sampleDoc = {
+//     name: "Alice123",
+//     email: userEmail,
+//     phoneNumber: ["Mobile",userPhoneNumber],
+//     organizations: [],
+//     lastOpenedOrganization: null,
+//     profilePicture: null
+// }
 
 
 describe ("Ensure all packets are installed properly for test", () => {
@@ -33,21 +33,21 @@ describe ("Ensure all packets are installed properly for test", () => {
 
 })
 
-describe ( "Testing user functions", () => {
+// describe ( "Testing user functions", () => {
 
-    beforeAll( () => {
+//     beforeAll( () => {
 
-    })
-    describe ( "AUTH-001: Create account", () => {
+//     })
+//     describe ( "AUTH-001: Create account", () => {
 
-        beforeAll( () => {
-            // Mock firestore functions
-            doc = jest.fn().mockReturnValue({});
-            
-        })
+//         beforeAll( () => {
+//             // Mock firestore functions
+//             doc = jest.fn().mockReturnValue({});
 
-        it("Account is created in database", async () => {
+//         })
 
-        })
-    })
-})
+//         it("Account is created in database", async () => {
+
+//         })
+//     })
+// })
