@@ -5,7 +5,8 @@ import {
     MenuButton,
     Icon,
     Flex,
-    Text
+    Text,
+    Fade
 } from '@chakra-ui/react'
 
 
@@ -15,14 +16,18 @@ export default function NavItem({navSize, icon, pageName, page}) {
     if (pathname === page) {
         active = true
     }
-    
+    let isOpen = false
+    if (navSize === "large") {
+        isOpen = true
+    }
+
     return (
         <Flex
             mt = {10}
             flexDir="column"
             w="100%"
             alignItems={navSize === "small" ? "center" : "flex-start" }
-        >
+        >                 
             <Menu placement="right">
                 <Link 
                 to={page}
@@ -37,22 +42,21 @@ export default function NavItem({navSize, icon, pageName, page}) {
                         
                     >
                          <Flex w = "100%">
-                             
                              <Icon as={icon} w={10} h={10} color='white'/>
+                             <Fade in={isOpen}>
                              <Text 
                                 display={navSize === "small" ? "none" : "flex" }
                                 color='white'
                                 fontSize = "25px"
-                                ml={5}
-                                
+                                ml={5}    
                             >
-                                     {pageName}
+                                {pageName}
                              </Text>
+                             </Fade>
                          </Flex>
                      </MenuButton>
                 </Link>
             </Menu>
-
         </Flex>
     )
     
