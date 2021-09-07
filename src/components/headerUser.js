@@ -1,8 +1,9 @@
 import * as React from "react"
 import PropTypes from "prop-types"
-
+import { isLoggedIn, logout } from "../utils/AuthFunctions";
 import PopUp from "./popup"
 import { Link } from 'gatsby'
+import { navigate } from "gatsby-link";
 import {
   Box,
   Image,
@@ -17,18 +18,21 @@ import {
   PopoverHeader,
   PopoverBody,
   PopoverFooter,
-  PopoverCloseButton,
+  AvatarBadge,
   Avatar,
   Heading,
   Text
 } from "@chakra-ui/react"
 
 import {
-  RiArrowDropDownLine
+  RiArrowDropDownLine,
+  RiArrowLeftRightLine,
+  RiLogoutBoxLine
 } from 'react-icons/ri'
 
 
 import Logo from "../images/RippleDEXWhite.svg"
+import ProfilePicture from "../images/RippleDEXWhite.svg"
 
 const Header = ({ siteTitle }) => {
   const { isOpen, onOpen, onClose } = useDisclosure()
@@ -36,6 +40,14 @@ const Header = ({ siteTitle }) => {
   // Organization Here Static data
   const organization = "Microsoft"
   const org_Id = "microsoft-2954"
+  const userName = "General Kenobi"
+  const Email = "General@ground.com"
+
+
+  const clickHandler = () => {
+    logout();
+    navigate("/login");
+  }
 
   const handleOpen = type => {
     setType(type)
@@ -65,7 +77,7 @@ const Header = ({ siteTitle }) => {
           </Box>
         </a>
         <Box pl='170px'>        
-          <Popover>
+          <Popover >
               <PopoverTrigger >
                 <Button 
                   w="fit" h = "50px"
@@ -82,7 +94,7 @@ const Header = ({ siteTitle }) => {
                 {<RiArrowDropDownLine size = "50px" />}
                 </Button>
               </PopoverTrigger>
-                  <PopoverContent w = "350px" >
+                  <PopoverContent w = "350px">
                     <PopoverHeader >
                       <Box  mt={4} mb={4} p="10px" w="100%" display = "flex" flexDir="row" pr="60px">
                             <Spacer />
@@ -96,7 +108,7 @@ const Header = ({ siteTitle }) => {
                             <Spacer />
                       </Box>
                     </PopoverHeader>
-                    <PopoverBody pr="70px" >
+                    <PopoverBody pl="40px" textAlign="left">
                       <br />
                       <Link to="/Settings" > Settings &amp; Administration</Link>
                       <br />
@@ -105,42 +117,18 @@ const Header = ({ siteTitle }) => {
                       <br />
                       <br />
                     </PopoverBody>
-                    <PopoverFooter pr="70px">
+                    <PopoverFooter pl="30px" textAlign="left">
                       <br />
-                      <Popover>
-              <PopoverTrigger >
-                <Button 
-                  w="100%"
-                  pr="70px"
-                  decoration="none"
-                  bgColor="white"
-                  _hover={{transform: "scale(1.01)"}} 
-                >
-                  Switch Workplace
-                </Button>
-              </PopoverTrigger>
-                  <PopoverContent w = "350px" >
-                    <PopoverHeader >
-                      <Box  mt={4} mb={4} p="10px" w="100%" display = "flex" flexDir="row" pr="60px">
-                      </Box>
-                    </PopoverHeader>
-                    <PopoverBody pr="70px">
-                      <br />
-                      <Link to="/Settings"> Settings &amp; Administration</Link>
-                      <br />
-                      <br />
-                      <Link to="/Invite"> Invite people to {organization}</Link>
-                      <br />
-                      <br />
-                    </PopoverBody>
-                    <PopoverFooter pr="70px">
-                      <br />
-                      Invite people to {organization}
-                      <br />
-                      <br />
-                    </PopoverFooter>
-                  </PopoverContent>
-          </Popover>
+                      <Button
+                        bgColor="white"
+                        onClick={() => handleOpen("SignUp")}
+                        _hover={{
+                          transform: "scale(1.08)",
+                        }}
+                        leftIcon={<RiArrowLeftRightLine />}
+                      >
+                        Switch Workspace
+                      </Button>
                       <br />
                       <br />
                     </PopoverFooter>
@@ -148,32 +136,76 @@ const Header = ({ siteTitle }) => {
           </Popover>
         </Box>
         <Spacer />
-        {/* <Button
-          onClick={() => handleOpen("SignUp")}
-          variant="ghost"
-          fontFamily="Raleway-Bold"
-          fontSize="18px"
-          color="white"
-          _hover={{
-            transform: "scale(1.08)",
-          }}
-        >
-          Sign Up
-        </Button>
-
-        <Button
-          onClick={() => handleOpen("LogIn")}
-          variant="ghost"
-          fontFamily="Raleway-Bold"
-          fontSize="18px"
-          color="white"
-          _hover={{
-            transform: "scale(1.08)",
-          }}
-        >
-          Log In
-        </Button> */}
-        <PopUp isOpen={isOpen} onClose={onClose} type={type} />
+        {/* Header Profile Right Side */}
+        <Box pr = "15px">
+        <Popover>
+              <PopoverTrigger  >
+                <Avatar 
+                    size="md" 
+                    name={userName} 
+                    src={ProfilePicture} 
+                    _hover={{
+                        transform: "scale(1.01)",
+                    }}
+                  >
+                  <AvatarBadge boxSize="20px" bg="green.500"  borderColor="black"/> {/* bg is online or offline, change based on boolean later */}
+                </Avatar>
+              </PopoverTrigger>
+                  <PopoverContent w = "350px">
+                    <PopoverHeader >
+                      <Box  mt={4} mb={4} p="10px" w="100%" display = "flex" flexDir="row" pr="60px">
+                            <Spacer />
+                            <Avatar 
+                                size="md" 
+                                name={userName} 
+                                src={ProfilePicture} 
+                                _hover={{
+                                    transform: "scale(1.01)",
+                                }}
+                              >
+                              <AvatarBadge boxSize="20px" borderColor="black" bg="green.500" /> {/* bg is online or offline, change based on boolean later */}
+                            </Avatar>
+                            <Spacer />
+                            <Box textAlign = "left" ml>
+                                <Heading as="h3" size="md">{userName}</Heading>
+                                <Text color="gray">{Email}</Text>
+                            </Box>
+                            <Spacer />
+                            <Spacer />
+                      </Box>
+                    </PopoverHeader>
+                    <PopoverBody pl="40px" textAlign="left" >
+                      <br />
+                      <Link to="/visibility" > Set as Invisible</Link>  {/* should be a button*/}
+                      <br />
+                      <br />
+                      <Link to="/Notification" >  Notifications</Link>
+                      <br />
+                    </PopoverBody>
+                    <PopoverHeader />
+                    <PopoverBody pl="40px" textAlign="left">
+                      <br />
+                      <Link to="/profile" > Edit Profile</Link>
+                      <br /><br />
+                      <Link to="/profile" >  View Profile</Link>
+                      <br /><br />
+                    </PopoverBody>
+                    <PopoverFooter pl="20px" textAlign="left">
+                      <br />
+                      <Button
+                        color="red"
+                        bgColor="white"
+                        onClick={clickHandler}
+                        _hover={{transform: "scale(1.08)",}}
+                        leftIcon={<RiLogoutBoxLine />}> 
+                        Sign out of RippleDEX
+                      </Button>
+                      <br />
+                      <br />
+                    </PopoverFooter>
+                  </PopoverContent>
+          </Popover>
+        </Box>
       </HStack>
     </Box>
   )
