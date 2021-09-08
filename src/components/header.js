@@ -6,6 +6,8 @@ import PopUp from "./popup"
 import {
   Box,
   Image,
+  Avatar,
+  AvatarBadge,
   Circle,
   HStack,
   Spacer,

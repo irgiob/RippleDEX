@@ -12,7 +12,10 @@ import {
   Input,
   InputGroup,
   InputRightElement,
+  useToast,
 } from "@chakra-ui/react"
+
+import { MdError } from "react-icons/md"
 
 const SignUp = () => {
   const [userName, setUserName] = useState("")
@@ -25,11 +28,13 @@ const SignUp = () => {
   const handleClick = () => setShow(!show)
   const handleLoad = () => setLoading(true)
 
+  const toast = useToast()
+
   useEffect(() => {
     const auth = getAuth(firebase)
     onAuthStateChanged(auth, user => {
       if (user) {
-        navigate("/profile")
+        navigate("/dashboard")
       }
     })
   }, [])
@@ -40,9 +45,23 @@ const SignUp = () => {
     const uid = await signup(userName, userEmail, userPassword, null)
     if (uid == null) {
       // Fail to signup
-      navigate(`/login`)
+      navigate(`/accerror`)
+      toast({
+        title: "Failed to create an account",
+        description: "Please try again",
+        status: "error",
+        duration: 5000,
+        isClosable: true,
+      })
     } else {
-      navigate(`/profile`)
+      navigate(`/dashboard`)
+      toast({
+        title: "Account created",
+        description: "Welcome to RippleDEX!",
+        status: "success",
+        duration: 5000,
+        isClosable: true,
+      })
     }
   }
 
@@ -90,6 +109,7 @@ const SignUp = () => {
         </InputGroup>
         <Box h="40px" />
         <Button
+          className="here"
           bgColor="ripple.200"
           color="white"
           fontFamily="Raleway-Bold"

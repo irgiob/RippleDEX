@@ -28,14 +28,13 @@ export const createNewUser = (userName, userID, userEmail,userPhoneNumber) => {
         })
     }).catch((error) => {
         console.log("Error adding new user: ", error);
-        throw "Error in createNewUser"
+        throw "Error in createNewUser";
     })
 }
 
 /**
  * updates information on a user
  * 
- * @param {Firestore} db Firestore Database Object
  * @param {String} userID ID of user to be updated
  * @param {Object} options List of user properities to change
  * @param {String} [options.userName] new name for user
@@ -44,7 +43,7 @@ export const createNewUser = (userName, userID, userEmail,userPhoneNumber) => {
  * 
  * @returns {DocumentReference} updated user object
  */
-export var updateUser = async (db, userID, options) => {
+export const updateUser = async (userID, options) => {
     const docRef = doc(db, "users", userID)
     const docSnap = await getDoc(docRef)
 
@@ -58,11 +57,10 @@ export var updateUser = async (db, userID, options) => {
 /**
  * updates the notification settings for a specific user
  * 
- * @param {Firestore} db Firestore Database Object
  * @param {String} userID ID of user to be updated
  * @param {Integer} notificationMode new notification mode
  */
-export const updateUserNotificationSettings = (db, userID, notificationMode) => {
+export const updateUserNotificationSettings = (userID, notificationMode) => {
 
     const docRef = doc(db, "users", userID);
     updateDoc(docRef, {
