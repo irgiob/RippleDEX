@@ -148,7 +148,7 @@ const Header = ({ siteTitle }) => {
                         transform: "scale(1.01)",
                     }}
                   >
-                  <AvatarBadge boxSize="20px" bg="green.500"  borderColor="black"/> {/* bg is online or offline, change based on boolean later */}
+                  <AvatarBadge boxSize="20px" bg="green.300"  borderColor="ripple.200"/> {/* bg is online or offline, change based on boolean later */}
                 </Avatar>
               </PopoverTrigger>
                   <PopoverContent w = "350px">
@@ -163,7 +163,7 @@ const Header = ({ siteTitle }) => {
                                     transform: "scale(1.01)",
                                 }}
                               >
-                              <AvatarBadge boxSize="20px" borderColor="black" bg="green.500" /> {/* bg is online or offline, change based on boolean later */}
+                              <AvatarBadge boxSize="20px" borderColor="black" bg="green.300" /> {/* bg is online or offline, change based on boolean later */}
                             </Avatar>
                             <Spacer />
                             <Box textAlign = "left" ml>
