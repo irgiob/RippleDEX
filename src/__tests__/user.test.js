@@ -67,7 +67,7 @@ describe ( "Testing user functions", () => {
     
     it(" Update existing document", async () => {
         getDoc.mockResolvedValue(sampleDoc)
-        const returnValue = await userFunctions.updateUser("",sampleDoc.data.userID,"")
+        const returnValue = await userFunctions.updateUser(sampleDoc.data.userID,"")
         expect(updateDoc).toBeCalledTimes(1);
     }) 
 
@@ -75,7 +75,7 @@ describe ( "Testing user functions", () => {
         const errorDoc = sampleDoc;
         errorDoc.exists = function(){return false;}
         getDoc.mockResolvedValue(errorDoc);
-        const returnValue = await userFunctions.updateUser("",sampleDoc.data.userID,"")
+        const returnValue = await userFunctions.updateUser(sampleDoc.data.userID,"")
         expect(updateDoc).toBeCalledTimes(0);
     })
 
