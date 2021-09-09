@@ -1,6 +1,7 @@
 import firebase from "../../plugins/gatsby-plugin-firebase-custom"
-import {getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, GoogleAuthProvider, signInWithPopup, signOut} from "firebase/auth";
+import {getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged} from "firebase/auth";
 import { createNewUser } from "../models/User"
+import { navigate } from "gatsby-link";
 
 /**
  * @param {String} name
@@ -43,14 +44,24 @@ export async function login(email, password) {
 }
 
 /**
+ * runs callback function on user load
  * 
- * @returns {firebase.User.uid} current user ID
+ * @param {function} isLoggedIn function that gets run when user loads
+ * @param {function} isNotLoggedIn function that runs if user is not logged in
  */
-export function isLoggedIn() {
+export function onAuthLoad(isLoggedIn, isNotLoggedIn) {
   const auth = getAuth(firebase)
-  console.log("A", auth.currentUser)
-  return auth.currentUser
+  var unsubscribe = onAuthStateChanged(auth, (user) => {
+    if (user) {
+      isLoggedIn(user)
+      unsubscribe()
+    } else {
+      isNotLoggedIn()
+      unsubscribe()
+    }
+  })
 }
+
 
 /**
  * Signs in using Google Account via popup

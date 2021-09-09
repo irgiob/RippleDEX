@@ -1,40 +1,37 @@
-import React, { useState, useEffect } from "react";
-import { isLoggedIn, logout } from "../utils/AuthFunctions";
-import { navigate } from "gatsby-link";
+import React, { useState, useEffect } from "react"
+import { onAuthLoad, logout } from "../utils/AuthFunctions"
+import { getUser } from "../models/User"
+import { navigate } from "gatsby-link"
 import Layout from "../components/layout"
-import { Button } from "@chakra-ui/react";
-
-import firebase from "../../plugins/gatsby-plugin-firebase-custom"
-import { getAuth, onAuthStateChanged } from "firebase/auth"
+import { Button } from "@chakra-ui/react"
 
 
 const Profile = () => {
     const [user, setUser] = useState(null)
+
     useEffect( () => {
-      const auth = getAuth(firebase)
-      onAuthStateChanged(auth, (user) => {
-        if (user) {
-          setUser(user)
-        } else {
-          navigate("/login")
-        }
-      })
+      onAuthLoad((loggedUser) => {
+        console.log(loggedUser.uid)
+        getUser(loggedUser.uid).then((userData) => setUser(userData))
+      }, () => navigate("/"))
     }, [])
 
     const clickHandler = () => {
         logout();
-        navigate("/login");
+        navigate("/");
     }
+
     if (!user) {
       return (<Layout><h1>Loading...</h1></Layout>)
     }
 
     return( 
-    <Layout>
-        <h1>IS LOGGED IN</h1>
-        <p>hi {user?.uid} </p>
-        <Button onClick={clickHandler}>Logout</Button>
-    </Layout>)
+      <Layout>
+          <h1>IS LOGGED IN</h1>
+          <p>hi {user.name} </p>
+          <Button onClick={clickHandler}>Logout</Button>
+      </Layout>
+    )
   }
 
   export default Profile

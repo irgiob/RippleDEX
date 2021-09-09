@@ -1,10 +1,7 @@
 import React, { useState, useEffect } from "react"
 // import { Form, Button, Card, Alert } from "react-bootstrap";
-import { signup, isLoggedIn } from "../../utils/AuthFunctions"
+import { signup } from "../../utils/AuthFunctions"
 import { navigate } from "gatsby"
-
-import firebase from "../../../plugins/gatsby-plugin-firebase-custom"
-import { getAuth, onAuthStateChanged } from "firebase/auth"
 
 import {
   Box,
@@ -29,15 +26,6 @@ const SignUp = () => {
   const handleLoad = () => setLoading(true)
 
   const toast = useToast()
-
-  useEffect(() => {
-    const auth = getAuth(firebase)
-    onAuthStateChanged(auth, user => {
-      if (user) {
-        navigate("/dashboard")
-      }
-    })
-  }, [])
 
   const handleSubmit = async event => {
     handleLoad()

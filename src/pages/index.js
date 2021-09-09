@@ -1,4 +1,5 @@
-import * as React from "react"
+import React, { useState, useEffect } from "react"
+import { onAuthLoad } from "../utils/AuthFunctions"
 
 import Layout from "../components/layout"
 import Seo from "../components/seo"
@@ -31,10 +32,15 @@ import {
   useMediaQuery,
   useDisclosure,
 } from "@chakra-ui/react"
+import { navigate } from "gatsby-link"
 
 const IndexPage = () => {
   const [isLargeSize] = useMediaQuery("(min-width: 42em)")
   const { isOpen, onOpen, onClose } = useDisclosure()
+
+  useEffect( () => {
+    onAuthLoad((user) => navigate("/dashboard"), () => {})
+  }, [])
 
   return (
     <Layout>
