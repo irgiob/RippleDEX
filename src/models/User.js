@@ -61,9 +61,8 @@ export const updateUser = async (userID, options) => {
  * @param {Integer} notificationMode new notification mode
  */
 export const updateUserNotificationSettings = (userID, notificationMode) => {
-
     const docRef = doc(db, "users", userID);
-    updateDoc(docRef, {
+    return updateDoc(docRef, {
         notificationMode: notificationMode
     });
 
@@ -72,14 +71,13 @@ export const updateUserNotificationSettings = (userID, notificationMode) => {
 /**
  * gets the last organization the user had opened while using the app
  * 
- * @param {Firestore} db Firestore Database Object
  * @param {String} userID ID of user to be updated
  * 
  * @returns {DocumentReference}
  */
-export const getUser = (db, userID) => {
+export const getUser = (userID) => {
     const docRef = doc(db, "users", userID)
-    getDoc(docRef).then((user) => {
+    return getDoc(docRef).then((user) => {
         return user.data();
     }).catch((error) => {
         console.error("Error getting user: ", error);
