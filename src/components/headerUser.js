@@ -1,9 +1,13 @@
-import * as React from "react"
+import React, { useState, useEffect } from "react"
 import PropTypes from "prop-types"
-import { isLoggedIn, logout } from "../utils/AuthFunctions";
+import { onAuthLoad, logout } from "../utils/AuthFunctions"
+import firebase from "../../plugins/gatsby-plugin-firebase-custom"
+import { getAuth, onAuthStateChanged } from "firebase/auth"
+import { getUser } from "../models/User";
 import PopUp from "./popup"
 import { Link } from 'gatsby'
 import { navigate } from "gatsby-link";
+
 import {
   Box,
   Image,
@@ -34,14 +38,32 @@ import {
 import Logo from "../images/RippleDEXWhite.svg"
 import ProfilePicture from "../images/RippleDEXWhite.svg"
 
-const Header = ({ siteTitle }) => {
+
+const HeaderUser = ({ siteTitle }) => {
   const { isOpen, onOpen, onClose } = useDisclosure()
   const [type, setType] = React.useState("SignUp")
+
+    const [user, setUser] = useState(null)
+
+    useEffect( () => {
+      onAuthLoad((loggedUser) => {
+        console.log(loggedUser.uid)
+        getUser(loggedUser.uid).then((userData) => setUser(userData))
+      }, () => navigate("/"))
+    }, [])
+
   // Organization Here Static data
-  const organization = "Microsoft"
-  const org_Id = "microsoft-2954"
-  const userName = "General Kenobi"
-  const Email = "General@ground.com"
+  let organization = "loading..."
+  let org_Id = "loading..."
+  let userName = "loading..."
+  let Email = "loading..."
+  if (user) {
+    organization = user.organization
+    org_Id = user.orgID
+    userName = user.name
+    Email = user.email
+  }
+
 
 
   const clickHandler = () => {
@@ -206,17 +228,46 @@ const Header = ({ siteTitle }) => {
                   </PopoverContent>
           </Popover>
         </Box>
+                    {/* <Spacer />
+                    <Button
+                      onClick={() => handleOpen("SignUp")}
+                      variant="ghost"
+                      fontFamily="Raleway-Bold"
+                      fontSize="18px"
+                      color="white"
+                      _hover={{
+                        transform: "scale(1.08)",
+                      }}
+                    >
+                      Sign Up
+                    </Button>
+
+                    <Button
+                      onClick={() => handleOpen("LogIn")}
+                      variant="ghost"
+                      fontFamily="Raleway-Bold"
+                      fontSize="18px"
+                      color="white"
+                      _hover={{
+                        transform: "scale(1.08)",
+                      }}
+                    >
+                      Log In
+                    </Button>
+                    <PopUp isOpen={isOpen} onClose={onClose} type={type} /> */}
       </HStack>
     </Box>
   )
 }
+// GTgDNjWkASNPNsPovItMQHFOmXd2
 
-Header.propTypes = {
+
+HeaderUser.propTypes = {
   siteTitle: PropTypes.string,
 }
 
-Header.defaultProps = {
+HeaderUser.defaultProps = {
   siteTitle: ``,
 }
 
-export default Header
+export default HeaderUser
