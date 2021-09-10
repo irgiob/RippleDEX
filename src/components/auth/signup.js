@@ -33,7 +33,7 @@ const SignUp = () => {
     const uid = await signup(userName, userEmail, userPassword, null)
     if (uid == null) {
       // Fail to signup
-      navigate(`/accerror`)
+      setLoading(false)
       toast({
         title: "Failed to create an account",
         description: "Please try again",

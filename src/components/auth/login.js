@@ -35,7 +35,7 @@ const Login = () => {
       // Fail to login
       setUserEmail("")
       setUserPassword("")
-      navigate(`/logerror`)
+      setLoading(false)
       toast({
         title: "Failed to Login",
         description: "Please try again",
@@ -60,7 +60,7 @@ const Login = () => {
     console.log(uid)
     if (uid == null) {
       // Fail to login
-      navigate(`/logerror`)
+      setLoading(false)
       toast({
         title: "Failed to Login",
         description: "Please try again",
