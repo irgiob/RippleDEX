@@ -1,8 +1,7 @@
 import React, { useState } from 'react'
 import {
     Flex,
-    IconButton,
-    Fade
+    IconButton
 } from '@chakra-ui/react'
 import {
     RiMoneyDollarCircleLine,
@@ -18,7 +17,7 @@ import { BiConversation, BiExpand } from "react-icons/bi"
 import NavItem from '../components/navItem'
 
 // code adapted from https://github.com/bjcarlson42/chakra-left-responsive-navbar
-export default function SideNav() {
+export default function SideNav({location}) {
     const [navSize, changeNavSize] = useState("small") // change nav size wide or small
     let isOpen = false
     if (navSize === "large") {
@@ -59,13 +58,13 @@ export default function SideNav() {
 
                     }}
                 />
-                <NavItem navSize={navSize} icon={RiTodoLine} pageName="Tasks" page="/tasks" />
-                <NavItem navSize={navSize} icon={RiCalendarEventLine} pageName="Calendar" page="/calendar" />
-                <NavItem navSize={navSize} icon={RiContactsBook2Line} pageName="Contacts" page="/contacts" />
-                <NavItem navSize={navSize} icon={RiCommunityLine} pageName="Organization" page="/organization" />
-                <NavItem navSize={navSize} icon={RiMoneyDollarCircleLine} pageName="Deal" page="/deal"/>
-                <NavItem navSize={navSize} icon={BiConversation} pageName="Interactions" page="/interactions" /> 
-                <NavItem navSize={navSize} icon={RiLineChartLine} pageName="Analytics" page="/analytics" />
+                <NavItem navSize={navSize} icon={RiTodoLine} pageName="Tasks" page="/tasks" location={location}/>
+                <NavItem navSize={navSize} icon={RiCalendarEventLine} pageName="Calendar" page="/calendar" location={location}/>
+                <NavItem navSize={navSize} icon={RiContactsBook2Line} pageName="Contacts" page="/contacts" location={location}/>
+                <NavItem navSize={navSize} icon={RiCommunityLine} pageName="Organization" page="/organization" location={location}/>
+                <NavItem navSize={navSize} icon={RiMoneyDollarCircleLine} pageName="Deal" page="/deal" location={location}/>
+                <NavItem navSize={navSize} icon={BiConversation} pageName="Interactions" page="/interactions" location={location}/> 
+                <NavItem navSize={navSize} icon={RiLineChartLine} pageName="Analytics" page="/analytics" location={location}/>
             </Flex>
         </Flex>
     )

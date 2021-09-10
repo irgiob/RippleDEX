@@ -10,9 +10,9 @@ import {
 } from '@chakra-ui/react'
 
 
-export default function NavItem({navSize, icon, pageName, page}) {
+export default function NavItem({navSize, icon, pageName, page, location}) {
     let active = false
-    const pathname = window.location.pathname
+    const pathname = location.pathname
     if (pathname === page) {
         active = true
     }

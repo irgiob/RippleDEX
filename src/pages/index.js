@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react"
+import React, { useEffect } from "react"
 import { onAuthLoad } from "../utils/AuthFunctions"
 
 import Layout from "../components/layout"
@@ -34,7 +34,7 @@ import {
 } from "@chakra-ui/react"
 import { navigate } from "gatsby-link"
 
-const IndexPage = () => {
+const IndexPage = (props) => {
   const [isLargeSize] = useMediaQuery("(min-width: 42em)")
   const { isOpen, onOpen, onClose } = useDisclosure()
 
@@ -43,7 +43,7 @@ const IndexPage = () => {
   }, [])
 
   return (
-    <Layout>
+    <Layout location={props.location}>
       <Seo title="Home" />
 
       <Box

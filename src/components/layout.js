@@ -9,10 +9,8 @@ import "./layout.css"
 
 import { ChakraProvider } from "@chakra-ui/react"
 
-let pathname = window.location.pathname
-
-
-const Layout = ({ children }) => {
+const Layout = ({ children, location }) => {
+  const pathname = location.pathname
   const data = useStaticQuery(graphql`
     query SiteTitleQuery {
       site {
@@ -32,7 +30,7 @@ const Layout = ({ children }) => {
           : <HeaderUser siteTitle={data.site.siteMetadata?.title || `Title`} /> 
         }
       </div>
-      { pathname  != '/' && <SideNav/> }
+      { pathname  != '/' && <SideNav location={location}/> }
       <main style={(pathname === '/') ? { paddingTop: "60px"} : { paddingTop: "60px", paddingLeft: "110px"}}>{children}</main>
       {/*
         <footer

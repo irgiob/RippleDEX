@@ -1,8 +1,6 @@
 import React, { useState, useEffect } from "react"
 import PropTypes from "prop-types"
 import { onAuthLoad, logout } from "../utils/AuthFunctions"
-import firebase from "../../plugins/gatsby-plugin-firebase-custom"
-import { getAuth, onAuthStateChanged } from "firebase/auth"
 import { getUser } from "../models/User";
 import PopUp from "./popup"
 import { Link } from 'gatsby'
@@ -41,16 +39,15 @@ import ProfilePicture from "../images/RippleDEXWhite.svg"
 
 const HeaderUser = ({ siteTitle }) => {
   const { isOpen, onOpen, onClose } = useDisclosure()
-  const [type, setType] = React.useState("SignUp")
+  const [type, setType] = useState("SignUp")
+  const [user, setUser] = useState(null)
 
-    const [user, setUser] = useState(null)
-
-    useEffect( () => {
-      onAuthLoad((loggedUser) => {
-        console.log(loggedUser.uid)
-        getUser(loggedUser.uid).then((userData) => setUser(userData))
-      }, () => navigate("/"))
-    }, [])
+  useEffect( () => {
+    onAuthLoad((loggedUser) => {
+      console.log(loggedUser.uid)
+      getUser(loggedUser.uid).then((userData) => setUser(userData))
+    }, () => navigate("/"))
+  }, [])
 
   // Organization Here Static data
   let organization = "loading..."
@@ -63,8 +60,6 @@ const HeaderUser = ({ siteTitle }) => {
     userName = user.name
     Email = user.email
   }
-
-
 
   const clickHandler = () => {
     logout();

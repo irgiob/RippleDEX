@@ -6,7 +6,7 @@ import Layout from "../components/layout"
 import { Button } from "@chakra-ui/react"
 
 
-const Profile = () => {
+const Profile = (props) => {
     const [user, setUser] = useState(null)
 
     useEffect( () => {
@@ -22,11 +22,11 @@ const Profile = () => {
     }
 
     if (!user) {
-      return (<Layout><h1>Loading...</h1></Layout>)
+      return (<Layout location={props.location}><h1>Loading...</h1></Layout>)
     }
 
     return( 
-      <Layout>
+      <Layout location={props.location}>
           <h1>IS LOGGED IN</h1>
           <p>hi {user.name} </p>
           <Button onClick={clickHandler}>Logout</Button>
