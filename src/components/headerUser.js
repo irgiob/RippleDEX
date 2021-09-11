@@ -2,7 +2,6 @@ import React, { useState, useEffect } from "react"
 import PropTypes from "prop-types"
 import { onAuthLoad, logout } from "../utils/AuthFunctions"
 import { getUser } from "../models/User"
-import PopUp from "./popup"
 import { Link } from "gatsby"
 import { navigate } from "gatsby-link"
 
@@ -63,7 +62,7 @@ const HeaderUser = ({ siteTitle }) => {
   if (user) {
     organization = user.organization
     org_Id = user.orgID
-    userName = user.name
+    userName = user.firstName + " " + user.lastName
     Email = user.email
   }
 

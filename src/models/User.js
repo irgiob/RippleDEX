@@ -1,5 +1,5 @@
 import firebase from "../../plugins/gatsby-plugin-firebase-custom"
-import {getFirestore, doc, setDoc, getDoc, updateDoc} from "firebase/firestore"
+import {getFirestore, doc, setDoc, getDoc, updateDoc, Timestamp} from "firebase/firestore"
 
 const db = getFirestore(firebase)
 
@@ -13,15 +13,19 @@ const db = getFirestore(firebase)
  * 
  * @returns {User} new user just created
  */
-export const createNewUser = (userName, userID, userEmail,userPhoneNumber) => {
+export const createNewUser = (userFirstName, userLastName, userID, userEmail,userPhoneNumber) => {
     const docRef = doc(db, "users", userID)
     return setDoc(docRef, {
-        name: userName,
+        firstName: userFirstName,
+        lastName: userLastName,
         email: userEmail,
-        phoneNumber: ["Mobile",userPhoneNumber],
+        phoneNumber: userPhoneNumber,
         organizations: [],
         lastOpenedOrganization: null,
-        profilePicture: null
+        profilePicture: null,
+        lastOnline: Timestamp.now(),
+        notificationMode: 0,
+        isInvisible: false
     }).then(()=>{
         return getDoc(docRef).then((doc) => {
             return doc.data()
@@ -37,9 +41,6 @@ export const createNewUser = (userName, userID, userEmail,userPhoneNumber) => {
  * 
  * @param {String} userID ID of user to be updated
  * @param {Object} options List of user properities to change
- * @param {String} [options.userName] new name for user
- * @param {String} [options.userEmail] new email for user
- * @param {String} [options.profilePicture] new profile picture for user
  * 
  * @returns {DocumentReference} updated user object
  */

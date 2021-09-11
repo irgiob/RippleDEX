@@ -28,7 +28,7 @@ const Profile = (props) => {
     return( 
       <Layout location={props.location}>
           <h1>IS LOGGED IN</h1>
-          <p>hi {user.name} </p>
+          <p>hi {user.firstName} </p>
           <Button onClick={clickHandler}>Logout</Button>
       </Layout>
     )

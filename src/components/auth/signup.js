@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from "react"
-// import { Form, Button, Card, Alert } from "react-bootstrap";
 import { signup } from "../../utils/AuthFunctions"
 import { navigate } from "gatsby"
 
@@ -12,10 +11,9 @@ import {
   useToast,
 } from "@chakra-ui/react"
 
-import { MdError } from "react-icons/md"
-
 const SignUp = () => {
-  const [userName, setUserName] = useState("")
+  const [userFirstName, setUserFirstName] = useState("")
+  const [userLastName, setUserLastName] = useState("")
   const [userEmail, setUserEmail] = useState("")
   const [userPassword, setUserPassword] = useState("")
 
@@ -30,7 +28,7 @@ const SignUp = () => {
   const handleSubmit = async event => {
     handleLoad()
     event.preventDefault()
-    const uid = await signup(userName, userEmail, userPassword, null)
+    const uid = await signup(userFirstName, userLastName, userEmail, userPassword, null)
     if (uid == null) {
       // Fail to signup
       setLoading(false)
@@ -58,10 +56,18 @@ const SignUp = () => {
       <form method="post">
         <Input
           variant="outline"
-          placeholder="Full Name"
+          placeholder="First Name"
           type="text"
-          name="name"
-          onChange={event => setUserName(event.target.value)}
+          name="firstName"
+          onChange={event => setUserFirstName(event.target.value)}
+        />
+        <Box h="20px" />
+        <Input
+          variant="outline"
+          placeholder="Last Name"
+          type="text"
+          name="lastName"
+          onChange={event => setUserLastName(event.target.value)}
         />
         <Box h="20px" />
         <Input

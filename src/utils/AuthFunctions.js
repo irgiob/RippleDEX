@@ -1,7 +1,6 @@
 import firebase from "../../plugins/gatsby-plugin-firebase-custom"
 import {getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged} from "firebase/auth";
 import { createNewUser } from "../models/User"
-import { navigate } from "gatsby-link";
 
 /**
  * @param {String} name
@@ -10,12 +9,12 @@ import { navigate } from "gatsby-link";
  * @param {String} phoneNumber
  * @returns {User} User ID, if doesnt exists returns null
  */
-export async function signup(name, email, password,phoneNumber) {
+export async function signup(firstName, lastName, email, password, phoneNumber) {
   const auth = getAuth(firebase)
   return createUserWithEmailAndPassword(auth, email, password)
   .then( (userCredential) => {
     const userID = userCredential.user.uid
-    return createNewUser(name, userID, email, phoneNumber)
+    return createNewUser(firstName, lastName, userID, email, phoneNumber)
   })
   .catch((error) => { 
     return null 
