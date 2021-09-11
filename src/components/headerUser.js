@@ -117,52 +117,52 @@ const HeaderUser = ({ siteTitle }) => {
               </Button>
             </PopoverTrigger>
             <PopoverContent w="350px">
-              <PopoverHeader>
-                <Box
-                  mt={4}
-                  mb={4}
-                  p="10px"
-                  w="100%"
-                  display="flex"
-                  flexDir="row"
-                  pr="60px"
-                >
-                  <Spacer />
-                  <Avatar size="md" src={Logo} />
-                  <Spacer />
-                  <Box textAlign="left" ml>
-                    <Heading as="h3" size="md">
-                      {organization}
-                    </Heading>
-                    <Text color="gray">id: {org_Id}</Text>
+              <PopoverBody>
+                <VStack spacing={5} align="start" p="8px">
+                  <HStack p="15px" spacing={5}>
+                    <Avatar
+                      size="md"
+                      name={organization}
+                      src={Logo}
+                      _hover={{
+                        transform: "scale(1.01)",
+                      }}
+                    >
+                      <AvatarBadge
+                        boxSize="20px"
+                        borderColor="black"
+                        bg="green.300"
+                      />
+                      {/* bg is online or offline, change based on boolean later */}
+                    </Avatar>
+                    <Box textAlign="left" ml>
+                      <Heading as="h3" size="md">
+                        {organization}
+                      </Heading>
+                      <Text color="gray">{org_Id}</Text>
+                    </Box>
+                  </HStack>
+
+                  <Divider />
+                  <Box pl="15px" pr="15px">
+                    <Link to="/Invite"> Invite people to {organization}</Link>
                   </Box>
-                  <Spacer />
-                  <Spacer />
-                </Box>
-              </PopoverHeader>
-              <PopoverBody pl="40px" textAlign="left">
-                <br />
-                <Link to="/Settings"> Settings &amp; Administration</Link>
-                <br />
-                <br />
-                <Link to="/Invite"> Invite people to {organization}</Link>
-                <br />
-                <br />
+
+                  <Box pl="15px" pr="15px">
+                    <Link to="/Settings"> Settings &amp; Administration</Link>
+                  </Box>
+                  <Divider />
+                  <Button
+                    bgColor="white"
+                    _hover={{
+                      transform: "scale(1.08)",
+                    }}
+                    leftIcon={<RiArrowLeftRightLine />}
+                  >
+                    Switch Workspace
+                  </Button>
+                </VStack>
               </PopoverBody>
-              <PopoverFooter pl="30px" textAlign="left">
-                <br />
-                <Button
-                  bgColor="white"
-                  _hover={{
-                    transform: "scale(1.08)",
-                  }}
-                  leftIcon={<RiArrowLeftRightLine />}
-                >
-                  Switch Workspace
-                </Button>
-                <br />
-                <br />
-              </PopoverFooter>
             </PopoverContent>
           </Popover>
         </Box>
