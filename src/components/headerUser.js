@@ -120,21 +120,7 @@ const HeaderUser = ({ siteTitle }) => {
               <PopoverBody>
                 <VStack spacing={5} align="start" p="8px">
                   <HStack p="15px" spacing={5}>
-                    <Avatar
-                      size="md"
-                      name={organization}
-                      src={Logo}
-                      _hover={{
-                        transform: "scale(1.01)",
-                      }}
-                    >
-                      <AvatarBadge
-                        boxSize="20px"
-                        borderColor="black"
-                        bg="green.300"
-                      />
-                      {/* bg is online or offline, change based on boolean later */}
-                    </Avatar>
+                    <Avatar size="md" src={Logo} />
                     <Box textAlign="left" ml>
                       <Heading as="h3" size="md">
                         {organization}
