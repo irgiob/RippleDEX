@@ -10,6 +10,7 @@ import {
   Box,
   Image,
   Circle,
+  Divider,
   HStack,
   Spacer,
   useDisclosure,
@@ -24,6 +25,7 @@ import {
   Avatar,
   Heading,
   Text,
+  VStack,
 } from "@chakra-ui/react"
 
 import {
@@ -187,97 +189,80 @@ const HeaderUser = ({ siteTitle }) => {
               </Avatar>
             </PopoverTrigger>
             <PopoverContent w="350px">
-              <PopoverHeader>
-                <Box
-                  mt={4}
-                  mb={4}
-                  p="10px"
-                  w="100%"
-                  display="flex"
-                  flexDir="row"
-                  pr="60px"
-                >
-                  <Spacer />
-                  <Avatar
-                    size="md"
-                    name={userName}
-                    src={ProfilePicture}
-                    _hover={{
-                      transform: "scale(1.01)",
+              <PopoverBody>
+                <VStack spacing={5} align="start" p="8px">
+                  <HStack p="15px" spacing={5}>
+                    <Avatar
+                      size="md"
+                      name={userName}
+                      src={ProfilePicture}
+                      _hover={{
+                        transform: "scale(1.01)",
+                      }}
+                    >
+                      <AvatarBadge
+                        boxSize="20px"
+                        borderColor="black"
+                        bg="green.300"
+                      />
+                      {/* bg is online or offline, change based on boolean later */}
+                    </Avatar>
+                    <Box textAlign="left" ml>
+                      <Heading as="h3" size="md">
+                        {userName}
+                      </Heading>
+                      <Text color="gray">{Email}</Text>
+                    </Box>
+                  </HStack>
+
+                  <Divider />
+                  <Box pl="15px" pr="15px">
+                    <Link to="/visibility"> Set as Invisible</Link>
+                  </Box>
+                  {/* should be a button*/}
+                  <Text
+                    pl="15px"
+                    pr="15px"
+                    onClick={() => {
+                      handleOpen(1)
                     }}
                   >
-                    <AvatarBadge
-                      boxSize="20px"
-                      borderColor="black"
-                      bg="green.300"
-                    />{" "}
-                    {/* bg is online or offline, change based on boolean later */}
-                  </Avatar>
-                  <Spacer />
-                  <Box textAlign="left" ml>
-                    <Heading as="h3" size="md">
-                      {userName}
-                    </Heading>
-                    <Text color="gray">{Email}</Text>
-                  </Box>
-                  <Spacer />
-                  <Spacer />
-                </Box>
-              </PopoverHeader>
-              <PopoverBody pl="40px" textAlign="left">
-                <br />
-                <Link to="/visibility"> Set as Invisible</Link>{" "}
-                {/* should be a button*/}
-                <br />
-                <br />
-                <Text
-                  onClick={() => {
-                    handleOpen(1)
-                  }}
-                >
-                  {" "}
-                  Notifications
-                </Text>
-                <br />
+                    {" "}
+                    Notifications
+                  </Text>
+                  <Divider />
+                  <Text
+                    pl="15px"
+                    pr="15px"
+                    onClick={() => {
+                      handleOpen(0)
+                    }}
+                  >
+                    {" "}
+                    Edit Profile
+                  </Text>
+                  <Text
+                    pl="15px"
+                    pr="15px"
+                    onClick={() => {
+                      handleOpen(0)
+                    }}
+                  >
+                    {" "}
+                    View Profile
+                  </Text>
+                  <Divider />
+                  <Button
+                    color="red"
+                    bgColor="white"
+                    onClick={clickHandler}
+                    _hover={{ transform: "scale(1.08)" }}
+                    leftIcon={<RiLogoutBoxLine />}
+                  >
+                    Sign out of RippleDEX
+                  </Button>
+                </VStack>
               </PopoverBody>
-              <PopoverHeader />
-              <PopoverBody pl="40px" textAlign="left">
-                <br />
-                <Text
-                  onClick={() => {
-                    handleOpen(0)
-                  }}
-                >
-                  {" "}
-                  Edit Profile
-                </Text>
-                <br />
-                <br />
-                <Text
-                  onClick={() => {
-                    handleOpen(0)
-                  }}
-                >
-                  {" "}
-                  View Profile
-                </Text>
-                <br />
-                <br />
-              </PopoverBody>
-              <PopoverFooter pl="20px" textAlign="left">
-                <br />
-                <Button
-                  color="red"
-                  bgColor="white"
-                  onClick={clickHandler}
-                  _hover={{ transform: "scale(1.08)" }}
-                  leftIcon={<RiLogoutBoxLine />}
-                >
-                  Sign out of RippleDEX
-                </Button>
-                <br />
-                <br />
-              </PopoverFooter>
             </PopoverContent>
           </Popover>
         </Box>
