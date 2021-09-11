@@ -24,7 +24,7 @@ export const createNewUser = (userFirstName, userLastName, userID, userEmail,use
         lastOpenedOrganization: null,
         profilePicture: null,
         lastOnline: Timestamp.now(),
-        notificationMode: 0,
+        notificationMode: "000",
         isInvisible: false
     }).then(()=>{
         return getDoc(docRef).then((doc) => {
@@ -78,9 +78,16 @@ export const updateUserNotificationSettings = (userID, notificationMode) => {
  */
 export const getUser = (userID) => {
     const docRef = doc(db, "users", userID)
-    return getDoc(docRef).then((user) => {
-        return user.data();
-    }).catch((error) => {
-        console.error("Error getting user: ", error);
-    });
+    return updateDoc(
+        docRef, 
+        {lastOnline: Timestamp.now()}
+    ).then(() => {
+        return getDoc(docRef).then((user) => {
+            const data = user.data()
+            data.id = userID
+            return data
+        }).catch((error) => {
+            console.error("Error getting user: ", error);
+        });
+    })
 }
