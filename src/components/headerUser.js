@@ -130,19 +130,25 @@ const HeaderUser = ({ siteTitle }) => {
                   </HStack>
 
                   <Divider />
-                  <Box pl="15px" pr="15px">
+                  <Button
+                    bgColor="white"
+                    _hover={{
+                      transform: "scale(1.08)",
+                    }}
+                  >
                     <Link to="/Invite"> Invite people to {organization}</Link>
-                  </Box>
-
-                  <Text
-                    pl="15px"
-                    pr="15px"
+                  </Button>
+                  <Button
+                    bgColor="white"
+                    _hover={{
+                      transform: "scale(1.08)",
+                    }}
                     onClick={() => {
                       handleOpen(3)
                     }}
                   >
                     Settings & Administration
-                  </Text>
+                  </Button>
                   <Divider />
                   <Button
                     bgColor="white"
@@ -161,7 +167,7 @@ const HeaderUser = ({ siteTitle }) => {
         <Spacer />
         {/* Header Profile Right Side */}
         <Box pr="15px">
-          <ProfileSettings isOpen={isOpen} onClose={onClose} tab={tab} />
+          <ProfileSettings isOpen={isOpen} onClose={onClose} tab={tab}/>
           <Popover>
             <PopoverTrigger>
               <Avatar
@@ -208,38 +214,41 @@ const HeaderUser = ({ siteTitle }) => {
                   </HStack>
 
                   <Divider />
-                  <Box pl="15px" pr="15px">
+                  <Button
+                    bgColor="white"
+                    _hover={{ transform: "scale(1.08)" }}
+                  >
                     <Link to="/visibility"> Set as Invisible</Link>
-                  </Box>
+                  </Button>
                   {/* should be a button*/}
-                  <Text
-                    pl="15px"
-                    pr="15px"
+                  <Button
+                    bgColor="white"
+                    _hover={{ transform: "scale(1.08)" }}
                     onClick={() => {
                       handleOpen(1)
                     }}
                   >
                     Notifications
-                  </Text>
+                  </Button>
                   <Divider />
-                  <Text
-                    pl="15px"
-                    pr="15px"
+                  <Button
+                    bgColor="white"
+                    _hover={{ transform: "scale(1.08)" }}
                     onClick={() => {
                       handleOpen(0)
                     }}
                   >
                     Edit Profile
-                  </Text>
-                  <Text
-                    pl="15px"
-                    pr="15px"
+                  </Button>
+                  <Button
+                    bgColor="white"
+                    _hover={{ transform: "scale(1.08)" }}
                     onClick={() => {
                       handleOpen(0)
                     }}
                   >
                     View Profile
-                  </Text>
+                  </Button>
                   <Divider />
                   <Button
                     color="red"
