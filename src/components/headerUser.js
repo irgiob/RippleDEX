@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react"
 import PropTypes from "prop-types"
 import { onAuthLoad, logout } from "../utils/AuthFunctions"
-import { getUser } from "../models/User"
+import { getUser, updateUser } from "../models/User"
 import { Link } from "gatsby"
 import { navigate } from "gatsby-link"
 
@@ -40,31 +40,20 @@ import ProfileSettings from "./settings/profileSettings"
 
 const HeaderUser = ({ siteTitle }) => {
   const { isOpen, onOpen, onClose } = useDisclosure()
-  const [type, setType] = useState("SignUp")
   const [user, setUser] = useState(null)
+  const [userID, setUserID] = useState(null)
   const [tab, setTab] = useState(0)
 
   useEffect(() => {
     onAuthLoad(
       loggedUser => {
         console.log(loggedUser.uid)
+        setUserID(loggedUser.uid)
         getUser(loggedUser.uid).then(userData => setUser(userData))
       },
       () => navigate("/")
     )
   }, [])
-
-  // Organization Here Static data
-  let organization = "loading..."
-  let org_Id = "loading..."
-  let userName = "loading..."
-  let Email = "loading..."
-  if (user) {
-    organization = user.organization
-    org_Id = user.orgID
-    userName = user.firstName + " " + user.lastName
-    Email = user.email
-  }
 
   const clickHandler = () => {
     logout()
@@ -111,7 +100,7 @@ const HeaderUser = ({ siteTitle }) => {
                 _hover={{ transform: "scale(1.01)" }}
                 _active={{ bg: "ripple.200", transform: "scale(1.01)" }}
               >
-                {organization}
+                {user?.organization || "loading..."}
                 {<RiArrowDropDownLine size="50px" />}
               </Button>
             </PopoverTrigger>
@@ -122,9 +111,9 @@ const HeaderUser = ({ siteTitle }) => {
                     <Avatar size="md" src={Logo} />
                     <Box textAlign="left" ml>
                       <Heading as="h3" size="md">
-                        {organization}
+                        {user?.organization || "loading..."}
                       </Heading>
-                      <Text color="gray">{org_Id}</Text>
+                      <Text color="gray">{user?.org_I || "loading..."}</Text>
                     </Box>
                   </HStack>
 
@@ -135,7 +124,7 @@ const HeaderUser = ({ siteTitle }) => {
                       transform: "scale(1.08)",
                     }}
                   >
-                    <Link to="/Invite"> Invite people to {organization}</Link>
+                    <Link to="/Invite"> Invite people to {user?.organization || "loading..."}</Link>
                   </Button>
                   <Button
                     bgColor="white"
@@ -171,7 +160,7 @@ const HeaderUser = ({ siteTitle }) => {
             <PopoverTrigger>
               <Avatar
                 size="md"
-                name={userName}
+                name={user?.firstName + " " + user?.lastName || "loading..."}
                 src={ProfilePicture}
                 _hover={{
                   transform: "scale(1.01)",
@@ -179,7 +168,7 @@ const HeaderUser = ({ siteTitle }) => {
               >
                 <AvatarBadge
                   boxSize="20px"
-                  bg="green.300"
+                  bg={user?.isInvisible ? "gray.300" : "green.300"}
                   borderColor="ripple.200"
                 />
                 {/* bg is online or offline, change based on boolean later */}
@@ -191,7 +180,7 @@ const HeaderUser = ({ siteTitle }) => {
                   <HStack p="15px" spacing={5}>
                     <Avatar
                       size="md"
-                      name={userName}
+                      name={user?.firstName + " " + user?.lastName?.lastName || "loading..."}
                       src={ProfilePicture}
                       _hover={{
                         transform: "scale(1.01)",
@@ -200,15 +189,15 @@ const HeaderUser = ({ siteTitle }) => {
                       <AvatarBadge
                         boxSize="20px"
                         borderColor="black"
-                        bg="green.300"
+                        bg={user?.isInvisible ? "gray.300" : "green.300"}
                       />
                       {/* bg is online or offline, change based on boolean later */}
                     </Avatar>
                     <Box textAlign="left" ml>
                       <Heading as="h3" size="md">
-                        {userName}
+                        {user?.firstName + " " + user?.lastName || "loading..."}
                       </Heading>
-                      <Text color="gray">{Email}</Text>
+                      <Text color="gray">{user?.email || "loading..."}</Text>
                     </Box>
                   </HStack>
 
@@ -216,8 +205,14 @@ const HeaderUser = ({ siteTitle }) => {
                   <Button
                     bgColor="white"
                     _hover={{ transform: "scale(1.08)" }}
+                    onClick={() => {
+                      updateUser(
+                        userID, 
+                        {isInvisible: !user?.isInvisible}
+                      ).then((updatedUser) => setUser(updatedUser))
+                    }}
                   >
-                    <Link to="/visibility"> Set as Invisible</Link>
+                    Set as {user?.isInvisible ? "Visible" : "Invisible"}
                   </Button>
                   {/* should be a button*/}
                   <Button

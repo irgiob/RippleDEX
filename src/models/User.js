@@ -49,7 +49,7 @@ export const updateUser = async (userID, options) => {
     const docSnap = await getDoc(docRef)
 
     if (docSnap.exists()){
-        return updateDoc(docRef, options)
+        return updateDoc(docRef, options).then(() => getUser(userID))
     } else {
         console.log("No such document!");
     }
