@@ -134,9 +134,15 @@ const HeaderUser = ({ siteTitle }) => {
                     <Link to="/Invite"> Invite people to {organization}</Link>
                   </Box>
 
-                  <Box pl="15px" pr="15px">
-                    <Link to="/Settings"> Settings &amp; Administration</Link>
-                  </Box>
+                  <Text
+                    pl="15px"
+                    pr="15px"
+                    onClick={() => {
+                      handleOpen(3)
+                    }}
+                  >
+                    Settings & Administration
+                  </Text>
                   <Divider />
                   <Button
                     bgColor="white"
@@ -170,7 +176,7 @@ const HeaderUser = ({ siteTitle }) => {
                   boxSize="20px"
                   bg="green.300"
                   borderColor="ripple.200"
-                />{" "}
+                />
                 {/* bg is online or offline, change based on boolean later */}
               </Avatar>
             </PopoverTrigger>
@@ -213,7 +219,6 @@ const HeaderUser = ({ siteTitle }) => {
                       handleOpen(1)
                     }}
                   >
-                    {" "}
                     Notifications
                   </Text>
                   <Divider />
@@ -224,7 +229,6 @@ const HeaderUser = ({ siteTitle }) => {
                       handleOpen(0)
                     }}
                   >
-                    {" "}
                     Edit Profile
                   </Text>
                   <Text
@@ -234,7 +238,6 @@ const HeaderUser = ({ siteTitle }) => {
                       handleOpen(0)
                     }}
                   >
-                    {" "}
                     View Profile
                   </Text>
                   <Divider />
