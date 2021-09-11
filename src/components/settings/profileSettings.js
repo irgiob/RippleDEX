@@ -1,4 +1,5 @@
-import * as React from "react"
+import React, { useState, useEffect } from "react"
+import { updateUser } from "../../models/User"
 
 import {
   Box,
@@ -31,9 +32,9 @@ import {
   TabPanels,
   TabPanel,
   VStack,
+  useToast
 } from "@chakra-ui/react"
 
-import SignUpIll from "../../images/RippleDexDark.svg"
 import ProfilePicture from "../../images/RippleDEXWhite.svg"
 
 import {
@@ -126,10 +127,10 @@ const ProfileSettings = props => {
             </TabList>
             <TabPanels pl="5px" pr="5px">
               <TabPanel>
-                <ProfileTab />
+                <ProfileTab user={props.user} setUser={props.setUser}/>
               </TabPanel>
               <TabPanel>
-                <NotificationsTab />
+                <NotificationsTab user={props.user} setUser={props.setUser}/>
               </TabPanel>
               <TabPanel>
                 <p>Coming Soon!</p>
@@ -145,7 +146,38 @@ const ProfileSettings = props => {
   )
 }
 
-const ProfileTab = () => {
+const ProfileTab = props => {
+  const [firstName, setFirstName] = useState(props.user.firstName)
+  const [lastName, setLastName] = useState(props.user.lastName)
+  const [position, setPosition] = useState(null)
+  const [phoneNumber, setPhoneNumber] = useState(props.user.phoneNumber)
+  const toast = useToast()
+
+  const handleClick = () => {
+    updateUser(props.user.id, {
+      firstName: firstName,
+      lastName: lastName,
+      phoneNumber: phoneNumber
+    }).then((user) => {
+      props.setUser(user)
+      toast({
+        title: "Success",
+        description: "Your details have been updated",
+        status: "success",
+        duration: 5000,
+        isClosable: true,
+      })
+    }).catch((error) => {
+      toast({
+        title: "Failed to update details",
+        description: error,
+        status: "error",
+        duration: 5000,
+        isClosable: true,
+      })
+    })
+  }
+
   return (
     <VStack>
       <HStack align="start" spacing={5}>
@@ -154,25 +186,46 @@ const ProfileTab = () => {
             <Text color="ripple.200" pb="5px" fontSize="12px">
               First Name
             </Text>
-            <Input variant="outline" placeholder="First Name" type="text" />
+            <Input
+              variant="outline" 
+              placeholder="First Name" 
+              type="text"
+              value={firstName}
+              onChange={event => setFirstName(event.target.value)}
+            />
           </Box>
           <Box textAlign="left" w="300px">
             <Text color="ripple.200" pb="5px" fontSize="12px">
               Last Name
             </Text>
-            <Input placeholder="Last Name" type="text" />
+            <Input 
+              placeholder="Last Name" 
+              type="text"
+              value={lastName}
+              onChange={event => setLastName(event.target.value)}
+            />
           </Box>
           <Box textAlign="left" w="300px">
             <Text color="ripple.200" pb="5px" fontSize="12px">
               Position at Company
             </Text>
-            <Input placeholder="Position at Company" type="text" />
+            <Input 
+              placeholder="Position at Company" 
+              type="text" 
+              value={position}
+              onChange={event => setPosition(event.target.value)}
+            />
           </Box>
           <Box textAlign="left" w="300px">
             <Text color="ripple.200" pb="5px" fontSize="12px">
               Phone Number
             </Text>
-            <Input placeholder="Phone Number" type="text" />
+            <Input 
+              placeholder="Phone Number" 
+              type="text" 
+              value={phoneNumber}
+              onChange={event => setPhoneNumber(event.target.value)}
+            />
           </Box>
         </VStack>
         <Spacer />
@@ -213,6 +266,7 @@ const ProfileTab = () => {
             _hover={{
               transform: "scale(1.05)",
             }}
+            onClick={handleClick}
           >
             Save Changes
           </Button>
@@ -222,21 +276,44 @@ const ProfileTab = () => {
   )
 }
 
-const NotificationsTab = () => {
+const NotificationsTab = props => {
+  const notificationMode = props.user.notificationMode
+  const [switch1, setSwitch1] = useState(parseInt(notificationMode.substr(0,1)))
+  const [switch2, setSwitch2] = useState(parseInt(notificationMode.substr(1,1)))
+  const [radio, setRadio] = useState(parseInt(notificationMode.substr(2,1)))
+
+  useEffect(()=>{
+    updateUser(props.user.id, {
+      notificationMode: switch1.toString() + switch2.toString() + radio.toString() 
+    }).then((updatedUser) => props.setUser(updatedUser))
+  },[switch1, switch2, radio])
+
   return (
     <VStack spacing={3} align="start">
       <Text color="ripple.200">Notify me about ...</Text>
       <HStack>
-        <Switch colorScheme="green" />
+        <Switch 
+          colorScheme="green" 
+          isChecked={switch1}
+          onChange={() => setSwitch1(switch1 ? 0 : 1)}
+        />
         <Text>New Meetings</Text>
       </HStack>
       <HStack>
-        <Switch colorScheme="green" />
+        <Switch 
+          colorScheme="green" 
+          isChecked={switch2}
+          onChange={() => setSwitch2(switch2 ? 0 : 1)}
+        />
         <Text>New Members</Text>
       </HStack>
       <br />
       <Text color="ripple.200">Customize Notifications</Text>
-      <RadioGroup colorScheme="green">
+      <RadioGroup 
+        colorScheme="green" 
+        value={radio.toString()} 
+        onChange={setRadio}
+      >
         <Stack spacing={3}>
           <Radio value="1">Send Notifications Live</Radio>
           <Radio value="2">

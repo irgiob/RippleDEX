@@ -41,14 +41,12 @@ import ProfileSettings from "./settings/profileSettings"
 const HeaderUser = ({ siteTitle }) => {
   const { isOpen, onOpen, onClose } = useDisclosure()
   const [user, setUser] = useState(null)
-  const [userID, setUserID] = useState(null)
   const [tab, setTab] = useState(0)
 
   useEffect(() => {
     onAuthLoad(
       loggedUser => {
         console.log(loggedUser.uid)
-        setUserID(loggedUser.uid)
         getUser(loggedUser.uid).then(userData => setUser(userData))
       },
       () => navigate("/")
@@ -155,7 +153,7 @@ const HeaderUser = ({ siteTitle }) => {
         <Spacer />
         {/* Header Profile Right Side */}
         <Box pr="15px">
-          <ProfileSettings isOpen={isOpen} onClose={onClose} tab={tab}/>
+          <ProfileSettings isOpen={isOpen} onClose={onClose} tab={tab} user={user} setUser={setUser}/>
           <Popover>
             <PopoverTrigger>
               <Avatar
@@ -207,7 +205,7 @@ const HeaderUser = ({ siteTitle }) => {
                     _hover={{ transform: "scale(1.08)" }}
                     onClick={() => {
                       updateUser(
-                        userID, 
+                        user?.id, 
                         {isInvisible: !user?.isInvisible}
                       ).then((updatedUser) => setUser(updatedUser))
                     }}
