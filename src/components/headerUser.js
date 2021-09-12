@@ -66,7 +66,7 @@ const HeaderUser = ({ siteTitle }) => {
   return (
     <Box zIndex={999} position="fixed" w="100vw" h="60px" bgColor="ripple.200">
       <HStack h="100%" textAlign="center" mr="20px">
-        <a href="/">
+        <a href="/dashboard">
           <Box pt="7px">
             <Image
               top="20px"
