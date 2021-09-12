@@ -52,7 +52,7 @@ const ProfileSettings = props => {
   return (
     <Modal size="3xl" isCentered isOpen={props.isOpen} onClose={props.onClose}>
       <ModalOverlay />
-      <ModalContent pos="absolute" borderRadius="20px" pt="10px" pb="10px">
+      <ModalContent pos="absolute" h="500px" borderRadius="20px" pt="10px" pb="10px">
         <ModalCloseButton m="15px" />
         <ModalBody>
           <Box pb="10px" pl="10px" textAlign="left">
