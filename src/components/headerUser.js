@@ -55,7 +55,7 @@ const HeaderUser = ({ siteTitle }) => {
 
   const clickHandler = () => {
     logout()
-    navigate("/login")
+    navigate("/")
   }
 
   const handleOpen = val => {
@@ -159,7 +159,7 @@ const HeaderUser = ({ siteTitle }) => {
               <Avatar
                 size="md"
                 name={user?.firstName + " " + user?.lastName || "loading..."}
-                src={ProfilePicture}
+                src={user?.profilePicture || ProfilePicture}
                 _hover={{
                   transform: "scale(1.01)",
                 }}
@@ -179,7 +179,7 @@ const HeaderUser = ({ siteTitle }) => {
                     <Avatar
                       size="md"
                       name={user?.firstName + " " + user?.lastName?.lastName || "loading..."}
-                      src={ProfilePicture}
+                      src={user?.profilePicture || ProfilePicture}
                       _hover={{
                         transform: "scale(1.01)",
                       }}

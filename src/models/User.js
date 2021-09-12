@@ -56,6 +56,18 @@ export const updateUser = async (userID, options) => {
 }
 
 /**
+ * checks if a specific userID is registered on the Firebase user collection
+ * 
+ * @param {String} userID ID of user being check
+ * @returns {Boolean} if the user exists in Firestore or not
+ */
+export const doesUserExist = async (userID) => {
+    const docRef = doc(db, "users", userID)
+    const docSnap = await getDoc(docRef)
+    return docSnap.exists()
+}
+
+/**
  * updates the notification settings for a specific user
  * 
  * @param {String} userID ID of user to be updated
@@ -78,10 +90,12 @@ export const updateUserNotificationSettings = (userID, notificationMode) => {
  */
 export const getUser = (userID) => {
     const docRef = doc(db, "users", userID)
+    // Logs the user activity for lastOnline
     return updateDoc(
         docRef, 
         {lastOnline: Timestamp.now()}
     ).then(() => {
+        // returns the user, appending the userID to the data
         return getDoc(docRef).then((user) => {
             const data = user.data()
             data.id = userID
