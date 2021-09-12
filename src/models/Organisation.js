@@ -1,5 +1,5 @@
 import "@firebase/firestore"
-import {getFirestore, doc, setDoc, getDoc, updateDoc} from "firebase/firestore"
+import {getFirestore, doc, addDoc, getDoc, updateDoc} from "firebase/firestore"
 
 const db = getFirestore(firebase)
 
@@ -7,26 +7,24 @@ const db = getFirestore(firebase)
  * creates new organization
  * 
  * @param {String} userID ID of user creating the organization
+ * @param {string} orgName the name of the organization being created
+ * @param {string} orgDesc description of the organization
  * 
  * @return {DocumentReference} newly created organization
  */
-export const createNewOrganization =  (userID, orgName, orgDesc) => {
-    const docRef = collection(db, "organizations")
-    return addDoc(docRef,{
+export const createNewOrganization = async (userID, orgName, orgDesc) => {
+    const docRef = await addDoc(collection(db, "organizations"),{
         admin: userID,
         name: orgName,
         description: orgDesc,
-        members: [{userID: userID, position: "Admin"}],
+        members: [],
         profilePicture: null
-    }).then(()=>{
-        return getDoc(docRef).then((doc) => {
-            data = doc.data()
-            data.id = doc.id
-            return data
-        })
-    }).catch((error) => {
-        console.log("Error adding new organization: ", error);
-        throw "Error in createNewOrgnization";
+    })
+    await addUserToOrganization(docRef.id, userID, "Admin")
+    return await getDoc(docRef).then((doc) => {
+        data = doc.data()
+        data.id = doc.id
+        return data
     })
 }
 
@@ -35,20 +33,16 @@ export const createNewOrganization =  (userID, orgName, orgDesc) => {
  * 
  * @param {String} email email address of invitee
  * @param {String} orgID ID of organization
+ * @param {String} position of the new member in the organization
  */
-export const inviteToOrganization = (email,orgID) => {
-    const docRef = collection(db, "invites");
-    return addDoc(docRef,{
+export const inviteToOrganization = async (email, orgID, position) => {
+    const docRef = await addDoc(collection(db, "invites"),{
         email: email,
-        organizationID: orgID
-    }).then(()=>{
-        return getDoc(docRef).then((doc) => {
-            return doc.data()
-        })
-    }).catch((error) => {
-        console.log("Error adding new individual: ", error);
-        throw "Error in inviteNewIndividual";
+        organizationID: orgID,
+        position, position
     })
+    const docSnap = await getDoc(docRef)
+    return docSnap.data()
 }
 
 
@@ -58,17 +52,16 @@ export const inviteToOrganization = (email,orgID) => {
  * @param {String} orgID ID of organization
  * @param {String} userID ID of user
  */
-export const addUserToOrganization = (orgID, userID) => {
-    const docRef = doc(db, "organizations", orgID)
-    const docSnap = await getDoc(docRef)
-
-    if (docSnap.exists()){
-        return updateDoc(docRef, {
-            members: arrayUnion(userID)
-        }).then(() => getOrganization(orgID))
-    } else {
-        console.log("No such document!");
-    }
+export const addUserToOrganization = async (orgID, userID, position) => {
+    // adds user to organizations document
+    await updateDoc(doc(db, "organizations", orgID), {
+        members: arrayUnion({userID: userID, position: position})
+    })
+    // adds organization to users document
+    await updateDoc(doc(db, "users", userID), {
+        lastOpenedOrganization: orgID,
+        organizations: arrayUnion(orgID)
+    })
 }
 
 /**
@@ -79,7 +72,7 @@ export const addUserToOrganization = (orgID, userID) => {
  * 
  * @returns bool
  */
-export const isUserInOrganization = (orgID, userID) => {
+export const isUserInOrganization = async (orgID, userID) => {
     const org = await getOrganization(orgID)
     return org.members.some(member => member.userID === userID)
 }
