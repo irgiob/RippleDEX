@@ -10,20 +10,24 @@ const db = getFirestore(firebase)
  * 
  * @return {DocumentReference} newly created organization
  */
-export const createNewOrganization =  (userID) => {
-
-    const docRef = doc(db, "organizations", userID)
-    return setDoc(docRef,{
+export const createNewOrganization =  (userID, orgName, orgDesc) => {
+    const docRef = collection(db, "organizations")
+    return addDoc(docRef,{
         admin: userID,
+        name: orgName,
+        description: orgDesc,
+        members: [{userID: userID, position: "Admin"}],
+        profilePicture: null
     }).then(()=>{
         return getDoc(docRef).then((doc) => {
-            return doc.data()
+            data = doc.data()
+            data.id = doc.id
+            return data
         })
     }).catch((error) => {
         console.log("Error adding new organization: ", error);
         throw "Error in createNewOrgnization";
     })
-    
 }
 
 /**
@@ -33,9 +37,8 @@ export const createNewOrganization =  (userID) => {
  * @param {String} orgID ID of organization
  */
 export const inviteToOrganization = (email,orgID) => {
-    
     const docRef = collection(db, "invites");
-    addDoc(docRef,{
+    return addDoc(docRef,{
         email: email,
         organizationID: orgID
     }).then(()=>{
@@ -56,14 +59,16 @@ export const inviteToOrganization = (email,orgID) => {
  * @param {String} userID ID of user
  */
 export const addUserToOrganization = (orgID, userID) => {
+    const docRef = doc(db, "organizations", orgID)
+    const docSnap = await getDoc(docRef)
 
-    const docRef = doc(db,"organizations",orgID);
-    
-    updateDoc(docRef,{
-        members: arrayUnion(userID)
-    })
-    
-
+    if (docSnap.exists()){
+        return updateDoc(docRef, {
+            members: arrayUnion(userID)
+        }).then(() => getOrganization(orgID))
+    } else {
+        console.log("No such document!");
+    }
 }
 
 /**
@@ -75,56 +80,56 @@ export const addUserToOrganization = (orgID, userID) => {
  * @returns bool
  */
 export const isUserInOrganization = (orgID, userID) => {
-
-    const docRef = doc(db,"organizations",orgID);
-
-    return (docRef.members.includes(userID))
-
+    const org = await getOrganization(orgID)
+    return org.members.some(member => member.userID === userID)
 }
 
 /**
  * checks if a user is the admin of a specific organization
  * 
- * @param {Firestore} db Firestore Database Object
  * @param {String} orgID ID of organization
  * @param {String} userID ID of user
  * 
  * @returns bool
  */
- export const isUserAdmin =  (orgID, userID) => {
-
-    const docRef = doc(db,"organizations",orgID);
-
-    return ((docRef.admin) === (userID))
-
+ export const isUserAdmin = async (orgID, userID) => {
+    const org = await getOrganization(orgID)
+    return org.admin == userID
 }
 
 /**
- * updates information on a user
+ * updates information on an organization
  * 
- * @param {Firestore} db Firestore Database Object
  * @param {String} orgID ID of organization to be updated
  * @param {Object} options List of organization properities to change
- * @param {String} [options.organizationName] new name for organization
- * @param {String} [options.organizationDesc] new description for organization
- * @param {String} [options.profilePicture] new profile picture for organization
  * 
- * @returns {DocumentReference} updated organization object
+ * @returns {DocumentReference} updated user object
  */
  export const updateOrganization = async (orgID, options) => {
-    //note: organizationName, organizationEmail, are profilePicture are all optional
-    
-    const docRef = doc(db, "organizations", orgID);
-    const docSnap = await getDoc(docRef);
+    const docRef = doc(db, "organizations", orgID)
+    const docSnap = await getDoc(docRef)
 
-    //must check if they are present
     if (docSnap.exists()){
-
-        return updateDoc(docRef, options)
-
-        } else {
-
-            console.log("No such document!");
-
-          }
+        return updateDoc(docRef, options).then(() => getOrganization(orgID))
+    } else {
+        console.log("No such document!");
     }
+}
+
+/**
+ * gets organization based on organization ID
+ * 
+ * @param {String} orgID ID of the organization
+ * 
+ * @returns {DocumentReference}
+ */
+ export const getOrganization = (orgID) => {
+    const docRef = doc(db, "organizations", orgID)
+    return getDoc(docRef).then((org) => {
+        const data = org.data()
+        data.id = orgID
+        return data
+    }).catch((error) => {
+        console.error("Error getting organization: ", error);
+    });
+}
