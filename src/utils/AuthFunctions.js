@@ -1,6 +1,6 @@
 import firebase from "../../plugins/gatsby-plugin-firebase-custom"
 import {getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged} from "firebase/auth";
-import { createNewUser } from "../models/User"
+import { createNewUser, doesUserExist, updateUser } from "../models/User"
 
 /**
  * @param {String} name
@@ -67,17 +67,24 @@ export function onAuthLoad(isLoggedIn, isNotLoggedIn) {
 */
 export async function signInGoogle(){
   const auth = getAuth(firebase)
-  const provider = new GoogleAuthProvider();
+  const provider = new GoogleAuthProvider()
   return signInWithPopup(auth, provider)
-  .then( (result) => {
-    const userID = result.user.uid;
-    console.log("Google log in")
-    console.log(userID);
+  .then( async (result) => {
+    const userID = result.user.uid
+    const firstName = result.user.displayName.split(' ').slice(0, -1).join(' ')
+    const lastName = result.user.displayName.split(' ').slice(-1).join(' ')
+    const email = result.user.email
+    const number = result.user.phoneNumber
+    const profilePicture = result.user.photoURL.split("=")[0] + "=s400-c" 
+    if (!(await doesUserExist(userID))) {
+      await createNewUser(firstName, lastName, userID, email, number)
+      await updateUser(userID, {profilePicture: profilePicture})
+    }
     return userID;
   })
   .catch( (err) => {
     console.log(err)
-    return null;
+    return null
   })
 }
 
