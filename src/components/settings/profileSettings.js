@@ -231,7 +231,7 @@ const ProfileTab = props => {
         <Spacer />
         <VStack spacing={0}>
           <Center h="200px" w="200px" bgColor="ripple.100">
-            <Image src={ProfilePicture} />
+            <Image src={props.user.profilePicture || ProfilePicture} boxSize="200px"/>
           </Center>
           <Box h="10px" />
           <HStack spacing={1}>
