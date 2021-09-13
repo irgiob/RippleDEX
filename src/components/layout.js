@@ -30,7 +30,7 @@ const Layout = ({ children, location }) => {
           : <HeaderUser siteTitle={data.site.siteMetadata?.title || `Title`} /> 
         }
       </div>
-      { pathname  != '/' && <SideNav location={location}/> }
+      { !['/','/workspace/'].includes(pathname) && <SideNav location={location}/> }
       <main style={(pathname === '/') ? { paddingTop: "60px"} : { paddingTop: "60px", paddingLeft: "110px"}}>{children}</main>
       {/*
         <footer
