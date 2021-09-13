@@ -1,5 +1,5 @@
-import "@firebase/firestore"
-import {getFirestore, doc, addDoc, getDoc, updateDoc} from "firebase/firestore"
+import firebase from "../../plugins/gatsby-plugin-firebase-custom"
+import {getFirestore, doc, addDoc, getDoc, updateDoc, collection, arrayUnion} from "firebase/firestore"
 
 const db = getFirestore(firebase)
 
@@ -22,7 +22,7 @@ export const createNewOrganization = async (userID, orgName, orgDesc) => {
     })
     await addUserToOrganization(docRef.id, userID, "Admin")
     return await getDoc(docRef).then((doc) => {
-        data = doc.data()
+        const data = doc.data()
         data.id = doc.id
         return data
     })

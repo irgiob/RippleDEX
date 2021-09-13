@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react"
 import { onAuthLoad, logout } from "../utils/AuthFunctions"
 import { getUser } from "../models/User"
+import { createNewOrganization } from "../models/Organisation"
 import { navigate } from "gatsby-link"
 import Layout from "../components/layout"
 
@@ -35,21 +36,58 @@ import {
 } from "@chakra-ui/react"
 
 const Workspace = (props) => {
-    const [user, setUser] = useState(null)
     
-    useEffect( () => {
-      onAuthLoad((loggedUser) => {
+  const [user, setUser] = useState(null)
+  const [userID, setUserID] = useState(null)
+  useEffect(() => {
+    onAuthLoad(
+      loggedUser => {
         console.log(loggedUser.uid)
-        getUser(loggedUser.uid).then((userData) => setUser(userData))
-      }, () => navigate("/"))
-    }, [])
+        setUserID(loggedUser.uid)
+        getUser(loggedUser.uid).then(userData => setUser(userData))
+      },
+      () => navigate("/")
+    )
+  }, [])
+   
+    const [orgName, setOrgName] = useState("")
+    const [orgDesc, setOrgDesc] = useState("")
+  
+    const [loading, setLoading] = React.useState(false)
+    const handleLoad = () => setLoading(true)
+    const toast = useToast()
+  
+    const handleSubmit = async event => {
+      handleLoad()
+      event.preventDefault()
+      const validUser = await createNewOrganization(userID, orgName, orgDesc)
+      if (validUser == null) {
+        // Failed to create Organization
+        setLoading(false)
+        toast({
+          title: "Failed to create Organization",
+          description: "Please try again",
+          status: "error",
+          duration: 5000,
+          isClosable: true,
+        })
+      } else {
+        navigate(`/dashboard`)
+        toast({
+          title: "New Organization Added",
+          description: "Welcome to the Dashboard!",
+          status: "success",
+          duration: 5000,
+          isClosable: true,
+        })
+      }
+    }
+
 
     const { isOpen, onOpen, onClose } = useDisclosure()
 
-    const clickHandler = () => {
-        logout();
-        navigate("/");
-    }
+
+
 
     if (!user) {
       return (<Layout location={props.location}><h1>Loading...</h1></Layout>)
@@ -119,102 +157,105 @@ const Workspace = (props) => {
                             </Center>
                           </Box>
                           {/* Right side of the the Organization page */}
-                          <Box pt= "180px" pl="30px" w="60%" h="100%"> 
+                          <Box pt= "150px" pl="30px" w="60%" h="100%"> 
                             <ModalHeader fontFamily="Raleway-Bold" fontSize="30px" color="ripple.200">
                               Register your Organization
                             </ModalHeader>
-                            <SimpleGrid w="100%" pt="50px" mr="15px" ml="15px" columns={2} spacing={4}>
-                              {/* Organization info and description here */}
-                              <Box  height="80px">
-                                <Text pb="5px" fontSize="15px">
-                                  Company / Workspace Name
-                                </Text>
-                                <Input
-                                  w = "90%"
-                                  size = "lg"
-                                  variant="outline"
-                                  type="text"
-                                  name="firstName"
-                                />
-                              </Box>
-                              <Box  height="80px">
-                                <Text pb="5px" fontSize="15px">
-                                  Company Description
-                                </Text>
-                                <Input
-                                  w = "90%"
-                                  size = "lg"
-                                  variant="outline"
-                                  type="text"
-                                  name="firstName"
-                                />
-                              </Box>
-                              {/* Invite Emails Here */}
-                              <Box pt = "60px" height="80px">
-                                <Text pb="20px" fontSize="15px">
-                                Invite Employees (You can add other employees later)
-                                </Text>
-                                <Input
-                                  w = "90%"
-                                  size = "lg"
-                                  variant="outline"
-                                  type="text"
-                                  placeholder="Email"
-                                />
-                              </Box>
-                              <Box pt="100px" pb="80px" height="80px">
-                                <Input
-                                  w = "90%"
-                                  size = "lg"
-                                  variant="outline"
-                                  type="text"
-                                  placeholder="Email"
-                                />
-                              </Box>
-                              <Box  height="80px">
-                                <Input
-                                  w = "90%"
-                                  size = "lg"
-                                  variant="outline"
-                                  type="text"
-                                  name="firstName"
-                                  placeholder="Email"
-                                />
-                              </Box>
-                              <Box height="80px">
-                                <Input
-                                  w = "90%"
-                                  size = "lg"
-                                  variant="outline"
-                                  type="text"
-                                  name="firstName"
-                                  placeholder="Email"
-                                />
-                              </Box>
-                              {/* create Workspace button */}
-                              <Box pt = "40px">
-                                <Button
-                                  w = "90%"
-                                  h = "65px"
-                                  className="here"
-                                  bgColor="ripple.200"
-                                  color="white"
-                                  fontFamily="Raleway-Bold"
-                                  fontSize="25px"
-                                  borderRadius="30px"
-                                  size="lg"
-                                  _hover={{
-                                    transform: "scale(1.05)",
-                                  }}
-                                  type="Submit"
-                                  value="Create Workspace"
-                                >
-                                  Create workspace
-                                </Button>
-                              </Box>
-
-                            </SimpleGrid>
-                              
+                            <form method="post">
+                              <SimpleGrid w="100%" pt="50px" mr="15px" ml="15px" columns={2} spacing={4}>
+                                  {/* Organization info and description here */}
+                                  <Box  height="80px">
+                                    <Text pb="20px" fontSize="15px">
+                                      Company / Workspace Name
+                                    </Text>
+                                    <Input
+                                      w = "90%"
+                                      size = "lg"
+                                      variant="outline"
+                                      type="text"
+                                      name="name"
+                                      onChange={event => setOrgName(event.target.value)}
+                                    />
+                                  </Box>
+                                  <Box  height="80px">
+                                    <Text pb="20px" fontSize="15px">
+                                      Company Description
+                                    </Text>
+                                    <Input
+                                      w = "90%"
+                                      size = "lg"
+                                      variant="outline"
+                                      type="text"
+                                      name="description"
+                                      onChange={event => setOrgDesc(event.target.value)}
+                                    />
+                                  </Box>
+                                  {/* Invite Emails Here */}
+                                  <Box pt = "60px" height="80px">
+                                    <Text pb="20px" fontSize="15px">
+                                    Invite Employees (You can add other employees later)
+                                    </Text>
+                                    <Input
+                                      w = "90%"
+                                      size = "lg"
+                                      variant="outline"
+                                      type="text"
+                                      placeholder="Email"
+                                    />
+                                  </Box>
+                                  <Box pt="100px" pb="80px" height="80px">
+                                    <Input
+                                      w = "90%"
+                                      size = "lg"
+                                      variant="outline"
+                                      type="text"
+                                      placeholder="Email"
+                                    />
+                                  </Box>
+                                  <Box  height="80px">
+                                    <Input
+                                      w = "90%"
+                                      size = "lg"
+                                      variant="outline"
+                                      type="text"
+                                      placeholder="Email"
+                                    />
+                                  </Box>
+                                  <Box height="80px">
+                                    <Input
+                                      w = "90%"
+                                      size = "lg"
+                                      variant="outline"
+                                      type="text"
+                                      placeholder="Email"
+                                    />
+                                  </Box>
+                                  {/* create Workspace button */}
+                                  <Box pt = "40px">
+                                    <Button
+                                      w = "90%"
+                                      h = "65px"
+                                      className="here"
+                                      bgColor="ripple.200"
+                                      color="white"
+                                      fontFamily="Raleway-Bold"
+                                      fontSize="25px"
+                                      borderRadius="30px"
+                                      size="lg"
+                                      _hover={{
+                                        transform: "scale(1.05)",
+                                      }}
+                                      type="Submit"
+                                      value="Create Organization"
+                                      onClick={handleSubmit}
+                                      isLoading={loading}
+                                      loadingText="Submitting"
+                                    >
+                                      Create workspace
+                                    </Button>
+                                  </Box>                
+                              </SimpleGrid>
+                            </form>  
                             
                           </Box>
                         </Stack>

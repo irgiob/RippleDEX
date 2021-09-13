@@ -86,69 +86,82 @@ const HeaderUser = ({ siteTitle }) => {
           </Box>
         </a>
         <Box pl="170px">
-          <Popover>
-            <PopoverTrigger>
-              <Button
-                w="fit"
-                h="50px"
-                color="white"
-                bgColor="ripple.200"
-                fontFamily="Raleway-Bold"
-                fontSize="30px"
-                _hover={{ transform: "scale(1.01)" }}
-                _active={{ bg: "ripple.200", transform: "scale(1.01)" }}
-              >
-                {user?.organization || "loading..."}
-                {<RiArrowDropDownLine size="50px" />}
-              </Button>
-            </PopoverTrigger>
-            <PopoverContent w="350px">
-              <PopoverBody>
-                <VStack spacing={5} align="start" p="8px">
-                  <HStack p="15px" spacing={5}>
-                    <Avatar size="md" src={Logo} />
-                    <Box textAlign="left" ml>
-                      <Heading as="h3" size="md">
-                        {user?.organization || "loading..."}
-                      </Heading>
-                      <Text color="gray">{user?.org_I || "loading..."}</Text>
-                    </Box>
-                  </HStack>
+          {user?.organization &&
+            <Popover >
+              <PopoverTrigger>
+                <Button
+                  w="fit"
+                  h="50px"
+                  color="white"
+                  bgColor="ripple.200"
+                  fontFamily="Raleway-Bold"
+                  fontSize="30px"
+                  _hover={{ transform: "scale(1.01)" }}
+                  _active={{ bg: "ripple.200", transform: "scale(1.01)" }}
+                >
+                  {user?.organization || "loading..."}
+                  {<RiArrowDropDownLine size="50px" />}
+                </Button>
+              </PopoverTrigger>
+              <PopoverContent w="350px">
+                <PopoverBody>
+                  <VStack spacing={5} align="start" p="8px">
+                    <HStack p="15px" spacing={5}>
+                      <Avatar size="md" src={Logo} />
+                      <Box textAlign="left" ml>
+                        <Heading as="h3" size="md">
+                          {user?.organization || "loading..."}
+                        </Heading>
+                        <Text color="gray">{user?.org_I || "loading..."}</Text>
+                      </Box>
+                    </HStack>
 
-                  <Divider />
-                  <Button
-                    bgColor="white"
-                    _hover={{
-                      transform: "scale(1.08)",
-                    }}
-                  >
-                    <Link to="/Invite"> Invite people to {user?.organization || "loading..."}</Link>
-                  </Button>
-                  <Button
-                    bgColor="white"
-                    _hover={{
-                      transform: "scale(1.08)",
-                    }}
-                    onClick={() => {
-                      handleOpen(3)
-                    }}
-                  >
-                    Settings & Administration
-                  </Button>
-                  <Divider />
-                  <Button
-                    bgColor="white"
-                    _hover={{
-                      transform: "scale(1.08)",
-                    }}
-                    leftIcon={<RiArrowLeftRightLine />}
-                  >
-                    Switch Workspace
-                  </Button>
-                </VStack>
-              </PopoverBody>
-            </PopoverContent>
-          </Popover>
+                    <Divider />
+                    <Button
+                      bgColor="white"
+                      _hover={{
+                        transform: "scale(1.08)",
+                      }}
+                    >
+                      <Link to="/Invite"> Invite people to {user?.organization || "loading..."}</Link>
+                    </Button>
+                    <Button
+                      bgColor="white"
+                      _hover={{
+                        transform: "scale(1.08)",
+                      }}
+                      onClick={() => {
+                        handleOpen(3)
+                      }}
+                    >
+                      Settings & Administration
+                    </Button>
+                    <Divider />
+                    <Button
+                      bgColor="white"
+                      _hover={{
+                        transform: "scale(1.08)",
+                      }}
+                      leftIcon={<RiArrowLeftRightLine />}
+                    >
+                      Switch Workspace
+                    </Button>
+                  </VStack>
+                </PopoverBody>
+              </PopoverContent>
+            </Popover>
+          }
+          {!user?.organization && 
+             <Text
+               w="fit"
+               h="50px"
+               color="white"
+               bgColor="ripple.200"
+               fontFamily="Raleway-Bold"
+               fontSize="30px"
+             > No Workspace
+             </Text>
+          }
         </Box>
         <Spacer />
         {/* Header Profile Right Side */}
