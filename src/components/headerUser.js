@@ -38,21 +38,29 @@ import Logo from "../images/RippleDEXWhite.svg"
 import ProfilePicture from "../images/RippleDEXWhite.svg"
 
 import ProfileSettings from "./settings/profileSettings"
+import { get } from "@firebase/database"
 
 const HeaderUser = ({ siteTitle }) => {
   const { isOpen, onOpen, onClose } = useDisclosure()
   const [user, setUser] = useState(null)
+  const [lastOrg, setLastOrg] = useState(null)
   const [tab, setTab] = useState(0)
 
   useEffect(() => {
     onAuthLoad(
-      loggedUser => {
+      async loggedUser => {
         console.log(loggedUser.uid)
-        getUser(loggedUser.uid).then(userData => setUser(userData))
+        const user = await getUser(loggedUser.uid)
+        setUser(user)
+        const org = await getOrganization(user?.lastOpenedOrganization)
+        setLastOrg(org)
       },
       () => navigate("/")
     )
   }, [])
+  // useEffect(() => {
+  //   setLastOrg(getOrganization(user?.lastOpenedOrganization))
+  // })
 
   const clickHandler = () => {
     logout()
@@ -87,7 +95,7 @@ const HeaderUser = ({ siteTitle }) => {
           </Box>
         </a>
         <Box pl="170px">
-          {user?.lastOpenedOrganization &&
+          {lastOrg?.name  &&
             <Popover >
               <PopoverTrigger>
                 <Button
@@ -100,7 +108,7 @@ const HeaderUser = ({ siteTitle }) => {
                   _hover={{ transform: "scale(1.01)" }}
                   _active={{ bg: "ripple.200", transform: "scale(1.01)" }}
                 >
-                  {user?.lastOpenedOrganization || "loading..."}
+                  {lastOrg?.name  || "loading..."}
                   {<RiArrowDropDownLine size="50px" />}
                 </Button>
               </PopoverTrigger>
@@ -109,11 +117,11 @@ const HeaderUser = ({ siteTitle }) => {
                   <VStack spacing={5} align="start" p="8px">
                     <HStack p="15px" spacing={5}>
                       <Avatar size="md" src={Logo} />
-                      <Box textAlign="left" ml>
+                      <Box textAlign="left" ml>  
                         <Heading as="h3" size="md">
-                          {user?.lastOpenedOrganization || "loading..."}
+                          {lastOrg?.name || "loading..."}
                         </Heading>
-                        <Text color="gray">{user?.org_I || "loading..."}</Text>
+                        <Text color="gray">Id: {user?.lastOpenedOrganization || "loading..."}</Text>
                       </Box>
                     </HStack>
 
@@ -124,7 +132,7 @@ const HeaderUser = ({ siteTitle }) => {
                         transform: "scale(1.08)",
                       }}
                     >
-                      <Link to="/Invite"> Invite people to {user?.lastOpenedOrganization || "loading..."}</Link>
+                      <Link to="/Invite"> Invite people to {lastOrg?.name || "loading..."}</Link>
                     </Button>
                     <Button
                       bgColor="white"
