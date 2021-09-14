@@ -61,7 +61,7 @@ const Workspace = (props) => {
       handleLoad()
       event.preventDefault()
       const validUser = await createNewOrganization(userID, orgName, orgDesc)
-      if (validUser == null) {
+      if (validUser === null) {
         // Failed to create Organization
         setLoading(false)
         toast({
@@ -106,9 +106,16 @@ const Workspace = (props) => {
                 />
               </Box>
               <Box pt="20px">
+              {!user?.lastOpenedOrganization && 
                 <Text fontSize="35px" color="grey" align="center" opacity = "0.5" fontFamily="Nunito-Bold" variant="solid"> 
                 You don’t have an active workspace at <br/>the moment
                 </Text>
+              }
+              {user?.lastOpenedOrganization && 
+                <Text fontSize="35px" color="grey" align="center" opacity = "0.5" fontFamily="Nunito-Bold" variant="solid"> 
+               Add another organization<br/>to the workspace
+                </Text>
+              }
               </Box>
               <Box h="50px">
                 <Button
@@ -169,6 +176,7 @@ const Workspace = (props) => {
                                       Company / Workspace Name
                                     </Text>
                                     <Input
+                                      isRequired = "true"
                                       w = "90%"
                                       size = "lg"
                                       variant="outline"
@@ -182,6 +190,7 @@ const Workspace = (props) => {
                                       Company Description
                                     </Text>
                                     <Input
+                                      isRequired = "true"
                                       w = "90%"
                                       size = "lg"
                                       variant="outline"

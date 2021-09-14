@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react"
 import PropTypes from "prop-types"
 import { onAuthLoad, logout } from "../utils/AuthFunctions"
 import { getUser, updateUser } from "../models/User"
+import { getOrganization } from "../models/Organisation"
 import { Link } from "gatsby"
 import { navigate } from "gatsby-link"
 
@@ -86,7 +87,7 @@ const HeaderUser = ({ siteTitle }) => {
           </Box>
         </a>
         <Box pl="170px">
-          {user?.organization &&
+          {user?.lastOpenedOrganization &&
             <Popover >
               <PopoverTrigger>
                 <Button
@@ -99,7 +100,7 @@ const HeaderUser = ({ siteTitle }) => {
                   _hover={{ transform: "scale(1.01)" }}
                   _active={{ bg: "ripple.200", transform: "scale(1.01)" }}
                 >
-                  {user?.organization || "loading..."}
+                  {user?.lastOpenedOrganization || "loading..."}
                   {<RiArrowDropDownLine size="50px" />}
                 </Button>
               </PopoverTrigger>
@@ -110,7 +111,7 @@ const HeaderUser = ({ siteTitle }) => {
                       <Avatar size="md" src={Logo} />
                       <Box textAlign="left" ml>
                         <Heading as="h3" size="md">
-                          {user?.organization || "loading..."}
+                          {user?.lastOpenedOrganization || "loading..."}
                         </Heading>
                         <Text color="gray">{user?.org_I || "loading..."}</Text>
                       </Box>
@@ -123,7 +124,7 @@ const HeaderUser = ({ siteTitle }) => {
                         transform: "scale(1.08)",
                       }}
                     >
-                      <Link to="/Invite"> Invite people to {user?.organization || "loading..."}</Link>
+                      <Link to="/Invite"> Invite people to {user?.lastOpenedOrganization || "loading..."}</Link>
                     </Button>
                     <Button
                       bgColor="white"
@@ -151,7 +152,7 @@ const HeaderUser = ({ siteTitle }) => {
               </PopoverContent>
             </Popover>
           }
-          {!user?.organization && 
+          {!user?.lastOpenedOrganization && 
              <Text
                w="fit"
                h="50px"
