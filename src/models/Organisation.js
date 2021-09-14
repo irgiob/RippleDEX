@@ -42,10 +42,24 @@ export const inviteToOrganization = async (email, orgID, position) => {
         position, position
     })
     const docSnap = await getDoc(docRef)
-    return docSnap.data()
+    return docSnap.id()
 }
 
 
+/**
+ * invite a new individual to gain access to the organization
+ * @param {String} inviteID of the new member in the organization
+ */
+
+export const getInvite = async (inviteID) => {
+    const docRef = doc(db, "invites", inviteID)
+    return getDoc(docRef).then((invite) => {
+        return invite.data()
+    }).catch((error) => {
+        console.error("Error getting invite: ", error);
+        return null
+    });
+}
 /**
  * adds a user to an organization
  * 
