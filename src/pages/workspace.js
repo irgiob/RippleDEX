@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react"
 import { onAuthLoad, logout } from "../utils/AuthFunctions"
 import { getUser } from "../models/User"
-import { createNewOrganization } from "../models/Organisation"
+import { createNewOrganization, inviteToOrganization, getInvite } from "../models/Organisation"
 import { navigate } from "gatsby-link"
 import Layout from "../components/layout"
 
@@ -52,7 +52,11 @@ const Workspace = (props) => {
    
     const [orgName, setOrgName] = useState("")
     const [orgDesc, setOrgDesc] = useState("")
-  
+    // const [emails, setEmails] = useState([null, null, null, null])
+    const [email_1, setEmail_1] = useState("")
+    const [email_2, setEmail_2] = useState("")
+    const [email_3, setEmail_3] = useState("")
+    const [email_4, setEmail_4] = useState("")
     const [loading, setLoading] = React.useState(false)
     const handleLoad = () => setLoading(true)
     const toast = useToast()
@@ -60,8 +64,26 @@ const Workspace = (props) => {
     const handleSubmit = async event => {
       handleLoad()
       event.preventDefault()
-      const validUser = await createNewOrganization(userID, orgName, orgDesc)
-      if (validUser === null) {
+      const orgID = await createNewOrganization(userID, orgName, orgDesc)
+      if (orgID){
+        if(email_1 != "" ){
+          const member_1 = await inviteToOrganization(email_1, orgID?.id, "member")
+          getInvite(member_1)
+        }
+        if(email_1!= ""){
+          const member_2 = await inviteToOrganization(email_2, orgID?.id, "member")
+          getInvite(member_2)
+        }
+        if(email_3 != ""){
+          const member_3 = await inviteToOrganization(email_3, orgID?.id, "member")
+          getInvite(member_3)
+        }
+        if(email_4 != ""){
+          const member_4 = await inviteToOrganization(email_4, orgID?.id, "member")
+          getInvite(member_4)
+        }
+      }
+      if (orgID === null) {
         // Failed to create Organization
         setLoading(false)
         toast({
@@ -210,6 +232,8 @@ const Workspace = (props) => {
                                       variant="outline"
                                       type="text"
                                       placeholder="Email"
+                                      name="Emails"
+                                      onChange={event => setEmail_1(event.target.value)}
                                     />
                                   </Box>
                                   <Box pt="100px" pb="80px" height="80px">
@@ -219,6 +243,8 @@ const Workspace = (props) => {
                                       variant="outline"
                                       type="text"
                                       placeholder="Email"
+                                      name="Emails"
+                                      onChange={event => setEmail_2(event.target.value)}
                                     />
                                   </Box>
                                   <Box  height="80px">
@@ -228,6 +254,8 @@ const Workspace = (props) => {
                                       variant="outline"
                                       type="text"
                                       placeholder="Email"
+                                      name="Emails"
+                                      onChange={event => setEmail_3(event.target.value)}
                                     />
                                   </Box>
                                   <Box height="80px">
@@ -237,6 +265,8 @@ const Workspace = (props) => {
                                       variant="outline"
                                       type="text"
                                       placeholder="Email"
+                                      name="Emails"
+                                      onChange={event => setEmail_4(event.target.value)}
                                     />
                                   </Box>
                                   {/* create Workspace button */}

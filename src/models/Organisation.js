@@ -42,7 +42,7 @@ export const inviteToOrganization = async (email, orgID, position) => {
         position, position
     })
     const docSnap = await getDoc(docRef)
-    return docSnap.id()
+    return docSnap.id
 }
 
 
