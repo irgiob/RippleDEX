@@ -45,9 +45,11 @@ import {
   BiTrash,
   BiSearch,
 } from "react-icons/bi"
+import UploadImageButton from "../uploadImageButton"
 
 const ProfileSettings = props => {
   const [isLargeSize] = useMediaQuery("(min-width: 42em)")
+
 
   return (
     <Modal size="3xl" isCentered isOpen={props.isOpen} onClose={props.onClose}>
@@ -153,11 +155,17 @@ const ProfileTab = props => {
   const [phoneNumber, setPhoneNumber] = useState(props.user.phoneNumber)
   const toast = useToast()
 
+  const [photoUrl, setPhotoUrl] = useState("")
+  const changePhotoUrl = (newUrl) => {
+    setPhotoUrl(newUrl)
+  }
+
   const handleClick = () => {
     updateUser(props.user.id, {
       firstName: firstName,
       lastName: lastName,
-      phoneNumber: phoneNumber
+      phoneNumber: phoneNumber,
+      profilePicture: photoUrl
     }).then((user) => {
       props.setUser(user)
       toast({
@@ -231,22 +239,24 @@ const ProfileTab = props => {
         <Spacer />
         <VStack spacing={0}>
           <Center h="200px" w="200px" bgColor="ripple.100">
-            <Image src={props.user.profilePicture || ProfilePicture} boxSize="200px"/>
+            <Image src={photoUrl || ProfilePicture} boxSize="200px"/>
           </Center>
           <Box h="10px" />
           <HStack spacing={1}>
-            <Button
-              color="ripple.200"
-              fontFamily="Raleway-Bold"
-              borderRadius="20px"
-              variant="ghost"
-              size="sm"
-              _hover={{
-                transform: "scale(1.08)",
-              }}
-            >
-              Change Profile Picture
-            </Button>
+            <UploadImageButton
+              style={{
+                color: "ripple.200",
+                fontFamily: "Raleway-Bold",
+                borderRadius: "20px",
+                variant: "ghost",
+                size: "sm",
+                _hover: {
+                  transform: "scale(1.08)"
+                }}
+              }
+              buttonMessage="Change Profile Picture"
+              changeUrl={changePhotoUrl}
+            />
             <Circle
               _hover={{
                 transform: "scale(1.2)",

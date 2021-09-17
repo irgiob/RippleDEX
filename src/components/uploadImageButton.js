@@ -53,10 +53,12 @@ const uploadFile = (reference, file) => {
 }
 
 /**
- * @params
+ * 
  * Sets the image state as the file selected
- * Pass in changeUrl prop which contains a function to set the URL state
- * Pass in buttonText prop for text in the button
+ * Props:
+ * @property {funcion} changeUrl prop which contains a function to set the URL state 
+ * @property {string} buttonText prop for text in the button 
+ * @property {object} style prop for button style 
  */
 const UploadImageButton = (props) => {
 
@@ -154,7 +156,7 @@ const UploadImageButton = (props) => {
 
   return (
     <>
-      <Button onClick={onOpen}>{props.buttonMessage}</Button>
+      <Button style={props.style} onClick={onOpen}>{props.buttonMessage}</Button>
       <Modal
         isOpen={isOpen} 
         onClose={onClose}
