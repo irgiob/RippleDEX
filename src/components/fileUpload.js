@@ -9,8 +9,10 @@ import {
   Center,
   Image,
   VStack,
+  Progress,
   HStack,
 } from "@chakra-ui/react"
+
 
 import firebase from "../../plugins/gatsby-plugin-firebase-custom"
 import {
@@ -22,6 +24,7 @@ import {
 
 import Pic from "../images/Upload/upload.png"
 import { FiUpload } from "react-icons/fi"
+import { MdCancel } from "react-icons/md"
 
 const storage = getStorage(firebase) // Middleware for firebase storage
 
@@ -52,7 +55,9 @@ const UploadImageButton = () => {
   const [inProgress, setInProgress] = useState(false)
   const [isUploaded, setUploaded] = useState(false)
 
+
   const reference = "images" // the folder path in the firestore storage
+  // const [uploadTask, setTask] = useState(null);
 
   // Handler for when the user selects a file
   const onImageChange = e => {
@@ -72,25 +77,41 @@ const UploadImageButton = () => {
     }
   }
 
+  // Handle when file upload button is clicked
   const handleClick = () => {
     const uploadTask = uploadFile(reference, image)
     if (uploadTask == null) {
       alert("Make sure file is uploaded")
       return
     }
+    setInProgress(true)
     uploadTask.on(
       "state_changed",
 
       // Observer state when image is uploading
       snapshot => {
-        setInProgress(true)
         const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100
         setProgress(progress)
       },
 
       // File upload has failed
       error => {
-        console.log(error)
+        
+        switch (error.code) {
+          case 'storage/unauthorized':
+            // User doesn't have permission to access the object
+            break;
+          case 'storage/canceled':
+            // User canceled the upload
+            console.log("Upload canceled")
+            break;
+          case 'storage/unknown':
+            // Unknown error occurred, inspect error.serverResponse
+            break;
+        }
+
+        setProgress(false)
+        setUploaded(false)
       },
 
       // File upload is successfull
@@ -153,14 +174,14 @@ const UploadImageButton = () => {
               value="Upload file"
               type="Submit"
               disabled={!isSelected}
-              hidden={!isSelected}
+              hidden={!isSelected || inProgress}
               onClick={handleClick}
             >
               Upload File
             </Button>
-            <CircularProgress value={progress} max="100" hidden={!inProgress} />
           </VStack>
         </Box>
+        <Progress value={progress} max="100" colorScheme="cyan" />
       </Box>
     </>
   )
