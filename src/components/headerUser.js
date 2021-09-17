@@ -18,9 +18,7 @@ import {
   Popover,
   PopoverTrigger,
   PopoverContent,
-  PopoverHeader,
   PopoverBody,
-  PopoverFooter,
   AvatarBadge,
   Avatar,
   Heading,
@@ -38,7 +36,6 @@ import Logo from "../images/RippleDEXWhite.svg"
 import ProfilePicture from "../images/RippleDEXWhite.svg"
 
 import ProfileSettings from "./settings/profileSettings"
-import { get } from "@firebase/database"
 
 const HeaderUser = ({ siteTitle }) => {
   const { isOpen, onOpen, onClose } = useDisclosure()
@@ -49,18 +46,16 @@ const HeaderUser = ({ siteTitle }) => {
   useEffect(() => {
     onAuthLoad(
       async loggedUser => {
-        console.log(loggedUser.uid)
         const user = await getUser(loggedUser.uid)
         setUser(user)
-        const org = await getOrganization(user?.lastOpenedOrganization)
-        setLastOrg(org)
+        if (user.lastOpenedOrganization) {
+          const org = await getOrganization(user.lastOpenedOrganization)
+          setLastOrg(org)
+        } 
       },
       () => navigate("/")
     )
   }, [])
-  // useEffect(() => {
-  //   setLastOrg(getOrganization(user?.lastOpenedOrganization))
-  // })
 
   const clickHandler = () => {
     logout()
