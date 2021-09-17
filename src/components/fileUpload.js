@@ -9,6 +9,7 @@ import {
   Center,
   Image,
   VStack,
+  HStack,
 } from "@chakra-ui/react"
 
 import firebase from "../../plugins/gatsby-plugin-firebase-custom"
@@ -139,27 +140,27 @@ const UploadImageButton = () => {
           <Text hidden={isSelected} color="gray.400">
             Choose a file or drag it here
           </Text>
-          <Button
-            bgColor="ripple.200"
-            color="white"
-            fontFamily="Raleway-Bold"
-            borderRadius="30px"
-            variant="solid"
-            size="md"
-            leftIcon={<FiUpload />}
-            _hover={{ transform: "scale(1.05)" }}
-            value="Upload file"
-            type="Submit"
-            disabled={!isSelected}
-            hidden={!isSelected}
-            onClick={handleClick}
-          >
-            {" "}
-            Upload File{" "}
-          </Button>
+          <VStack>
+            <Button
+              bgColor="ripple.200"
+              color="white"
+              fontFamily="Raleway-Bold"
+              borderRadius="30px"
+              variant="solid"
+              size="md"
+              leftIcon={<FiUpload />}
+              _hover={{ transform: "scale(1.05)" }}
+              value="Upload file"
+              type="Submit"
+              disabled={!isSelected}
+              hidden={!isSelected}
+              onClick={handleClick}
+            >
+              Upload File
+            </Button>
+            <CircularProgress value={progress} max="100" hidden={!inProgress} />
+          </VStack>
         </Box>
-        <CircularProgress value={progress} max="100" hidden={!inProgress} />
-        <Image hidden={!isUploaded} src={uploadedURL} alt="Uploaded image" />
       </Box>
     </>
   )
