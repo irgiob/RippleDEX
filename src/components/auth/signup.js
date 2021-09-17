@@ -1,10 +1,6 @@
 import React, { useState, useEffect } from "react"
-// import { Form, Button, Card, Alert } from "react-bootstrap";
-import { signup, isLoggedIn } from "../../utils/AuthFunctions"
+import { signup } from "../../utils/AuthFunctions"
 import { navigate } from "gatsby"
-
-import firebase from "../../../plugins/gatsby-plugin-firebase-custom"
-import { getAuth, onAuthStateChanged } from "firebase/auth"
 
 import {
   Box,
@@ -15,10 +11,9 @@ import {
   useToast,
 } from "@chakra-ui/react"
 
-import { MdError } from "react-icons/md"
-
 const SignUp = () => {
-  const [userName, setUserName] = useState("")
+  const [userFirstName, setUserFirstName] = useState("")
+  const [userLastName, setUserLastName] = useState("")
   const [userEmail, setUserEmail] = useState("")
   const [userPassword, setUserPassword] = useState("")
 
@@ -30,22 +25,13 @@ const SignUp = () => {
 
   const toast = useToast()
 
-  useEffect(() => {
-    const auth = getAuth(firebase)
-    onAuthStateChanged(auth, user => {
-      if (user) {
-        navigate("/dashboard")
-      }
-    })
-  }, [])
-
   const handleSubmit = async event => {
     handleLoad()
     event.preventDefault()
-    const uid = await signup(userName, userEmail, userPassword, null)
+    const uid = await signup(userFirstName, userLastName, userEmail, userPassword, null)
     if (uid == null) {
       // Fail to signup
-      navigate(`/accerror`)
+      setLoading(false)
       toast({
         title: "Failed to create an account",
         description: "Please try again",
@@ -70,10 +56,18 @@ const SignUp = () => {
       <form method="post">
         <Input
           variant="outline"
-          placeholder="Full Name"
+          placeholder="First Name"
           type="text"
-          name="name"
-          onChange={event => setUserName(event.target.value)}
+          name="firstName"
+          onChange={event => setUserFirstName(event.target.value)}
+        />
+        <Box h="20px" />
+        <Input
+          variant="outline"
+          placeholder="Last Name"
+          type="text"
+          name="lastName"
+          onChange={event => setUserLastName(event.target.value)}
         />
         <Box h="20px" />
         <Input

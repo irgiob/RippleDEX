@@ -48,3 +48,7 @@ TO DO:
 
 Feel free to add more
 
+## Testing
+
+`npm install`
+`npm test`

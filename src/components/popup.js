@@ -28,11 +28,10 @@ const PopUp = ({ isOpen, onClose, type }) => {
   const onClosePopup = useDisclosure()
 
   return (
-    <Modal isOpen={isOpen} onClose={onClose}>
+    <Modal isCentered isOpen={isOpen} onClose={onClose}>
       <ModalOverlay />
       <ModalContent
         pos="absolute"
-        top="15vh"
         maxW={!isLargeSize ? "90vw" : "500px"}
         borderRadius="20px"
         p="20px"

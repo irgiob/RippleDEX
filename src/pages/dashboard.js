@@ -5,8 +5,8 @@ import Seo from "../components/seo"
 
 import { Heading } from "@chakra-ui/react"
 
-const Dashboard = () => (
-  <Layout>
+const Dashboard = (props) => (
+  <Layout location={props.location}>
     <Seo title="Dashboard" />
     <Heading>Welcome to your Dashboard</Heading>
   </Layout>

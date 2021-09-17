@@ -1,6 +1,6 @@
 import firebase from "../../plugins/gatsby-plugin-firebase-custom"
-import {getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, GoogleAuthProvider, signInWithPopup, signOut} from "firebase/auth";
-import { createNewUser } from "../models/User"
+import {getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged} from "firebase/auth";
+import { createNewUser, doesUserExist, updateUser } from "../models/User"
 
 /**
  * @param {String} name
@@ -9,12 +9,12 @@ import { createNewUser } from "../models/User"
  * @param {String} phoneNumber
  * @returns {User} User ID, if doesnt exists returns null
  */
-export async function signup(name, email, password,phoneNumber) {
+export async function signup(firstName, lastName, email, password, phoneNumber) {
   const auth = getAuth(firebase)
   return createUserWithEmailAndPassword(auth, email, password)
   .then( (userCredential) => {
     const userID = userCredential.user.uid
-    return createNewUser(name, userID, email, phoneNumber)
+    return createNewUser(firstName, lastName, userID, email, phoneNumber)
   })
   .catch((error) => { 
     return null 
@@ -43,31 +43,48 @@ export async function login(email, password) {
 }
 
 /**
+ * runs callback function on user load
  * 
- * @returns {firebase.User.uid} current user ID
+ * @param {function} isLoggedIn function that gets run when user loads
+ * @param {function} isNotLoggedIn function that runs if user is not logged in
  */
-export function isLoggedIn() {
+export function onAuthLoad(isLoggedIn, isNotLoggedIn) {
   const auth = getAuth(firebase)
-  console.log("A", auth.currentUser)
-  return auth.currentUser
+  var unsubscribe = onAuthStateChanged(auth, (user) => {
+    if (user) {
+      isLoggedIn(user)
+      unsubscribe()
+    } else {
+      isNotLoggedIn()
+      unsubscribe()
+    }
+  })
 }
+
 
 /**
  * Signs in using Google Account via popup
 */
 export async function signInGoogle(){
   const auth = getAuth(firebase)
-  const provider = new GoogleAuthProvider();
+  const provider = new GoogleAuthProvider()
   return signInWithPopup(auth, provider)
-  .then( (result) => {
-    const userID = result.user.uid;
-    console.log("Google log in")
-    console.log(userID);
+  .then( async (result) => {
+    const userID = result.user.uid
+    const firstName = result.user.displayName.split(' ').slice(0, -1).join(' ')
+    const lastName = result.user.displayName.split(' ').slice(-1).join(' ')
+    const email = result.user.email
+    const number = result.user.phoneNumber
+    const profilePicture = result.user.photoURL.split("=")[0] + "=s400-c" 
+    if (!(await doesUserExist(userID))) {
+      await createNewUser(firstName, lastName, userID, email, number)
+      await updateUser(userID, {profilePicture: profilePicture})
+    }
     return userID;
   })
   .catch( (err) => {
     console.log(err)
-    return null;
+    return null
   })
 }
 

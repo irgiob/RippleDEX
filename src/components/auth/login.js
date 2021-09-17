@@ -1,9 +1,6 @@
 import React, { useState, useEffect } from "react"
-import { login, isLoggedIn, signInGoogle } from "../../utils/AuthFunctions"
+import { login, signInGoogle } from "../../utils/AuthFunctions"
 import { navigate } from "gatsby"
-
-import firebase from "../../../plugins/gatsby-plugin-firebase-custom"
-import { getAuth, onAuthStateChanged } from "firebase/auth"
 
 import {
   Box,
@@ -29,15 +26,6 @@ const Login = () => {
 
   const toast = useToast()
 
-  useEffect(() => {
-    const auth = getAuth(firebase)
-    onAuthStateChanged(auth, user => {
-      if (user) {
-        navigate("/dashboard")
-      }
-    })
-  }, [])
-
   const handleSubmit = async event => {
     handleLoad()
     event.preventDefault()
@@ -47,7 +35,7 @@ const Login = () => {
       // Fail to login
       setUserEmail("")
       setUserPassword("")
-      navigate(`/logerror`)
+      setLoading(false)
       toast({
         title: "Failed to Login",
         description: "Please try again",
@@ -72,7 +60,7 @@ const Login = () => {
     console.log(uid)
     if (uid == null) {
       // Fail to login
-      navigate(`/logerror`)
+      setLoading(false)
       toast({
         title: "Failed to Login",
         description: "Please try again",
