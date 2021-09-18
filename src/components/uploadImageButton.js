@@ -147,7 +147,17 @@ const UploadImageButton = (props) => {
 
   return (
     <>
-      <Button style={props.style} onClick={onOpen}>{props.buttonMessage}</Button>
+      <Button 
+        color={props.color}
+        fontFamily={props.fontFamily}
+        borderRadius={props.borderRadius}
+        variant={props.variant}
+        size={props.size}
+        _hover={props._hover}
+        onClick={onOpen}
+      >
+        {props.buttonMessage}
+      </Button>
       <Modal
         isOpen={isOpen} 
         onClose={onClose}

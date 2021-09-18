@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react"
+import React, { useState } from "react"
 import { updateUser } from "../../models/User"
 
 import {
@@ -45,6 +45,7 @@ import {
   BiSearch,
 } from "react-icons/bi"
 import UploadImageButton from "../uploadImageButton"
+import { updateMemberPosition, updateOrganization } from "../../models/Organisation"
 
 const ProfileSettings = props => {
   return (
@@ -110,22 +111,29 @@ const ProfileSettings = props => {
                   <Spacer />
                 </HStack>
               </Tab>
-              <Tab
-                _selected={{
-                  borderRadius: "10px",
-                  color: "white",
-                  bg: "ripple.200",
-                }}
-              >
-                <HStack>
-                  <BiBuildings />
-                  <Text>Organizations</Text>
-                </HStack>
-              </Tab>
+              {props.org?.admin === props.user?.id &&
+                <Tab
+                  _selected={{
+                    borderRadius: "10px",
+                    color: "white",
+                    bg: "ripple.200",
+                  }}
+                >
+                  <HStack>
+                    <BiBuildings />
+                    <Text>Organizations</Text>
+                  </HStack>
+                </Tab>
+              }
             </TabList>
             <TabPanels pl="5px" pr="5px">
               <TabPanel>
-                <ProfileTab user={props.user} setUser={props.setUser}/>
+                <ProfileTab 
+                  user={props.user} 
+                  setUser={props.setUser}
+                  org={props.org}
+                  setOrg={props.setOrg}
+                />
               </TabPanel>
               <TabPanel>
                 <NotificationsTab user={props.user} setUser={props.setUser}/>
@@ -134,7 +142,7 @@ const ProfileSettings = props => {
                 <p>Coming Soon!</p>
               </TabPanel>
               <TabPanel>
-                <OrganizationsTab />
+                <OrganizationsTab org={props.org} setOrg={props.setOrg}/>
               </TabPanel>
             </TabPanels>
           </Tabs>
@@ -145,31 +153,51 @@ const ProfileSettings = props => {
 }
 
 const ProfileTab = props => {
-  const [firstName, setFirstName] = useState(props.user.firstName)
-  const [lastName, setLastName] = useState(props.user.lastName)
-  const [position, setPosition] = useState(null)
-  const [phoneNumber, setPhoneNumber] = useState(props.user.phoneNumber)
+  const [firstName, setFirstName] = useState(props.user?.firstName)
+  const [lastName, setLastName] = useState(props.user?.lastName)
+  const [position, setPosition] = useState(props.org?.members.filter(
+    member => member.userID === props.user?.id
+  )[0].position)
+  const [phoneNumber, setPhoneNumber] = useState(props.user?.phoneNumber)
   const toast = useToast()
 
-  const [photoUrl, setPhotoUrl] = useState("")
+  const [photoUrl, setPhotoUrl] = useState(props.user?.profilePicture)
   const changePhotoUrl = (newUrl) => {
     setPhotoUrl(newUrl)
   }
 
   const handleClick = () => {
-    updateUser(props.user.id, {
+    updateUser(props.user?.id, {
       firstName: firstName,
       lastName: lastName,
       phoneNumber: phoneNumber,
       profilePicture: photoUrl
     }).then((user) => {
       props.setUser(user)
-      toast({
-        title: "Success",
-        description: "Your details have been updated",
-        status: "success",
-        duration: 5000,
-        isClosable: true,
+      updateMemberPosition(
+        props.org?.id, 
+        props.user?.id, 
+        props.org?.members.filter(
+          member => member.userID === props.user?.id
+        )[0].position,
+        position
+      ).then((org) => {
+        props.setOrg(org)
+        toast({
+          title: "Success",
+          description: "Your details have been updated",
+          status: "success",
+          duration: 5000,
+          isClosable: true,
+        })
+      }).catch((error) => {
+        toast({
+          title: "Failed to update details",
+          description: error,
+          status: "error",
+          duration: 5000,
+          isClosable: true,
+        })
       })
     }).catch((error) => {
       toast({
@@ -235,21 +263,17 @@ const ProfileTab = props => {
         <Spacer />
         <VStack spacing={0}>
           <Center h="200px" w="200px" bgColor="ripple.100">
-            <Image src={photoUrl || props.user.profilePicture || ProfilePicture} boxSize="200px"/>
+            <Image src={photoUrl || props.user?.profilePicture || ProfilePicture} boxSize="200px"/>
           </Center>
           <Box h="10px" />
           <HStack spacing={1}>
             <UploadImageButton
-              style={{
-                color: "ripple.200",
-                fontFamily: "Raleway-Bold",
-                borderRadius: "20px",
-                variant: "ghost",
-                size: "sm",
-                _hover: {
-                  transform: "scale(1.08)"
-                }}
-              }
+              color="ripple.200"
+              fontFamily="Raleway-Bold"
+              borderRadius="20px"
+              variant="ghost"
+              size="sm"
+              _hover={{ transform: "scale(1.08)" }}
               buttonMessage="Change Profile Picture"
               changeUrl={changePhotoUrl}
             />
@@ -283,16 +307,19 @@ const ProfileTab = props => {
 }
 
 const NotificationsTab = props => {
-  const notificationMode = props.user.notificationMode
+  const notificationMode = props.user?.notificationMode
   const [switch1, setSwitch1] = useState(parseInt(notificationMode.substr(0,1)))
   const [switch2, setSwitch2] = useState(parseInt(notificationMode.substr(1,1)))
   const [radio, setRadio] = useState(parseInt(notificationMode.substr(2,1)))
 
-  useEffect(()=>{
-    updateUser(props.user.id, {
-      notificationMode: switch1.toString() + switch2.toString() + radio.toString() 
+  const updateNotifs = (switch1Val, switch2Val, radioVal) => {
+    updateUser(props.user?.id, {
+      notificationMode: switch1Val.toString() + switch2Val.toString() + radioVal.toString() 
     }).then((updatedUser) => props.setUser(updatedUser))
-  },[switch1, switch2, radio, props])
+    setSwitch1(switch1Val)
+    setSwitch2(switch2Val)
+    setRadio(radioVal)
+  }
 
   return (
     <VStack spacing={3} align="start">
@@ -301,7 +328,7 @@ const NotificationsTab = props => {
         <Switch 
           colorScheme="green" 
           isChecked={switch1}
-          onChange={() => setSwitch1(switch1 ? 0 : 1)}
+          onChange={(e) => { updateNotifs(switch1 ? 0 : 1, switch2, radio) }}
         />
         <Text>New Meetings</Text>
       </HStack>
@@ -309,7 +336,7 @@ const NotificationsTab = props => {
         <Switch 
           colorScheme="green" 
           isChecked={switch2}
-          onChange={() => setSwitch2(switch2 ? 0 : 1)}
+          onChange={(e) => { updateNotifs(switch1, switch2 ? 0 : 1, radio) }}
         />
         <Text>New Members</Text>
       </HStack>
@@ -318,10 +345,12 @@ const NotificationsTab = props => {
       <RadioGroup 
         colorScheme="green" 
         value={radio.toString()} 
-        onChange={setRadio}
+        onChange={(e) => { updateNotifs(switch1, switch2, e) }}
       >
         <Stack spacing={3}>
-          <Radio value="1">Send Notifications Live</Radio>
+          <Radio value="1">
+            Send Notifications Live
+          </Radio>
           <Radio value="2">
             Send Notifications as Daily Digest at the start of the next day
           </Radio>
@@ -336,6 +365,36 @@ const NotificationsTab = props => {
 }
 
 const OrganizationsTab = props => {
+  const [orgName, setOrgName] = useState(props.org.name)
+  const [orgDesc, setOrgDesc] = useState(props.org.description)
+  const [photoUrl, setPhotoUrl] = useState(props.user?.profilePicture)
+  const toast = useToast()
+
+  const handleClick = () => {
+    updateOrganization(props.org.id, {
+      name: orgName,
+      description: orgDesc,
+      profilePicture: photoUrl
+    }).then((org) => {
+      props.setOrg(org)
+      toast({
+        title: "Success",
+        description: "Organization details have been updated",
+        status: "success",
+        duration: 5000,
+        isClosable: true,
+      })
+    }).catch((error) => {
+      toast({
+        title: "Failed to update details",
+        description: error,
+        status: "error",
+        duration: 5000,
+        isClosable: true,
+      })
+    })
+  } 
+
   return (
     <VStack>
       <HStack align="start" spacing={4}>
@@ -344,7 +403,25 @@ const OrganizationsTab = props => {
             <Text color="ripple.200" pb="5px" fontSize="12px">
               Workspace Name
             </Text>
-            <Input variant="outline" placeholder="First Name" type="text" />
+            <Input 
+              variant="outline" 
+              placeholder="Organization Name" 
+              type="text" 
+              value={orgName}
+              onChange={(e) => setOrgName(e.target.value)}
+            />
+          </Box>
+          <Box textAlign="left" w="300px">
+            <Text color="ripple.200" pb="5px" fontSize="12px">
+              Workspace Description
+            </Text>
+            <Input 
+              variant="outline" 
+              placeholder="Organization Description" 
+              type="text" 
+              value={orgDesc}
+              onChange={(e) => setOrgDesc(e.target.value)}
+            />
           </Box>
           <Box textAlign="left" w="300px">
             <HStack>
@@ -364,7 +441,7 @@ const OrganizationsTab = props => {
               <Input type="text" placeholder="Search" />
             </InputGroup>
           </Box>
-          <Box padding="6" w="100%">
+          <Box w="100%">
             <SkeletonCircle size="10" />
             <SkeletonText mt="4" noOfLines={4} spacing="4" />
           </Box>
@@ -372,11 +449,11 @@ const OrganizationsTab = props => {
         <Spacer />
         <VStack spacing={0}>
           <Center h="200px" w="200px" bgColor="ripple.100">
-            <Image src={ProfilePicture} />
+            <Image src={photoUrl || props.org?.profilePicture || ProfilePicture} />
           </Center>
           <Box h="10px" />
           <HStack spacing={1}>
-            <Button
+            <UploadImageButton
               color="ripple.200"
               fontFamily="Raleway-Bold"
               borderRadius="20px"
@@ -385,14 +462,10 @@ const OrganizationsTab = props => {
               _hover={{
                 transform: "scale(1.08)",
               }}
-            >
-              Change Workspace Icon
-            </Button>
-            <Circle
-              _hover={{
-                transform: "scale(1.2)",
-              }}
-            >
+              buttonMessage="Change Workspace Icon"
+              changeUrl={setPhotoUrl}
+            />
+            <Circle _hover={{ transform: "scale(1.2)" }}>
               <BiTrash style={{ color: "red" }} />
             </Circle>
           </HStack>
@@ -407,6 +480,7 @@ const OrganizationsTab = props => {
             _hover={{
               transform: "scale(1.05)",
             }}
+            onClick={handleClick}
           >
             Save Changes
           </Button>
