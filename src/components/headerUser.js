@@ -40,7 +40,7 @@ import ProfileSettings from "./settings/profileSettings"
 const HeaderUser = ({ siteTitle }) => {
   const { isOpen, onOpen, onClose } = useDisclosure()
   const [user, setUser] = useState(null)
-  const [lastOrg, setLastOrg] = useState(null)
+  const [org, setOrg] = useState(null)
   const [tab, setTab] = useState(0)
 
   useEffect(() => {
@@ -50,7 +50,7 @@ const HeaderUser = ({ siteTitle }) => {
         setUser(user)
         if (user.lastOpenedOrganization) {
           const org = await getOrganization(user.lastOpenedOrganization)
-          setLastOrg(org)
+          setOrg(org)
         } 
       },
       () => navigate("/")
@@ -90,7 +90,7 @@ const HeaderUser = ({ siteTitle }) => {
           </Box>
         </a>
         <Box pl="170px">
-          {lastOrg?.name  &&
+          {org?.name  &&
             <Popover >
               <PopoverTrigger>
                 <Button
@@ -103,7 +103,7 @@ const HeaderUser = ({ siteTitle }) => {
                   _hover={{ transform: "scale(1.01)" }}
                   _active={{ bg: "ripple.200", transform: "scale(1.01)" }}
                 >
-                  {lastOrg?.name  || "loading..."}
+                  {org?.name  || "loading..."}
                   {<RiArrowDropDownLine size="50px" />}
                 </Button>
               </PopoverTrigger>
@@ -114,7 +114,7 @@ const HeaderUser = ({ siteTitle }) => {
                       <Avatar size="md" src={Logo} />
                       <Box textAlign="left" ml>  
                         <Heading as="h3" size="md">
-                          {lastOrg?.name || "loading..."}
+                          {org?.name || "loading..."}
                         </Heading>
                         <Text color="gray">Id: {user?.lastOpenedOrganization || "loading..."}</Text>
                       </Box>
@@ -127,9 +127,9 @@ const HeaderUser = ({ siteTitle }) => {
                         transform: "scale(1.08)",
                       }}
                     >
-                      <Link to="/Invite"> Invite people to {lastOrg?.name || "loading..."}</Link>
+                      <Link to="/Invite"> Invite people to {org?.name || "loading..."}</Link>
                     </Button>
-                    <Button
+                    {org.admin == user.id &&  <Button
                       bgColor="white"
                       _hover={{
                         transform: "scale(1.08)",
@@ -139,7 +139,7 @@ const HeaderUser = ({ siteTitle }) => {
                       }}
                     >
                       Settings & Administration
-                    </Button>
+                    </Button>}
                     <Divider />
                     <Button
                       bgColor="white"
