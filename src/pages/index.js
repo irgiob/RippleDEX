@@ -1,4 +1,5 @@
-import * as React from "react"
+import React, { useEffect } from "react"
+import { onAuthLoad } from "../utils/AuthFunctions"
 
 import Layout from "../components/layout"
 import Seo from "../components/seo"
@@ -7,14 +8,16 @@ import "./index.scss"
 
 import { IoIosArrowDown } from "react-icons/io"
 
-import Statistics from "../images/Statistics.png"
-import Donut from "../images/Donut.png"
-import Spring from "../images/Spring.png"
+import Statistics from "../images/HomePage/Statistics.png"
+import Donut from "../images/HomePage/Donut.png"
+import Spring from "../images/HomePage/Spring.png"
 
-import Analytics from "../images/Analytics.png"
-import Chats from "../images/Chats.png"
-import Calendar from "../images/Calendar.png"
-import Mobile from "../images/Mobile.png"
+import Analytics from "../images/HomePage/Analytics.png"
+import Chats from "../images/HomePage/Chats.png"
+import Calendar from "../images/HomePage/Calendar.png"
+import Mobile from "../images/HomePage/Mobile.png"
+
+import AuthPopUp from "../components/auth/authPopup"
 
 import {
   Box,
@@ -27,13 +30,20 @@ import {
   Button,
   Center,
   useMediaQuery,
+  useDisclosure,
 } from "@chakra-ui/react"
+import { navigate } from "gatsby-link"
 
-const IndexPage = () => {
+const IndexPage = (props) => {
   const [isLargeSize] = useMediaQuery("(min-width: 42em)")
+  const { isOpen, onOpen, onClose } = useDisclosure()
+
+  useEffect( () => {
+    onAuthLoad((user) => navigate("/dashboard"), () => {})
+  }, [])
 
   return (
-    <Layout>
+    <Layout location={props.location}>
       <Seo title="Home" />
 
       <Box
@@ -43,9 +53,13 @@ const IndexPage = () => {
         justifyContent="center"
       >
         <Center>
-          <Stack direction={["column", "row"]}>
+          <Stack direction={["column", "column", "row"]}>
             <Center>
-              <VStack maxW={["100vw", "35vw"]} p="50px" alignItems="left">
+              <VStack
+                maxW={["100vw", "100vw", "35vw"]}
+                p="50px"
+                alignItems="left"
+              >
                 <Heading
                   pb="10px"
                   fontSize={["40px", "50px"]}
@@ -59,6 +73,7 @@ const IndexPage = () => {
                 <br />
                 <HStack gridGap={15}>
                   <Button
+                    onClick={onOpen}
                     bgColor="ripple.200"
                     color="white"
                     fontFamily="Raleway-Bold"
@@ -75,6 +90,7 @@ const IndexPage = () => {
                   >
                     Sign Up
                   </Button>
+                  <AuthPopUp isOpen={isOpen} onClose={onClose} type="SignUp" />
                   <Button
                     color="ripple.200"
                     fontFamily="Raleway-Bold"
