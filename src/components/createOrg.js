@@ -69,14 +69,14 @@ const CreateOrgPopup = (props) => {
     
     return <Modal isOpen={props.isOpen} onClose={props.onClose}>
         <ModalOverlay/>
-        <ModalContent pos="absolute" h="90%" maxW="80%" borderRadius="15px">
+        <ModalContent pos="absolute" h="900px" minHeight="90%" maxW="80%" borderRadius="15px" value="inside">
             <ModalCloseButton m="15px"/>
             <Stack h="100%" direction={["column", "row"]} spacing="30px">
-                <Box w="35%" h="100%" bg = "ripple.100" borderRadius="15px 0px 0px 15px" p="35px">
+                <Box w="35%" h="full" bg = "ripple.100" borderRadius="15px 0px 0px 15px" p="35px">
                     <HStack>
                         <Image 
                             w="80px"
-                            mt = "5px"
+                            mt="5px"
                             mr="15px"
                             src={LogoWhite}
                         />
@@ -99,12 +99,12 @@ const CreateOrgPopup = (props) => {
                     </Center>
                 </Box>
                 {/* Right side of the the Organization page */}
-                <Box pt= "2em" pl="30px" w="60%" h="100%"> 
+                <Box pt= "5%" pl="30px" w="60%" h="100%"> 
                     <ModalHeader fontFamily="Raleway-Bold" fontSize="30px" color="ripple.200">
                         Register your Organization
                     </ModalHeader>
                     <form method="post">
-                        <SimpleGrid w="100%" pt="1empx" mr="15px" ml="15px" columns={2} spacing={4}>
+                        <SimpleGrid w="100%" pt="5%" mr="15px" ml="15px" columns={2} spacing={4}>
                             {/* Organization info and description here */}
                             <Box  height="80px">
                                 <Text pb="20px" fontSize="15px">Company / Workspace Name</Text>
@@ -132,7 +132,7 @@ const CreateOrgPopup = (props) => {
                             </Box>
                         </SimpleGrid>
                         {/* Invite Emails Here */}
-                        <Box pt="2em" ml="15px">
+                        <Box pt="4em" ml="15px">
                             <Text fontSize="15px">
                                 Invite Employees (You can add other employees later)
                             </Text>
@@ -174,9 +174,10 @@ const CreateOrgPopup = (props) => {
                             })}
                         </SimpleGrid>
                         {/* create Workspace button */}
-                        <Box pt = "40px">
+                        <Box pt = "6em">
                             <Button
                                 w = "50%"
+                                minW = "fit-content"
                                 h = "65px"
                                 className="here"
                                 bgColor="ripple.200"

@@ -28,7 +28,7 @@ const JoinOrgPopup = (props) => {
 
     return <Modal isOpen={props.isOpen} onClose={props.onClose}>
         <ModalOverlay/>
-        <ModalContent pos="absolute" h="90%" maxW="80%" borderRadius="15px">
+        <ModalContent pos="absolute" h="900px" minHeight="90%" maxW="80%" borderRadius="15px" value="inside">
             <ModalCloseButton m="15px"/>
             
         </ModalContent>
