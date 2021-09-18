@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from "react"
 import { navigate } from "gatsby-link"
 import PropTypes from "prop-types"
-import Header from "./header"
-import HeaderUser from "./headerUser"
+import Header from "./headers/header"
+import HeaderUser from "./headers/headerUser"
 import SideNav from "./sideNav"
 import theme from "./theme"
 import "./layout.css"
@@ -19,78 +19,81 @@ const Layout = ({ children, location }) => {
   const [org, setOrg] = useState(null)
 
   useEffect(() => {
-    onAuthLoad(
-      async loggedUser => {
-        const user = await getUser(loggedUser.uid)
-        setUser(user)
-        if (user.lastOpenedOrganization) {
-          const org = await getOrganization(user.lastOpenedOrganization)
-          setOrg(org)
-        } else {
-          navigate("/welcome")
-        }
-      },
-      () => navigate("/")
-    )
-  }, [])
-
-  const childrenWithProps = React.Children.map(children, child => {
-    if (React.isValidElement(child)) {
-      return React.cloneElement(child, { user, setUser, org, setOrg });
+    if (pathname !== '/') {
+      onAuthLoad(
+        async loggedUser => {
+          const user = await getUser(loggedUser.uid)
+          setUser(user)
+          if (user.lastOpenedOrganization) {
+            const org = await getOrganization(user.lastOpenedOrganization)
+            setOrg(org)
+          } else {
+            navigate("/welcome")
+          }
+        },
+        () => navigate("/")
+      )
     }
-    return child;
-  });
-
-  if (!user || !org) {
+  }, [])
+  
+  if (pathname === '/') {
     return (
       <ChakraProvider theme={theme}>
-        <Center h="100vh">
-          <VStack>
-            <Box>
-              <Spinner
-                thickness="1em"
-                speed="1s"
-                emptyColor="gray.200"
-                color="ripple.200"
-                w="10em"
-                h="10em"
-              />
-            </Box>
-            <Box>
-              <Text className="shimmer" fontFamily="Nunito-Bold">
-                RippleDEX is loading...
-              </Text>
-            </Box>
-          </VStack>
-        </Center>
+      <Header/>
+      <main style={{ paddingTop: "60px" }}>{children}</main>
+    </ChakraProvider>
+    )
+  } else {
+    if (!user || !org) {
+      return (
+        <ChakraProvider theme={theme}>
+          <Center h="100vh">
+            <VStack>
+              <Box>
+                <Spinner
+                  thickness="1em"
+                  speed="1s"
+                  emptyColor="gray.200"
+                  color="ripple.200"
+                  w="10em"
+                  h="10em"
+                />
+              </Box>
+              <Box>
+                <Text className="shimmer" fontFamily="Nunito-Bold">
+                  RippleDEX is loading...
+                </Text>
+              </Box>
+            </VStack>
+          </Center>
+        </ChakraProvider>
+      )
+    }
+    
+    const childrenWithProps = React.Children.map(children, child => {
+      if (React.isValidElement(child))
+        return React.cloneElement(child, { user, setUser, org, setOrg });
+      return child;
+    });
+  
+    return (
+      <ChakraProvider theme={theme}>
+        <HeaderUser
+          user={user}
+          setUser={setUser}
+          org={org}
+          setOrg={setOrg}
+        /> 
+        { pathname !== '/welcome' && <SideNav location={location}/> }
+        <main style={ (pathname !== '/welcome')
+          ? { paddingTop: "60px", paddingLeft: "110px"}
+          : { paddingTop: "60px" }
+        }>
+          {childrenWithProps}
+        </main>
       </ChakraProvider>
     )
   }
-
-  return (
-    <ChakraProvider theme={theme}>
-      <div>
-        { (pathname === '/') 
-          ? <Header/> 
-          : <HeaderUser
-              user={user}
-              setUser={setUser}
-              org={org}
-              setOrg={setOrg}
-            /> 
-        }
-      </div>
-      { !['/','/welcome/'].includes(pathname) && <SideNav location={location}/> }
-      <main 
-        style={(pathname === '/') 
-          ? { paddingTop: "60px"} 
-          : { paddingTop: "60px", paddingLeft: "110px"}
-        }
-      >
-        {childrenWithProps}
-      </main>
-    </ChakraProvider>
-  )
 }
 
 Layout.propTypes = {

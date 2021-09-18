@@ -1,6 +1,6 @@
 import React, { useState } from "react"
-import { logout } from "../utils/AuthFunctions"
-import { updateUser } from "../models/User"
+import { logout } from "../../utils/AuthFunctions"
+import { updateUser } from "../../models/User"
 import { Link } from "gatsby"
 import { navigate } from "gatsby-link"
 
@@ -30,10 +30,10 @@ import {
   RiLogoutBoxLine,
 } from "react-icons/ri"
 
-import Logo from "../images/RippleDEXWhite.svg"
-import ProfilePicture from "../images/RippleDEXWhite.svg"
+import Logo from "../../images/RippleDEXWhite.svg"
+import ProfilePicture from "../../images/RippleDEXWhite.svg"
 
-import ProfileSettings from "./settings/profileSettings"
+import ProfileSettings from "../settings/profileSettings"
 
 const HeaderUser = props => {
   const { isOpen, onOpen, onClose } = useDisclosure()

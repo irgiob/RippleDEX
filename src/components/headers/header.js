@@ -1,6 +1,6 @@
 import * as React from "react"
 
-import AuthPopUp from "./auth/authPopup"
+import AuthPopUp from "../auth/authPopup"
 
 import {
   Box,
@@ -12,7 +12,7 @@ import {
   Button,
 } from "@chakra-ui/react"
 
-import Logo from "../images/RippleDEXWhite.svg"
+import Logo from "../../images/RippleDEXWhite.svg"
 
 const Header = () => {
   const { isOpen, onOpen, onClose } = useDisclosure()

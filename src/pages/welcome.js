@@ -5,8 +5,8 @@ import Layout from "../components/layout"
 
 import LogoDark from "../images/RippleDEXDark.svg" 
 
-import CreateOrgPopup from "../components/createOrg"
-import JoinOrgPopup from "../components/joinOrg"
+import CreateOrgPopup from "../components/orgPopups/createOrg"
+import JoinOrgPopup from "../components/orgPopups/joinOrg"
 
 import {
   Box,

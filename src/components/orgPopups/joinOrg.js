@@ -1,5 +1,5 @@
 import React, { useState } from "react"
-import { addUserToOrganization } from "../models/Organisation"
+import { addUserToOrganization } from "../../models/Organisation"
 import { navigate } from "gatsby-link"
 
 import {
