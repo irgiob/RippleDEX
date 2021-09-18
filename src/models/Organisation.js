@@ -39,7 +39,7 @@ export const inviteToOrganization = async (email, orgID, position) => {
     const docRef = await addDoc(collection(db, "invites"),{
         email: email,
         organizationID: orgID,
-        position, position
+        position: position
     })
     const docSnap = await getDoc(docRef)
     return docSnap.id
@@ -101,7 +101,7 @@ export const isUserInOrganization = async (orgID, userID) => {
  */
  export const isUserAdmin = async (orgID, userID) => {
     const org = await getOrganization(orgID)
-    return org.admin == userID
+    return org.admin === userID
 }
 
 /**

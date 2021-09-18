@@ -32,7 +32,6 @@ export const createNewUser = (userFirstName, userLastName, userID, userEmail,use
         })
     }).catch((error) => {
         console.log("Error adding new user: ", error);
-        throw "Error in createNewUser";
     })
 }
 

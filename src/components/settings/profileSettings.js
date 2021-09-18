@@ -17,7 +17,6 @@ import {
   ModalContent,
   ModalBody,
   ModalCloseButton,
-  useMediaQuery,
   Radio,
   RadioGroup,
   Spacer,
@@ -48,9 +47,6 @@ import {
 import UploadImageButton from "../uploadImageButton"
 
 const ProfileSettings = props => {
-  const [isLargeSize] = useMediaQuery("(min-width: 42em)")
-
-
   return (
     <Modal size="3xl" isCentered isOpen={props.isOpen} onClose={props.onClose}>
       <ModalOverlay />
@@ -239,7 +235,7 @@ const ProfileTab = props => {
         <Spacer />
         <VStack spacing={0}>
           <Center h="200px" w="200px" bgColor="ripple.100">
-            <Image src={photoUrl || ProfilePicture} boxSize="200px"/>
+            <Image src={photoUrl || props.user.profilePicture || ProfilePicture} boxSize="200px"/>
           </Center>
           <Box h="10px" />
           <HStack spacing={1}>
@@ -296,7 +292,7 @@ const NotificationsTab = props => {
     updateUser(props.user.id, {
       notificationMode: switch1.toString() + switch2.toString() + radio.toString() 
     }).then((updatedUser) => props.setUser(updatedUser))
-  },[switch1, switch2, radio])
+  },[switch1, switch2, radio, props])
 
   return (
     <VStack spacing={3} align="start">
@@ -339,7 +335,7 @@ const NotificationsTab = props => {
   )
 }
 
-const OrganizationsTab = () => {
+const OrganizationsTab = props => {
   return (
     <VStack>
       <HStack align="start" spacing={4}>

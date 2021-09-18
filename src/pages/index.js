@@ -17,7 +17,7 @@ import Chats from "../images/HomePage/Chats.png"
 import Calendar from "../images/HomePage/Calendar.png"
 import Mobile from "../images/HomePage/Mobile.png"
 
-import PopUp from "../components/popup"
+import AuthPopUp from "../components/auth/authPopup"
 
 import {
   Box,
@@ -90,7 +90,7 @@ const IndexPage = (props) => {
                   >
                     Sign Up
                   </Button>
-                  <PopUp isOpen={isOpen} onClose={onClose} type="SignUp" />
+                  <AuthPopUp isOpen={isOpen} onClose={onClose} type="SignUp" />
                   <Button
                     color="ripple.200"
                     fontFamily="Raleway-Bold"

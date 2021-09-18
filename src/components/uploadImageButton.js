@@ -1,16 +1,12 @@
-import React, { useState, useEffect, useProps } from "react"
+import React, { useState } from "react"
 
 import {
   Box,
   Button,
   Input,
   Text,
-  CircularProgress,
-  Center,
-  Image,
   VStack,
   Progress,
-  HStack,
   useDisclosure,
   Modal,
   ModalOverlay,
@@ -22,7 +18,6 @@ import {
   ModalFooter
 } from "@chakra-ui/react"
 
-
 import firebase from "../../plugins/gatsby-plugin-firebase-custom"
 import {
   getDownloadURL,
@@ -33,7 +28,6 @@ import {
 
 import Pic from "../images/Upload/upload.png"
 import { FiUpload } from "react-icons/fi"
-
 
 const storage = getStorage(firebase) // Middleware for firebase storage
 
@@ -71,11 +65,7 @@ const UploadImageButton = (props) => {
 
   const { isOpen, onOpen, onClose } = useDisclosure()
 
-  // const initialRef = React.useRef()
-  // const finalRef = React.useRef()
   const [isLargeSize] = useMediaQuery("(min-width: 42em)")
-
-
   const reference = "images" // the folder path in the firestore storage
 
   // Handler for when the user selects a file
@@ -115,7 +105,6 @@ const UploadImageButton = (props) => {
 
       // File upload has failed
       error => {
-        
         switch (error.code) {
           case 'storage/unauthorized':
             // User doesn't have permission to access the object
@@ -126,6 +115,8 @@ const UploadImageButton = (props) => {
             break;
           case 'storage/unknown':
             // Unknown error occurred, inspect error.serverResponse
+            break;
+          default:
             break;
         }
 
@@ -201,7 +192,6 @@ const UploadImageButton = (props) => {
                 <Progress value={progress} max="100" colorScheme="cyan" hidden={!inProgress} width="400px" />
               </Box>  
           </ModalBody>
-
             <ModalFooter>
               <Box
                   align="center"
@@ -228,10 +218,8 @@ const UploadImageButton = (props) => {
                   </VStack>
                 </Box>
             </ModalFooter>
-
         </ModalContent>
       </Modal>
-      
     </>
   )
 }

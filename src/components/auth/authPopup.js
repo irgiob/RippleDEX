@@ -8,24 +8,17 @@ import {
   ModalBody,
   ModalCloseButton,
   useMediaQuery,
-  useDisclosure,
   Text,
   Image,
-  Button,
-  Box,
 } from "@chakra-ui/react"
 
-import SignUp from "./auth/signup"
-import LogIn from "./auth/login"
+import SignUp from "./signup"
+import LogIn from "./login"
 
-import SignUpIll from "../images/RippleDexDark.svg"
+import SignUpIll from "../../images/RippleDEXDark.svg"
 
-const PopUp = ({ isOpen, onClose, type }) => {
+const AuthPopUp = ({ isOpen, onClose, type }) => {
   const [isLargeSize] = useMediaQuery("(min-width: 42em)")
-
-  const isOpenPopup = useDisclosure()
-  const onOpenPopup = useDisclosure()
-  const onClosePopup = useDisclosure()
 
   return (
     <Modal isCentered isOpen={isOpen} onClose={onClose}>
@@ -37,7 +30,7 @@ const PopUp = ({ isOpen, onClose, type }) => {
         p="20px"
       >
         <ModalHeader>
-          {type == "SignUp" ? (
+          {type === "SignUp" ? (
             <Text
               mb="10px"
               fontFamily="Raleway-Bold"
@@ -58,8 +51,8 @@ const PopUp = ({ isOpen, onClose, type }) => {
           )}
         </ModalHeader>
         <ModalCloseButton m="20px" />
-        <ModalBody>{type == "SignUp" ? <SignUp /> : <LogIn />}</ModalBody>
-        {type == "SignUp" && (
+        <ModalBody>{type === "SignUp" ? <SignUp /> : <LogIn />}</ModalBody>
+        {type === "SignUp" && (
           <Image
             w="70px"
             right="40px"
@@ -73,4 +66,4 @@ const PopUp = ({ isOpen, onClose, type }) => {
   )
 }
 
-export default PopUp
+export default AuthPopUp

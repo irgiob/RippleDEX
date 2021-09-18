@@ -1,25 +1,12 @@
 import React, { useState } from "react"
-import { createNewOrganization, inviteToOrganization } from "../models/Organisation"
+import { addUserToOrganization } from "../models/Organisation"
 import { navigate } from "gatsby-link"
 
-import LogoWhite from "../images/RippleDEXWhite.svg"
-import Worker from "../images/HomePage/Worker.png" 
-
 import {
-    Box,
-    Image,
-    Text,
-    HStack,
-    Stack,
-    Button,
-    Center,
     Modal,
     ModalOverlay,
     ModalContent,
-    ModalHeader,
     ModalCloseButton,
-    Input,
-    SimpleGrid,
     useToast,
 } from "@chakra-ui/react"
 

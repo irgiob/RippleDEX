@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react"
+import React, { useState } from "react"
 import { signup } from "../../utils/AuthFunctions"
 import { navigate } from "gatsby"
 

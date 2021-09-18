@@ -1,7 +1,13 @@
 import React, { useState } from 'react'
+import { Link } from 'gatsby'
 import {
     Flex,
-    IconButton
+    IconButton,
+    Menu,
+    MenuButton,
+    Icon,
+    Text,
+    Fade
 } from '@chakra-ui/react'
 import {
     RiMoneyDollarCircleLine,
@@ -13,18 +19,11 @@ import {
 } from 'react-icons/ri'
 import { BiConversation, BiExpand } from "react-icons/bi"
 
-
-import NavItem from '../components/navItem'
-
 // code adapted from https://github.com/bjcarlson42/chakra-left-responsive-navbar
-export default function SideNav({location}) {
+const SideNav = ({location}) => {
     const [navSize, changeNavSize] = useState("small") // change nav size wide or small
-    let isOpen = false
-    if (navSize === "large") {
-        isOpen = true
-    }
-    return (
 
+    return (
         <Flex 
             pos="fixed"
             zIndex={998}
@@ -33,14 +32,14 @@ export default function SideNav({location}) {
             h="100vh"
             marginTop="0vh"
             boxShadow="0 4px 12px 0 rgba(0, 0, 0, 0.05)"
-            w={navSize == "small" ? "110px" : "260px"}
+            w={navSize === "small" ? "110px" : "260px"}
             flexDir="column"
             justifyContent="space-between"
         >
             <Flex
                 p="5%"    
                 flexDir="column"
-                alignItems={navSize == "small" ? "center" : "flex-start" }
+                alignItems={navSize === "small" ? "center" : "flex-start" }
                 as="nav"
             >
                 <IconButton
@@ -50,13 +49,10 @@ export default function SideNav({location}) {
                     _hover={{background: 'ripple.200'}}
                     icon={<BiExpand/>}
                     size="lg"
-                    onClick={() => {
-                        if (navSize == "small")
-                            changeNavSize("large")
-                        else
-                            changeNavSize("small")
-
-                    }}
+                    onClick={() => navSize === "small" 
+                        ? changeNavSize("large") 
+                        : changeNavSize("small")
+                    }
                 />
                 <NavItem navSize={navSize} icon={RiTodoLine} pageName="Tasks" page="/tasks" location={location}/>
                 <NavItem navSize={navSize} icon={RiCalendarEventLine} pageName="Calendar" page="/calendar" location={location}/>
@@ -69,3 +65,49 @@ export default function SideNav({location}) {
         </Flex>
     )
 }
+
+const NavItem = ({navSize, icon, pageName, page, location}) => {
+    const pathname = location.pathname
+    const active = pathname === page
+    const isOpen = navSize === "large"
+
+    return (
+        <Flex
+            mt = {10}
+            flexDir="column"
+            w="100%"
+            alignItems={navSize === "small" ? "center" : "flex-start" }
+        >                 
+            <Menu placement="right">
+                <Link 
+                    to={page}
+                    w={navSize === "large" && "100%"}
+                >
+                    <MenuButton
+                        w = {navSize === "large" && "230px" }
+                        _hover={{background: 'ripple.200',  transform: "scale(1.05)"}}
+                        backgroundColor={active && "ripple.200"}
+                        p={3}
+                        borderRadius= {50}   
+                    >
+                        <Flex w = "100%">
+                            <Icon as={icon} w={10} h={10} color='white'/>
+                            <Fade in={isOpen}>
+                                <Text 
+                                    display={navSize === "small" ? "none" : "flex" }
+                                    color='white'
+                                    fontSize = "25px"
+                                    ml={5}    
+                                >
+                                    {pageName}
+                                </Text>
+                            </Fade>
+                        </Flex>
+                    </MenuButton>
+                </Link>
+            </Menu>
+        </Flex>
+    )   
+}
+
+export default SideNav

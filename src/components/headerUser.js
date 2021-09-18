@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from "react"
-import PropTypes from "prop-types"
 import { onAuthLoad, logout } from "../utils/AuthFunctions"
 import { getUser, updateUser } from "../models/User"
 import { getOrganization } from "../models/Organisation"
@@ -37,7 +36,7 @@ import ProfilePicture from "../images/RippleDEXWhite.svg"
 
 import ProfileSettings from "./settings/profileSettings"
 
-const HeaderUser = ({ siteTitle }) => {
+const HeaderUser = () => {
   const { isOpen, onOpen, onClose } = useDisclosure()
   const [user, setUser] = useState(null)
   const [org, setOrg] = useState(null)
@@ -129,7 +128,7 @@ const HeaderUser = ({ siteTitle }) => {
                     >
                       <Link to="/Invite"> Invite people to {org?.name || "loading..."}</Link>
                     </Button>
-                    {org.admin == user.id &&  <Button
+                    {org.admin === user.id &&  <Button
                       bgColor="white"
                       _hover={{
                         transform: "scale(1.08)",
@@ -170,7 +169,15 @@ const HeaderUser = ({ siteTitle }) => {
         <Spacer />
         {/* Header Profile Right Side */}
         <Box pr="15px">
-          <ProfileSettings isOpen={isOpen} onClose={onClose} tab={tab} user={user} setUser={setUser}/>
+          <ProfileSettings 
+            isOpen={isOpen} 
+            onClose={onClose} 
+            tab={tab} 
+            user={user} 
+            setUser={setUser}
+            org={org}
+            setOrg={setOrg}
+          />
           <Popover>
             <PopoverTrigger>
               <Avatar
@@ -273,45 +280,9 @@ const HeaderUser = ({ siteTitle }) => {
             </PopoverContent>
           </Popover>
         </Box>
-        {/* <Spacer />
-                    <Button
-                      onClick={() => handleOpen("SignUp")}
-                      variant="ghost"
-                      fontFamily="Raleway-Bold"
-                      fontSize="18px"
-                      color="white"
-                      _hover={{
-                        transform: "scale(1.08)",
-                      }}
-                    >
-                      Sign Up
-                    </Button>
-
-                    <Button
-                      onClick={() => handleOpen("LogIn")}
-                      variant="ghost"
-                      fontFamily="Raleway-Bold"
-                      fontSize="18px"
-                      color="white"
-                      _hover={{
-                        transform: "scale(1.08)",
-                      }}
-                    >
-                      Log In
-                    </Button>
-                    <PopUp isOpen={isOpen} onClose={onClose} type={type} /> */}
       </HStack>
     </Box>
   )
-}
-// GTgDNjWkASNPNsPovItMQHFOmXd2
-
-HeaderUser.propTypes = {
-  siteTitle: PropTypes.string,
-}
-
-HeaderUser.defaultProps = {
-  siteTitle: ``,
 }
 
 export default HeaderUser
