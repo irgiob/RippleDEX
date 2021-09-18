@@ -5,17 +5,17 @@ import Seo from "../components/seo"
 
 import { Heading } from "@chakra-ui/react"
 
-const DashboardPage = ({user, setUser, org, setOrg}) => {
+const TasksPage = ({user, setUser, org, setOrg}) => {
   return (<>
-      <Heading>Dashboard for {org.name}</Heading>
+      <Heading>Tasks for {org.name}</Heading>
   </>)
 }
 
-const Dashboard = (props) => (
+const Tasks = (props) => (
   <Layout location={props.location}>
-    <Seo title="Dashboard" />
-    <DashboardPage/>
+    <Seo title="Tasks" />
+    <TasksPage/>
   </Layout>
 )
 
-export default Dashboard
+export default Tasks

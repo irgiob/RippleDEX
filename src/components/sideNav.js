@@ -57,8 +57,8 @@ const SideNav = ({location}) => {
                 <NavItem navSize={navSize} icon={RiTodoLine} pageName="Tasks" page="/tasks" location={location}/>
                 <NavItem navSize={navSize} icon={RiCalendarEventLine} pageName="Calendar" page="/calendar" location={location}/>
                 <NavItem navSize={navSize} icon={RiContactsBook2Line} pageName="Contacts" page="/contacts" location={location}/>
-                <NavItem navSize={navSize} icon={RiCommunityLine} pageName="Organization" page="/organization" location={location}/>
-                <NavItem navSize={navSize} icon={RiMoneyDollarCircleLine} pageName="Deal" page="/deal" location={location}/>
+                <NavItem navSize={navSize} icon={RiCommunityLine} pageName="Companies" page="/companies" location={location}/>
+                <NavItem navSize={navSize} icon={RiMoneyDollarCircleLine} pageName="Deals" page="/deals" location={location}/>
                 <NavItem navSize={navSize} icon={BiConversation} pageName="Interactions" page="/interactions" location={location}/> 
                 <NavItem navSize={navSize} icon={RiLineChartLine} pageName="Analytics" page="/analytics" location={location}/>
             </Flex>
@@ -73,7 +73,7 @@ const NavItem = ({navSize, icon, pageName, page, location}) => {
 
     return (
         <Flex
-            mt = {10}
+            mt="0.8em"
             flexDir="column"
             w="100%"
             alignItems={navSize === "small" ? "center" : "flex-start" }
