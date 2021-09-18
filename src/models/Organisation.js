@@ -1,5 +1,14 @@
 import firebase from "../../plugins/gatsby-plugin-firebase-custom"
-import {getFirestore, doc, addDoc, getDoc, updateDoc, collection, arrayUnion} from "firebase/firestore"
+import {
+    getFirestore, 
+    doc, 
+    addDoc, 
+    getDoc, 
+    updateDoc, 
+    collection, 
+    arrayUnion, 
+    arrayRemove
+} from "firebase/firestore"
 
 const db = getFirestore(firebase)
 
@@ -121,6 +130,16 @@ export const isUserInOrganization = async (orgID, userID) => {
     } else {
         console.log("No such document!");
     }
+}
+
+export const updateMemberPosition = async (orgID, userID, oldPosition, newPosition) => {
+    await updateDoc(doc(db, "organizations", orgID), {
+        members: arrayRemove({userID: userID, position: oldPosition})
+    })
+    await updateDoc(doc(db, "organizations", orgID), {
+        members: arrayUnion({userID: userID, position: newPosition})
+    })
+    return getOrganization(orgID)
 }
 
 /**
