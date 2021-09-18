@@ -25,24 +25,13 @@ const Layout = ({ children, location }) => {
   return (
     <ChakraProvider theme={theme}>
       <div>
-        { (pathname === '/') ? 
-          <Header siteTitle={data.site.siteMetadata?.title || `Title`} /> 
+        { (pathname === '/') 
+          ? <Header siteTitle={data.site.siteMetadata?.title || `Title`} /> 
           : <HeaderUser siteTitle={data.site.siteMetadata?.title || `Title`} /> 
         }
       </div>
-      { pathname  != '/' && <SideNav location={location}/> }
+      { !['/','/workspace/'].includes(pathname) && <SideNav location={location}/> }
       <main style={(pathname === '/') ? { paddingTop: "60px"} : { paddingTop: "60px", paddingLeft: "110px"}}>{children}</main>
-      {/*
-        <footer
-          style={{
-            marginTop: `2rem`,
-          }}
-        >
-          © {new Date().getFullYear()}, Built with
-          {` `}
-          <a href="https://www.gatsbyjs.com">Gatsby</a>
-        </footer>
-        */}
     </ChakraProvider>
   )
 }
