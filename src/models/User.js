@@ -48,7 +48,7 @@ export const updateUser = async (userID, options) => {
     const docSnap = await getDoc(docRef)
 
     if (docSnap.exists()){
-        return updateDoc(docRef, options).then(() => getUser(userID))
+        return updateDoc(docRef, options).then(() => getUser(userID, true))
     } else {
         console.log("No such document!");
     }
@@ -87,20 +87,18 @@ export const updateUserNotificationSettings = (userID, notificationMode) => {
  * 
  * @returns {DocumentReference}
  */
-export const getUser = (userID) => {
+export const getUser = async (userID, updateLastOnline) => {
     const docRef = doc(db, "users", userID)
     // Logs the user activity for lastOnline
-    return updateDoc(
-        docRef, 
-        {lastOnline: Timestamp.now()}
-    ).then(() => {
-        // returns the user, appending the userID to the data
-        return getDoc(docRef).then((user) => {
-            const data = user.data()
-            data.id = userID
-            return data
-        }).catch((error) => {
-            console.error("Error getting user: ", error);
-        });
-    })
+    if (updateLastOnline)
+        await updateDoc(docRef, {lastOnline: Timestamp.now()})
+    // returns the user, appending the userID to the data
+    const user = await getDoc(docRef)
+    if (user.exists()) {
+        const data = user.data()
+        data.id = userID
+        return data
+    } else {
+        console.error("Error getting user");
+    }
 }

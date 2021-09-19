@@ -22,7 +22,7 @@ const Layout = ({ children, location }) => {
     if (pathname !== '/') {
       onAuthLoad(
         async loggedUser => {
-          const user = await getUser(loggedUser.uid)
+          const user = await getUser(loggedUser.uid, true)
           setUser(user)
           if (user.lastOpenedOrganization) {
             const org = await getOrganization(user.lastOpenedOrganization)
@@ -34,7 +34,7 @@ const Layout = ({ children, location }) => {
         () => navigate("/")
       )
     }
-  }, [])
+  }, [pathname])
   
   if (pathname === '/') {
     return (
