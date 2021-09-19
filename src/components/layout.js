@@ -28,7 +28,7 @@ const Layout = ({ children, location }) => {
             const org = await getOrganization(user.lastOpenedOrganization)
             setOrg(org)
           } else {
-            navigate("/welcome")
+            navigate("/welcome/")
           }
         },
         () => navigate("/")
@@ -84,8 +84,8 @@ const Layout = ({ children, location }) => {
           org={org}
           setOrg={setOrg}
         /> 
-        { pathname !== '/welcome' && <SideNav location={location}/> }
-        <main style={ (pathname !== '/welcome')
+        { pathname !== '/welcome/' && <SideNav location={location}/> }
+        <main style={ (pathname !== '/welcome/')
           ? { paddingTop: "60px", paddingLeft: "110px"}
           : { paddingTop: "60px" }
         }>

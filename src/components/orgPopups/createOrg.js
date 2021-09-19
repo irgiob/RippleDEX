@@ -109,7 +109,8 @@ const CreateOrgPopup = (props) => {
                             <Box  height="80px">
                                 <Text pb="20px" fontSize="15px">Company / Workspace Name</Text>
                                 <Input
-                                    isRequired = "true"
+                                    key="name"
+                                    isRequired={true}
                                     w = "90%"
                                     size = "lg"
                                     variant="outline"
@@ -121,7 +122,8 @@ const CreateOrgPopup = (props) => {
                             <Box height="80px">
                                 <Text pb="20px" fontSize="15px">Company Description</Text>
                                 <Input
-                                    isRequired = "true"
+                                    key="description"
+                                    isRequired={true}
                                     w = "90%"
                                     size = "lg"
                                     variant="outline"
@@ -139,9 +141,10 @@ const CreateOrgPopup = (props) => {
                         </Box>
                         <SimpleGrid w="100%" pt="0.5em" mr="15px" ml="15px" columns={2} spacing={4}>
                             {invites.map((invite, i) => {
-                                return <>
-                                    <Box pt = "1em" height="3em">
+                                return <div key={i}>
+                                    <Box key={"EmailBox_" + i} pt="1em" height="3em">
                                         <Input
+                                            key={"Email_" + i}
                                             w = "90%"
                                             size = "lg"
                                             variant="outline"
@@ -155,8 +158,9 @@ const CreateOrgPopup = (props) => {
                                             }}
                                         />
                                     </Box>
-                                    <Box pt = "1em" height="3em">
+                                    <Box key={"PositionBox_" + i} pt="1em" height="3em">
                                         <Input
+                                            key={"Position_" + i}
                                             w = "90%"
                                             size = "lg"
                                             variant="outline"
@@ -170,7 +174,7 @@ const CreateOrgPopup = (props) => {
                                             }}
                                         />
                                     </Box>
-                                </>
+                                </div>
                             })}
                         </SimpleGrid>
                         {/* create Workspace button */}

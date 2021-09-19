@@ -81,16 +81,16 @@ const NavItem = ({navSize, icon, pageName, page, location}) => {
             <Menu placement="right">
                 <Link 
                     to={page}
-                    w={navSize === "large" && "100%"}
+                    w={navSize === "large" ? "100%" : undefined}
                 >
                     <MenuButton
-                        w = {navSize === "large" && "230px" }
+                        w={navSize === "large" ? "230px": undefined}
                         _hover={{background: 'ripple.200',  transform: "scale(1.05)"}}
-                        backgroundColor={active && "ripple.200"}
+                        backgroundColor={active ? "ripple.200" : undefined}
                         p={3}
                         borderRadius= {50}   
                     >
-                        <Flex w = "100%">
+                        <Flex w="100%">
                             <Icon as={icon} w={10} h={10} color='white'/>
                             <Fade in={isOpen}>
                                 <Text 
