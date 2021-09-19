@@ -1,5 +1,14 @@
-import "@firebase/firestore"
-import {getFirestore, doc, addDoc, getDoc, updateDoc} from "firebase/firestore"
+import firebase from "../../plugins/gatsby-plugin-firebase-custom"
+import {
+    getFirestore, 
+    doc, 
+    addDoc, 
+    getDoc, 
+    updateDoc, 
+    collection, 
+    arrayUnion, 
+    arrayRemove
+} from "firebase/firestore"
 
 const db = getFirestore(firebase)
 
@@ -22,7 +31,7 @@ export const createNewOrganization = async (userID, orgName, orgDesc) => {
     })
     await addUserToOrganization(docRef.id, userID, "Admin")
     return await getDoc(docRef).then((doc) => {
-        data = doc.data()
+        const data = doc.data()
         data.id = doc.id
         return data
     })
@@ -39,13 +48,27 @@ export const inviteToOrganization = async (email, orgID, position) => {
     const docRef = await addDoc(collection(db, "invites"),{
         email: email,
         organizationID: orgID,
-        position, position
+        position: position
     })
     const docSnap = await getDoc(docRef)
-    return docSnap.data()
+    return docSnap.id
 }
 
 
+/**
+ * invite a new individual to gain access to the organization
+ * @param {String} inviteID of the new member in the organization
+ */
+
+export const getInvite = async (inviteID) => {
+    const docRef = doc(db, "invites", inviteID)
+    return getDoc(docRef).then((invite) => {
+        return invite.data()
+    }).catch((error) => {
+        console.error("Error getting invite: ", error);
+        return null
+    });
+}
 /**
  * adds a user to an organization
  * 
@@ -87,7 +110,7 @@ export const isUserInOrganization = async (orgID, userID) => {
  */
  export const isUserAdmin = async (orgID, userID) => {
     const org = await getOrganization(orgID)
-    return org.admin == userID
+    return org.admin === userID
 }
 
 /**
@@ -107,6 +130,16 @@ export const isUserInOrganization = async (orgID, userID) => {
     } else {
         console.log("No such document!");
     }
+}
+
+export const updateMemberPosition = async (orgID, userID, oldPosition, newPosition) => {
+    await updateDoc(doc(db, "organizations", orgID), {
+        members: arrayRemove({userID: userID, position: oldPosition})
+    })
+    await updateDoc(doc(db, "organizations", orgID), {
+        members: arrayUnion({userID: userID, position: newPosition})
+    })
+    return getOrganization(orgID)
 }
 
 /**

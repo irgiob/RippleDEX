@@ -1,6 +1,8 @@
 import firebase from "../../plugins/gatsby-plugin-firebase-custom"
-import {getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged} from "firebase/auth";
+import {getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, GoogleAuthProvider,
+   signInWithPopup, signOut, onAuthStateChanged, setPersistence, browserSessionPersistence} from "firebase/auth";
 import { createNewUser, doesUserExist, updateUser } from "../models/User"
+
 
 /**
  * @param {String} name
@@ -11,6 +13,7 @@ import { createNewUser, doesUserExist, updateUser } from "../models/User"
  */
 export async function signup(firstName, lastName, email, password, phoneNumber) {
   const auth = getAuth(firebase)
+  auth.setPersistence(browserSessionPersistence)
   return createUserWithEmailAndPassword(auth, email, password)
   .then( (userCredential) => {
     const userID = userCredential.user.uid
@@ -30,6 +33,7 @@ export async function signup(firstName, lastName, email, password, phoneNumber) 
  */
 export async function login(email, password) {
   const auth = getAuth(firebase)
+  auth.setPersistence(browserSessionPersistence)
   return signInWithEmailAndPassword(auth, email, password)
   .then( (userCredential) => {
     const userID = userCredential.user.uid;
@@ -67,6 +71,7 @@ export function onAuthLoad(isLoggedIn, isNotLoggedIn) {
 */
 export async function signInGoogle(){
   const auth = getAuth(firebase)
+  auth.setPersistence(browserSessionPersistence)
   const provider = new GoogleAuthProvider()
   return signInWithPopup(auth, provider)
   .then( async (result) => {
@@ -86,6 +91,8 @@ export async function signInGoogle(){
     console.log(err)
     return null
   })
+
+  
 }
 
 /**

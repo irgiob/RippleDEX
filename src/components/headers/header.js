@@ -1,13 +1,10 @@
 import * as React from "react"
-import PropTypes from "prop-types"
 
-import PopUp from "./popup"
+import AuthPopUp from "../auth/authPopup"
 
 import {
   Box,
   Image,
-  Avatar,
-  AvatarBadge,
   Circle,
   HStack,
   Spacer,
@@ -15,9 +12,9 @@ import {
   Button,
 } from "@chakra-ui/react"
 
-import Logo from "../images/RippleDEXWhite.svg"
+import Logo from "../../images/RippleDEXWhite.svg"
 
-const Header = ({ siteTitle }) => {
+const Header = () => {
   const { isOpen, onOpen, onClose } = useDisclosure()
   const [type, setType] = React.useState("SignUp")
 
@@ -45,47 +42,34 @@ const Header = ({ siteTitle }) => {
               pos="absolute"
               bgColor="ripple.100"
               size="80px"
-            ></Circle>
+            />
           </Box>
         </a>
-        <Spacer />
+        <Spacer/>
         <Button
           onClick={() => handleOpen("SignUp")}
           variant="ghost"
           fontFamily="Raleway-Bold"
           fontSize="18px"
           color="white"
-          _hover={{
-            transform: "scale(1.08)",
-          }}
+          _hover={{ transform: "scale(1.08)" }}
         >
           Sign Up
         </Button>
-
         <Button
           onClick={() => handleOpen("LogIn")}
           variant="ghost"
           fontFamily="Raleway-Bold"
           fontSize="18px"
           color="white"
-          _hover={{
-            transform: "scale(1.08)",
-          }}
+          _hover={{ transform: "scale(1.08)" }}
         >
           Log In
         </Button>
-        <PopUp isOpen={isOpen} onClose={onClose} type={type} />
+        <AuthPopUp isOpen={isOpen} onClose={onClose} type={type} />
       </HStack>
     </Box>
   )
-}
-
-Header.propTypes = {
-  siteTitle: PropTypes.string,
-}
-
-Header.defaultProps = {
-  siteTitle: ``,
 }
 
 export default Header
