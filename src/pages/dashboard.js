@@ -7,7 +7,7 @@ import { Heading } from "@chakra-ui/react"
 
 const DashboardPage = ({user, setUser, org, setOrg}) => {
   return (<>
-      <Heading>Dashboard for {org.name}</Heading>
+      <Heading>Dashboard for {org != null ? org.name : ""}</Heading>
   </>)
 }
 
