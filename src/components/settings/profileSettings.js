@@ -141,9 +141,11 @@ const ProfileSettings = props => {
               <TabPanel>
                 <p>Coming Soon!</p>
               </TabPanel>
-              <TabPanel>
-                <OrganizationsTab org={props.org} setOrg={props.setOrg}/>
-              </TabPanel>
+              {props.org &&
+                <TabPanel>
+                  <OrganizationsTab org={props.org} setOrg={props.setOrg}/>
+                </TabPanel>
+              }
             </TabPanels>
           </Tabs>
         </ModalBody>
@@ -166,47 +168,31 @@ const ProfileTab = props => {
     setPhotoUrl(newUrl)
   }
 
-  const handleClick = () => {
-    updateUser(props.user?.id, {
+  const handleClick = async () => {
+    const updatedUser = await updateUser(props.user?.id, {
       firstName: firstName,
       lastName: lastName,
       phoneNumber: phoneNumber,
       profilePicture: photoUrl
-    }).then((user) => {
-      props.setUser(user)
-      updateMemberPosition(
+    });
+    props.setUser(updatedUser)
+    if (props.org) {
+      const updatedOrg = await updateMemberPosition(
         props.org?.id, 
         props.user?.id, 
         props.org?.members.filter(
           member => member.userID === props.user?.id
         )[0].position,
         position
-      ).then((org) => {
-        props.setOrg(org)
-        toast({
-          title: "Success",
-          description: "Your details have been updated",
-          status: "success",
-          duration: 5000,
-          isClosable: true,
-        })
-      }).catch((error) => {
-        toast({
-          title: "Failed to update details",
-          description: error,
-          status: "error",
-          duration: 5000,
-          isClosable: true,
-        })
-      })
-    }).catch((error) => {
-      toast({
-        title: "Failed to update details",
-        description: error,
-        status: "error",
-        duration: 5000,
-        isClosable: true,
-      })
+      )
+      props.setOrg(updatedOrg)
+    }
+    toast({
+      title: "Success",
+      description: "Your details have been updated",
+      status: "success",
+      duration: 5000,
+      isClosable: true,
     })
   }
 
@@ -237,17 +223,19 @@ const ProfileTab = props => {
               onChange={event => setLastName(event.target.value)}
             />
           </Box>
-          <Box textAlign="left" w="300px">
-            <Text color="ripple.200" pb="5px" fontSize="12px">
-              Position at Company
-            </Text>
-            <Input 
-              placeholder="Position at Company" 
-              type="text" 
-              value={position}
-              onChange={event => setPosition(event.target.value)}
-            />
-          </Box>
+          {props.org &&
+            <Box textAlign="left" w="300px">
+              <Text color="ripple.200" pb="5px" fontSize="12px">
+                Position at Company
+              </Text>
+              <Input 
+                placeholder="Position at Company" 
+                type="text" 
+                value={position}
+                onChange={event => setPosition(event.target.value)}
+              />
+            </Box>
+          }
           <Box textAlign="left" w="300px">
             <Text color="ripple.200" pb="5px" fontSize="12px">
               Phone Number
@@ -263,7 +251,11 @@ const ProfileTab = props => {
         <Spacer />
         <VStack spacing={0}>
           <Center h="200px" w="200px" bgColor="ripple.100">
-            <Image src={photoUrl || props.user?.profilePicture || ProfilePicture} boxSize="200px"/>
+            <Image objectFit="cover" w="100%" h="100%" src={
+              photoUrl || 
+              props.user?.profilePicture || 
+              ProfilePicture}
+            />
           </Center>
           <Box h="10px" />
           <HStack spacing={1}>
@@ -278,8 +270,13 @@ const ProfileTab = props => {
               changeUrl={changePhotoUrl}
             />
             <Circle
-              _hover={{
-                transform: "scale(1.2)",
+              _hover={{ transform: "scale(1.2)" }}
+              onClick={async () => {
+                const newUser = await updateUser(
+                  props.user?.id, 
+                  {profilePicture: null}
+                )
+                props.setUser(newUser)
               }}
             >
               <BiTrash style={{ color: "red" }} />
@@ -449,7 +446,11 @@ const OrganizationsTab = props => {
         <Spacer />
         <VStack spacing={0}>
           <Center h="200px" w="200px" bgColor="ripple.100">
-            <Image src={photoUrl || props.org?.profilePicture || ProfilePicture} />
+            <Image objectFit="cover" h="100%" w="100%" src={
+              photoUrl || 
+              props.org?.profilePicture || 
+              ProfilePicture} 
+            />
           </Center>
           <Box h="10px" />
           <HStack spacing={1}>
@@ -465,7 +466,16 @@ const OrganizationsTab = props => {
               buttonMessage="Change Workspace Icon"
               changeUrl={setPhotoUrl}
             />
-            <Circle _hover={{ transform: "scale(1.2)" }}>
+            <Circle 
+              _hover={{ transform: "scale(1.2)" }}
+              onClick={async () => {
+                const newOrg = await updateOrganization(
+                  props.org?.id, 
+                  {profilePicture: null}
+                )
+                props.setOrg(newOrg)
+              }}
+            >
               <BiTrash style={{ color: "red" }} />
             </Circle>
           </HStack>
