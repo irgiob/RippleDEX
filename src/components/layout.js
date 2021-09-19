@@ -28,7 +28,8 @@ const Layout = ({ children, location }) => {
             const org = await getOrganization(user.lastOpenedOrganization)
             setOrg(org)
           } else {
-            navigate("/welcome/")
+            if (pathname !== '/welcome/')
+              navigate("/welcome/")
           }
         },
         () => navigate("/")
