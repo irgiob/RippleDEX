@@ -28,6 +28,7 @@ const Layout = ({ children, location }) => {
             const org = await getOrganization(user.lastOpenedOrganization)
             setOrg(org)
           } else {
+            console.log(pathname)
             if (pathname !== '/welcome/')
               navigate("/welcome/")
           }
@@ -45,7 +46,7 @@ const Layout = ({ children, location }) => {
     </ChakraProvider>
     )
   } else {
-    if (!user || !org) {
+    if (!user) {
       return (
         <ChakraProvider theme={theme}>
           <Center h="100vh">
