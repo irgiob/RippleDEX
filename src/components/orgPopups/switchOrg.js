@@ -3,6 +3,7 @@ import { updateUser } from "../../models/User"
 
 import {
   Box,
+  HStack,
   Button,
   Center,
   Input,
@@ -14,14 +15,12 @@ import {
   ModalCloseButton,
   Spacer,
   Text,
+  Image,
   useToast,
 } from "@chakra-ui/react"
 
-import {
-  RiArrowDropDownLine,
-  RiArrowLeftRightLine,
-  RiLogoutBoxLine,
-} from "react-icons/ri"
+import { RiArrowLeftRightLine } from "react-icons/ri"
+import ProfilePicture from "../../images/RippleDEXDark.svg"
 
 import { BiSearch } from "react-icons/bi"
 
@@ -71,7 +70,9 @@ const SwitchOrgPopup = props => {
         pos="absolute"
         h="fit-content"
         minHeight="50%"
-        maxW="20%"
+        maxW="30%"
+        p="15px"
+        pb="30px"
         borderRadius="15px"
         value="inside"
         scrollBehavior="inside"
@@ -79,23 +80,35 @@ const SwitchOrgPopup = props => {
         <ModalCloseButton m="15px" />
         <Center>
           <Box textAlign="left" w="80%" mt="25px">
-            <Box>
-              <Text
-                pb="5px"
-                fontFamily="Nunito-Bold"
-                fontSize="23px"
-                color="ripple.200"
-              >
-                Switch Organizations
-              </Text>
-              <hr w="100%" />
-              <Spacer pb="30px" />
-              <Text pb="10px" fontSize="20px" color="ripple.200">
-                Current Organization: <br />
-                <Text color="black"> {props.org?.name} </Text>
-              </Text>
-            </Box>
-            <Text pt="30px" pb="10px" fontSize="20px" color="ripple.200">
+            <Text
+              pb="5px"
+              fontFamily="Nunito-Bold"
+              fontSize="23px"
+              color="ripple.200"
+            >
+              Switch Organizations
+            </Text>
+            <hr w="100%" />
+            <HStack maxW="100%">
+              <Box>
+                <Spacer pb="30px" />
+                <Text pb="10px" fontSize="20px" color="ripple.200">
+                  Current Organization: <br />
+                  <Text color="black"> {props.org?.name} </Text>
+                  <Text color="grey" fontSize="15px">
+                    {" "}
+                    {props.org?.description}{" "}
+                  </Text>
+                </Text>
+              </Box>
+              <Spacer />
+              <Image
+                src={props.org?.profilePicture || ProfilePicture}
+                boxSize="100px"
+                p="20px"
+              />
+            </HStack>
+            <Text pt="10px" pb="10px" fontSize="20px" color="ripple.200">
               All Organization <br />
             </Text>
             <InputGroup>
@@ -105,7 +118,7 @@ const SwitchOrgPopup = props => {
               />
               <Input type="text" placeholder="Search" />
             </InputGroup>
-            <Box pt="30px" w="100%">
+            <Box pt="30px" pb="30px" w="100%">
               <ol style={{ listStyleType: "none" }}>
                 {orgList}
                 <hr />
