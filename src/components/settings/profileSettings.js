@@ -1,5 +1,5 @@
-import React, { useState } from "react"
-import { updateUser } from "../../models/User"
+import React, { useEffect, useState } from "react"
+import { updateUser, getUser } from "../../models/User"
 
 import {
   Box,
@@ -23,7 +23,7 @@ import {
   Switch,
   Stack,
   SkeletonCircle,
-  SkeletonText,
+  Skeleton,
   Text,
   Tabs,
   Tab,
@@ -31,7 +31,11 @@ import {
   TabPanels,
   TabPanel,
   VStack,
-  useToast
+  useToast,
+  Avatar,
+  Badge,
+  AvatarBadge,
+  Tooltip
 } from "@chakra-ui/react"
 
 import ProfilePicture from "../../images/RippleDEXWhite.svg"
@@ -42,6 +46,7 @@ import {
   BiBell,
   BiUserCircle,
   BiTrash,
+  BiUserMinus,
   BiSearch,
 } from "react-icons/bi"
 import UploadImageButton from "../uploadImageButton"
@@ -143,7 +148,11 @@ const ProfileSettings = props => {
               </TabPanel>
               {props.org &&
                 <TabPanel>
-                  <OrganizationsTab org={props.org} setOrg={props.setOrg}/>
+                  <OrganizationsTab 
+                    org={props.org} 
+                    setOrg={props.setOrg}
+                    user={props.user}
+                  />
                 </TabPanel>
               }
             </TabPanels>
@@ -364,8 +373,25 @@ const NotificationsTab = props => {
 const OrganizationsTab = props => {
   const [orgName, setOrgName] = useState(props.org.name)
   const [orgDesc, setOrgDesc] = useState(props.org.description)
-  const [photoUrl, setPhotoUrl] = useState(props.user?.profilePicture)
+  const [photoUrl, setPhotoUrl] = useState(props.org.profilePicture)
+  const [members, setMembers] = useState([props.user, props.user, props.user])
+  const [search, setSearch]   = useState("")  
+  const [loading, setLoading] = useState(true)
   const toast = useToast()
+
+  useEffect(() => {
+    const fetchMembers = async (membersList) => {
+      const orgMembers = []
+      for await (const memberObj of membersList) {
+        const member = await getUser(memberObj.userID)
+        orgMembers.push(member)
+      }
+      console.log(orgMembers)
+      setMembers(orgMembers)
+      setLoading(false)
+    }
+    fetchMembers(props.org.members)
+  }, [props.org.members])
 
   const handleClick = () => {
     updateOrganization(props.org.id, {
@@ -393,9 +419,9 @@ const OrganizationsTab = props => {
   } 
 
   return (
-    <VStack>
-      <HStack align="start" spacing={4}>
-        <VStack textAlign="left" spacing={5}>
+    <VStack h="25em">
+      <HStack align="start" spacing={4} h="100%">
+        <VStack textAlign="left" spacing={5} h="100%">
           <Box textAlign="left" w="300px">
             <Text color="ripple.200" pb="5px" fontSize="12px">
               Workspace Name
@@ -435,12 +461,68 @@ const OrganizationsTab = props => {
                 pointerEvents="none"
                 children={<BiSearch style={{ color: "#a2b1c0" }} />}
               />
-              <Input type="text" placeholder="Search" />
+              <Input 
+                type="text" 
+                placeholder="Search" 
+                onChange={(e) => setSearch(e.target.value)}
+              />
             </InputGroup>
           </Box>
-          <Box w="100%">
-            <SkeletonCircle size="10" />
-            <SkeletonText mt="4" noOfLines={4} spacing="4" />
+          <Box w="100%" h="100%" overflow="scroll">
+            <VStack spacing={1} align="start">
+              {members.filter((member) => {
+                // filter displayed members based on search box
+                return (member?.firstName + " " + member?.lastName)
+                  .toLowerCase()
+                  .includes(search.toLowerCase())
+              }).map((member, i) => {
+                // return members of organization
+                return (
+                  <HStack p="0.5em" spacing={3} w="100%">
+                    <SkeletonCircle isLoaded={!loading} size="12">
+                      <Avatar
+                        size="md"
+                        name={member?.firstName + " " + member?.lastName}
+                        src={member?.profilePicture || ProfilePicture}
+                        _hover={{ transform: "scale(1.01)" }}
+                      >
+                        <AvatarBadge
+                          boxSize="20px"
+                          borderColor="black"
+                          bg={member?.isInvisible ? "gray.300" : "green.300"}
+                        />
+                      </Avatar>
+                    </SkeletonCircle>
+                    <Center h="100%" w="100%">
+                      <Box textAlign="left" ml  w="100%">
+                        <Skeleton isLoaded={!loading}>
+                          <Text fontWeight="bold">
+                            {member?.firstName + " " + member?.lastName}
+                            {member?.id === props.user?.id &&
+                              <Badge ml="1" colorScheme="green">
+                                You
+                              </Badge>
+                            }
+                          </Text>
+                        </Skeleton>
+                        <Skeleton isLoaded={!loading}>
+                          <Text color="gray" fontSize="sm">{member?.email}</Text>
+                        </Skeleton>
+                      </Box>
+                    </Center>
+                    {member?.id !== props.user?.id &&
+                      <Tooltip label="Remove user" hasArrow bg="red.600">
+                        <Circle 
+                          _hover={{ transform: "scale(1.2)" }}
+                        >
+                          <BiUserMinus style={{ color: "red" }} />
+                        </Circle>
+                      </Tooltip>
+                    }
+                  </HStack>
+                )
+              })}
+            </VStack>
           </Box>
         </VStack>
         <Spacer />
