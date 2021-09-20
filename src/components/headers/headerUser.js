@@ -34,6 +34,7 @@ import Logo from "../../images/RippleDEXWhite.svg"
 import ProfilePicture from "../../images/RippleDEXWhite.svg"
 
 import ProfileSettings from "../settings/profileSettings"
+import SwitchOrgPopup from "../orgPopups/switchOrg"
 
 const HeaderUser = props => {
   const { isOpen, onOpen, onClose } = useDisclosure()
@@ -49,6 +50,13 @@ const HeaderUser = props => {
     setTab(val)
     onOpen()
   }
+
+  const {
+    isOpen: isSwitchOpen,
+    onOpen: onSwitchOpen,
+    onClose: onSwitchClose,
+  } = useDisclosure()
+
 
   return (
     <Box zIndex={999} position="fixed" w="100vw" h="60px" bgColor="ripple.200">
@@ -131,9 +139,18 @@ const HeaderUser = props => {
                         transform: "scale(1.08)",
                       }}
                       leftIcon={<RiArrowLeftRightLine />}
+                      onClick={onSwitchOpen}
                     >
                       Switch Workspace
                     </Button>
+                    <SwitchOrgPopup
+                      user={user} 
+                      setUser={setUser}
+                      org={org}
+                      setOrg={setOrg}
+                      isOpen={isSwitchOpen}
+                      onClose={onSwitchClose}
+                    />
                   </VStack>
                 </PopoverBody>
               </PopoverContent>
