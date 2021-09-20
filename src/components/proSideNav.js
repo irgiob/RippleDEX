@@ -92,7 +92,7 @@ const ProSideNav = ({ location }) => {
               <Link to="/contacts">Contacts</Link>
             </MenuItem>
           </Tooltip>
-          <Tooltip lisDisabled={!collapsed} label="Companies" placement="right">
+          <Tooltip isDisabled={!collapsed} label="Companies" placement="right">
             <MenuItem
               active={
                 pathname != null &&
