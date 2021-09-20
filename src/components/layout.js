@@ -7,11 +7,20 @@ import SideNav from "./sideNav"
 import theme from "./theme"
 import "./layout.css"
 
+import ProSidebar from "./proSideNav"
+
 import { onAuthLoad } from "../utils/AuthFunctions"
 import { getUser } from "../models/User"
 import { getOrganization } from "../models/Organisation"
 
-import { ChakraProvider, Spinner, Center, Text, VStack, Box } from "@chakra-ui/react"
+import {
+  ChakraProvider,
+  Spinner,
+  Center,
+  Text,
+  VStack,
+  Box,
+} from "@chakra-ui/react"
 
 const Layout = ({ children, location }) => {
   const pathname = location.pathname
@@ -19,7 +28,7 @@ const Layout = ({ children, location }) => {
   const [org, setOrg] = useState(null)
 
   useEffect(() => {
-    if (pathname !== '/') {
+    if (pathname !== "/") {
       onAuthLoad(
         async loggedUser => {
           const user = await getUser(loggedUser.uid, true)
@@ -29,21 +38,20 @@ const Layout = ({ children, location }) => {
             setOrg(org)
           } else {
             console.log(pathname)
-            if (pathname !== '/welcome/')
-              navigate("/welcome/")
+            if (pathname !== "/welcome/") navigate("/welcome/")
           }
         },
         () => navigate("/")
       )
     }
   }, [pathname])
-  
-  if (pathname === '/') {
+
+  if (pathname === "/") {
     return (
       <ChakraProvider theme={theme}>
-      <Header/>
-      <main style={{ paddingTop: "60px" }}>{children}</main>
-    </ChakraProvider>
+        <Header />
+        <main style={{ paddingTop: "60px" }}>{children}</main>
+      </ChakraProvider>
     )
   } else {
     if (!user) {
@@ -71,26 +79,24 @@ const Layout = ({ children, location }) => {
         </ChakraProvider>
       )
     }
-    
+
     const childrenWithProps = React.Children.map(children, child => {
       if (React.isValidElement(child))
-        return React.cloneElement(child, { user, setUser, org, setOrg });
-      return child;
-    });
-  
+        return React.cloneElement(child, { user, setUser, org, setOrg })
+      return child
+    })
+
     return (
       <ChakraProvider theme={theme}>
-        <HeaderUser
-          user={user}
-          setUser={setUser}
-          org={org}
-          setOrg={setOrg}
-        /> 
-        { pathname !== '/welcome/' && <SideNav location={location}/> }
-        <main style={ (pathname !== '/welcome/')
-          ? { paddingTop: "60px", paddingLeft: "110px"}
-          : { paddingTop: "60px" }
-        }>
+        <HeaderUser user={user} setUser={setUser} org={org} setOrg={setOrg} />
+        {pathname !== "/welcome/" && <ProSidebar location={location} />}
+        <main
+          style={
+            pathname !== "/welcome/"
+              ? { paddingTop: "60px", paddingLeft: "90px" }
+              : { paddingTop: "60px" }
+          }
+        >
           {childrenWithProps}
         </main>
       </ChakraProvider>

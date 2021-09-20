@@ -38,7 +38,7 @@ import ProfileSettings from "../settings/profileSettings"
 const HeaderUser = props => {
   const { isOpen, onOpen, onClose } = useDisclosure()
   const [tab, setTab] = useState(0)
-  const {user, setUser, org, setOrg} = props
+  const { user, setUser, org, setOrg } = props
 
   const clickHandler = () => {
     logout()
@@ -56,25 +56,25 @@ const HeaderUser = props => {
         <a href="/dashboard">
           <Box pt="7px">
             <Image
-              top="20px"
-              left="21px"
+              top="23px"
+              left="12px"
               zIndex={999}
               pos="absolute"
-              w="80px"
+              w="60px"
               src={Logo}
             />
             <Circle
-              left="20px"
+              left="2px"
               top="-5px"
               pos="absolute"
               bgColor="ripple.200"
-              size="80px"
+              size="78px"
             ></Circle>
           </Box>
         </a>
-        <Box pl="170px">
-          {org?.name  &&
-            <Popover >
+        <Box pl="90px">
+          {org?.name && (
+            <Popover>
               <PopoverTrigger>
                 <Button
                   w="fit"
@@ -82,11 +82,11 @@ const HeaderUser = props => {
                   color="white"
                   bgColor="ripple.200"
                   fontFamily="Raleway-Bold"
-                  fontSize="30px"
+                  fontSize="28px"
                   _hover={{ transform: "scale(1.01)" }}
                   _active={{ bg: "ripple.200", transform: "scale(1.01)" }}
                 >
-                  {org?.name  || "loading..."}
+                  {org?.name || "loading..."}
                   {<RiArrowDropDownLine size="50px" />}
                 </Button>
               </PopoverTrigger>
@@ -95,35 +95,42 @@ const HeaderUser = props => {
                   <VStack spacing={5} align="start" p="8px">
                     <HStack p="15px" spacing={5}>
                       <Avatar size="md" src={org?.profilePicture || Logo} />
-                      <Box textAlign="left" ml>  
+                      <Box textAlign="left" ml>
                         <Heading as="h3" size="md">
                           {org?.name || "loading..."}
                         </Heading>
-                        <Text color="gray">{org?.description || "loading..."}</Text>
+                        <Text color="gray">
+                          {org?.description || "loading..."}
+                        </Text>
                       </Box>
                     </HStack>
-                    {org?.admin === user?.id && <>
-                      <Divider />
-                      <Button
-                        bgColor="white"
-                        _hover={{
-                          transform: "scale(1.08)",
-                        }}
-                      >
-                        <Link to="/Invite"> Invite people to {org?.name || "loading..."}</Link>
-                      </Button>
-                      <Button
-                        bgColor="white"
-                        _hover={{
-                          transform: "scale(1.08)",
-                        }}
-                        onClick={() => {
-                          handleOpen(3)
-                        }}
-                      >
-                        Settings & Administration
-                      </Button>
-                    </>}
+                    {org?.admin === user?.id && (
+                      <>
+                        <Divider />
+                        <Button
+                          bgColor="white"
+                          _hover={{
+                            transform: "scale(1.08)",
+                          }}
+                        >
+                          <Link to="/Invite">
+                            {" "}
+                            Invite people to {org?.name || "loading..."}
+                          </Link>
+                        </Button>
+                        <Button
+                          bgColor="white"
+                          _hover={{
+                            transform: "scale(1.08)",
+                          }}
+                          onClick={() => {
+                            handleOpen(3)
+                          }}
+                        >
+                          Settings & Administration
+                        </Button>
+                      </>
+                    )}
                     <Divider />
                     <Button
                       bgColor="white"
@@ -138,27 +145,29 @@ const HeaderUser = props => {
                 </PopoverBody>
               </PopoverContent>
             </Popover>
-          }
-          {!user?.lastOpenedOrganization && 
-             <Text
-               w="fit"
-               h="50px"
-               color="white"
-               bgColor="ripple.200"
-               fontFamily="Raleway-Bold"
-               fontSize="30px"
-             > No Workspace
-             </Text>
-          }
+          )}
+          {!user?.lastOpenedOrganization && (
+            <Text
+              w="fit"
+              h="50px"
+              color="white"
+              bgColor="ripple.200"
+              fontFamily="Raleway-Bold"
+              fontSize="30px"
+            >
+              {" "}
+              No Workspace
+            </Text>
+          )}
         </Box>
         <Spacer />
         {/* Header Profile Right Side */}
         <Box pr="15px">
-          <ProfileSettings 
-            isOpen={isOpen} 
-            onClose={onClose} 
-            tab={tab} 
-            user={user} 
+          <ProfileSettings
+            isOpen={isOpen}
+            onClose={onClose}
+            tab={tab}
+            user={user}
             setUser={setUser}
             org={org}
             setOrg={setOrg}
@@ -187,7 +196,10 @@ const HeaderUser = props => {
                   <HStack p="15px" spacing={5}>
                     <Avatar
                       size="md"
-                      name={user?.firstName + " " + user?.lastName?.lastName || "loading..."}
+                      name={
+                        user?.firstName + " " + user?.lastName?.lastName ||
+                        "loading..."
+                      }
                       src={user?.profilePicture || ProfilePicture}
                       _hover={{
                         transform: "scale(1.01)",
@@ -213,10 +225,9 @@ const HeaderUser = props => {
                     bgColor="white"
                     _hover={{ transform: "scale(1.08)" }}
                     onClick={() => {
-                      updateUser(
-                        user?.id, 
-                        {isInvisible: !user?.isInvisible}
-                      ).then((updatedUser) => setUser(updatedUser))
+                      updateUser(user?.id, {
+                        isInvisible: !user?.isInvisible,
+                      }).then(updatedUser => setUser(updatedUser))
                     }}
                   >
                     Set as {user?.isInvisible ? "Visible" : "Invisible"}
