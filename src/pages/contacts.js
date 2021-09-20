@@ -3,7 +3,7 @@ import * as React from "react"
 import Layout from "../components/layout"
 import Seo from "../components/seo"
 
-import { Box, Text } from "@chakra-ui/react"
+import { Box, Text, IconButton, Tooltip, useDisclosure } from "@chakra-ui/react"
 
 import MaterialTable from "material-table"
 
@@ -27,6 +27,10 @@ import Remove from "@material-ui/icons/Remove"
 import SaveAlt from "@material-ui/icons/SaveAlt"
 import Search from "@material-ui/icons/Search"
 import ViewColumn from "@material-ui/icons/ViewColumn"
+
+import { FaExpandAlt } from "react-icons/fa"
+
+import ContactPopUp from "../components/contacts/contactPopup"
 
 const Contacts = props => {
   const tableIcons = {
@@ -67,6 +71,8 @@ const Contacts = props => {
       },
     },
   })
+
+  const { isOpen, onOpen, onClose } = useDisclosure()
 
   return (
     <Layout location={props.location}>
@@ -128,6 +134,21 @@ const Contacts = props => {
                 width: "18%",
                 align: "left",
               },
+              {
+                render: rowData => (
+                  <Tooltip hasArrow label="View Contact">
+                    <IconButton
+                      pt="10px"
+                      pb="10px"
+                      color="ripple.200"
+                      variant="link"
+                      icon={<FaExpandAlt />}
+                      onClick={onOpen}
+                    />
+                  </Tooltip>
+                ),
+                width: "10%",
+              },
             ]}
             data={[
               {
@@ -141,6 +162,7 @@ const Contacts = props => {
             ]}
           />
         </MuiThemeProvider>
+        <ContactPopUp onOpen={onOpen} isOpen={isOpen} onClose={onClose} />
       </Box>
     </Layout>
   )
