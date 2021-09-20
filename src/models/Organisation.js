@@ -9,6 +9,7 @@ import {
     arrayUnion, 
     arrayRemove
 } from "firebase/firestore"
+import { getUser } from "./User"
 
 const db = getFirestore(firebase)
 
@@ -69,6 +70,7 @@ export const getInvite = async (inviteID) => {
         return null
     });
 }
+
 /**
  * adds a user to an organization
  * 
@@ -84,6 +86,29 @@ export const addUserToOrganization = async (orgID, userID, position) => {
     await updateDoc(doc(db, "users", userID), {
         lastOpenedOrganization: orgID,
         organizations: arrayUnion(orgID)
+    })
+}
+
+/**
+ * removes a user from an organization
+ * 
+ * @param {String} orgID ID of organization
+ * @param {String} userID ID of user
+ */
+ export const removeUserFromOrganization = async (orgID, userID) => {
+    // removes user from organizations document
+    const org = await getOrganization(orgID)
+    const member = org.members.filter(member => member.userID === userID)[0]
+    await updateDoc(doc(db, "organizations", orgID), {
+        members: arrayRemove(member)
+    })
+    // removes organization to users document
+    const user = await getUser(userID)
+    const orgList = user.organizations
+    orgList.splice(orgList.indexOf(orgID), 1)
+    await updateDoc(doc(db, "users", userID), {
+        lastOpenedOrganization: orgList.length > 0 ? orgList[0] : null,
+        organizations: arrayRemove(orgID)
     })
 }
 

@@ -1,6 +1,7 @@
 import React, { useState } from "react"
 import { logout } from "../../utils/AuthFunctions"
 import { updateUser } from "../../models/User"
+import { removeUserFromOrganization } from "../../models/Organisation"
 import { Link } from "gatsby"
 import { navigate } from "gatsby-link"
 
@@ -22,6 +23,7 @@ import {
   Heading,
   Text,
   VStack,
+  useToast
 } from "@chakra-ui/react"
 
 import {
@@ -39,6 +41,7 @@ const HeaderUser = props => {
   const { isOpen, onOpen, onClose } = useDisclosure()
   const [tab, setTab] = useState(0)
   const {user, setUser, org, setOrg} = props
+  const toast = useToast()
 
   const clickHandler = () => {
     logout()
@@ -48,6 +51,18 @@ const HeaderUser = props => {
   const handleOpen = val => {
     setTab(val)
     onOpen()
+  }
+
+  const leaveWorkspace = async () => {
+    await removeUserFromOrganization(org?.id, user?.id)
+    toast({
+      title: "Success",
+      description: "You have left " + org?.name,
+      status: "success",
+      duration: 5000,
+      isClosable: true,
+    })
+    navigate('/dashboard')
   }
 
   return (
@@ -72,9 +87,9 @@ const HeaderUser = props => {
             ></Circle>
           </Box>
         </a>
-        <Box pl="170px">
+        <Box pl="6.5em">
           {org?.name  &&
-            <Popover >
+            <Popover placement="bottom-start">
               <PopoverTrigger>
                 <Button
                   w="fit"
@@ -134,6 +149,19 @@ const HeaderUser = props => {
                     >
                       Switch Workspace
                     </Button>
+                    {org?.admin !== user?.id &&
+                      <Button
+                        bgColor="white"
+                        color="red.600"
+                        _hover={{
+                          transform: "scale(1.08)",
+                        }}
+                        onClick={leaveWorkspace}
+                        leftIcon={<RiLogoutBoxLine />}
+                      >
+                        Leave Workspace
+                      </Button>
+                    }
                   </VStack>
                 </PopoverBody>
               </PopoverContent>

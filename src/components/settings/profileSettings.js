@@ -1,4 +1,10 @@
 import React, { useEffect, useState } from "react"
+
+import { 
+  updateMemberPosition, 
+  updateOrganization, 
+  removeUserFromOrganization 
+} from "../../models/Organisation"
 import { updateUser, getUser } from "../../models/User"
 
 import {
@@ -49,8 +55,8 @@ import {
   BiUserMinus,
   BiSearch,
 } from "react-icons/bi"
+
 import UploadImageButton from "../uploadImageButton"
-import { updateMemberPosition, updateOrganization } from "../../models/Organisation"
 
 const ProfileSettings = props => {
   return (
@@ -386,7 +392,6 @@ const OrganizationsTab = props => {
         const member = await getUser(memberObj.userID)
         orgMembers.push(member)
       }
-      console.log(orgMembers)
       setMembers(orgMembers)
       setLoading(false)
     }
@@ -417,6 +422,18 @@ const OrganizationsTab = props => {
       })
     })
   } 
+
+  const removeUser = async (userID) => {
+    await removeUserFromOrganization(props.org.id, userID)
+    setMembers(members.filter(member => member.id !== userID))
+    toast({
+      title: "Success",
+      description: "Removed user from " + props.org?.name,
+      status: "success",
+      duration: 5000,
+      isClosable: true,
+    })
+  }
 
   return (
     <VStack h="25em">
@@ -452,7 +469,12 @@ const OrganizationsTab = props => {
                 Manage Members
               </Text>
               <Spacer />
-              <Text color="green.400" pb="5px" fontSize="12px">
+              <Text 
+                color="green.400" 
+                pb="5px" 
+                fontSize="12px"
+                _hover={{ transform: "scale(1.1)" }}
+              >
                 Invite People +
               </Text>
             </HStack>
@@ -475,53 +497,15 @@ const OrganizationsTab = props => {
                 return (member?.firstName + " " + member?.lastName)
                   .toLowerCase()
                   .includes(search.toLowerCase())
-              }).map((member, i) => {
-                // return members of organization
-                return (
-                  <HStack p="0.5em" spacing={3} w="100%">
-                    <SkeletonCircle isLoaded={!loading} size="12">
-                      <Avatar
-                        size="md"
-                        name={member?.firstName + " " + member?.lastName}
-                        src={member?.profilePicture || ProfilePicture}
-                        _hover={{ transform: "scale(1.01)" }}
-                      >
-                        <AvatarBadge
-                          boxSize="20px"
-                          borderColor="black"
-                          bg={member?.isInvisible ? "gray.300" : "green.300"}
-                        />
-                      </Avatar>
-                    </SkeletonCircle>
-                    <Center h="100%" w="100%">
-                      <Box textAlign="left" ml  w="100%">
-                        <Skeleton isLoaded={!loading}>
-                          <Text fontWeight="bold">
-                            {member?.firstName + " " + member?.lastName}
-                            {member?.id === props.user?.id &&
-                              <Badge ml="1" colorScheme="green">
-                                You
-                              </Badge>
-                            }
-                          </Text>
-                        </Skeleton>
-                        <Skeleton isLoaded={!loading}>
-                          <Text color="gray" fontSize="sm">{member?.email}</Text>
-                        </Skeleton>
-                      </Box>
-                    </Center>
-                    {member?.id !== props.user?.id &&
-                      <Tooltip label="Remove user" hasArrow bg="red.600">
-                        <Circle 
-                          _hover={{ transform: "scale(1.2)" }}
-                        >
-                          <BiUserMinus style={{ color: "red" }} />
-                        </Circle>
-                      </Tooltip>
-                    }
-                  </HStack>
-                )
-              })}
+              }).map((member, i) => 
+                <MemberTag
+                  key={"member_" + i}
+                  member={member} 
+                  adminID={props.user?.id} 
+                  loading={loading}
+                  removeUser={removeUser}
+                />
+              )}
             </VStack>
           </Box>
         </VStack>
@@ -529,9 +513,7 @@ const OrganizationsTab = props => {
         <VStack spacing={0}>
           <Center h="200px" w="200px" bgColor="ripple.100">
             <Image objectFit="cover" h="100%" w="100%" src={
-              photoUrl || 
-              props.org?.profilePicture || 
-              ProfilePicture} 
+              photoUrl || props.org?.profilePicture || ProfilePicture} 
             />
           </Center>
           <Box h="10px" />
@@ -579,6 +561,58 @@ const OrganizationsTab = props => {
         </VStack>
       </HStack>
     </VStack>
+  )
+}
+
+const MemberTag = ({member, adminID, loading, removeUser}) => {
+  return (
+    <HStack p="0.5em" spacing={3} w="100%">
+      <SkeletonCircle isLoaded={!loading} size="12" >
+        <Avatar
+          size="md"
+          name={member?.firstName + " " + member?.lastName}
+          src={member?.profilePicture || ProfilePicture}
+          _hover={{ transform: "scale(1.01)" }}
+        >
+          <AvatarBadge
+            boxSize="20px"
+            borderColor="black"
+            bg={member?.isInvisible || 
+              (Date.now() / 1000 - member?.lastOnline.seconds) > 300 
+                ? "gray.300" 
+                : "green.300"
+            }
+          />
+        </Avatar>
+      </SkeletonCircle>
+      <Center h="100%" w="100%">
+        <Box textAlign="left" ml  w="100%">
+          <Skeleton isLoaded={!loading}>
+            <Text fontWeight="bold">
+              {member?.firstName + " " + member?.lastName}
+              {member?.id === adminID &&
+                <Badge ml="1" colorScheme="green">
+                  You
+                </Badge>
+              }
+            </Text>
+          </Skeleton>
+          <Skeleton isLoaded={!loading}>
+            <Text color="gray" fontSize="sm">{member?.email}</Text>
+          </Skeleton>
+        </Box>
+      </Center>
+      {member?.id !== adminID &&
+        <Tooltip  label="Remove user" hasArrow bg="red.600">
+          <Circle 
+            _hover={{ transform: "scale(1.2)" }}
+            onClick={() => removeUser(member?.id)}
+          >
+            <BiUserMinus style={{ color: "red" }} />
+          </Circle>
+        </Tooltip>
+      }
+    </HStack>
   )
 }
 
