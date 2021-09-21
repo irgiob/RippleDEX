@@ -257,10 +257,8 @@ const HeaderUser = props => {
                     bgColor="white"
                     _hover={{ transform: "scale(1.08)" }}
                     onClick={() => {
-                      updateUser(
-                        user?.id, 
-                        {isInvisible: !user?.isInvisible}
-                      ).then((updatedUser) => setUser(updatedUser))
+                      updateUser(user?.id, {isInvisible: !user?.isInvisible})
+                      setUser({...user, isInvisible: !user?.isInvisible})
                     }}
                   >
                     Set as {user?.isInvisible ? "Visible" : "Invisible"}

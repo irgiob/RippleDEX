@@ -13,7 +13,8 @@ const db = getFirestore(firebase)
  * 
  * @returns {User} new user just created
  */
-export const createNewUser = (userFirstName, userLastName, userID, userEmail,userPhoneNumber) => {
+export const createNewUser = (userFirstName, userLastName, userID, 
+    userEmail,userPhoneNumber, userProfilePicture) => {
     const docRef = doc(db, "users", userID)
     return setDoc(docRef, {
         firstName: userFirstName,
@@ -22,16 +23,10 @@ export const createNewUser = (userFirstName, userLastName, userID, userEmail,use
         phoneNumber: userPhoneNumber,
         organizations: [],
         lastOpenedOrganization: null,
-        profilePicture: null,
+        profilePicture: userProfilePicture,
         lastOnline: Timestamp.now(),
         notificationMode: "000",
         isInvisible: false
-    }).then(()=>{
-        return getDoc(docRef).then((doc) => {
-            return doc.data()
-        })
-    }).catch((error) => {
-        console.log("Error adding new user: ", error);
     })
 }
 
@@ -45,13 +40,7 @@ export const createNewUser = (userFirstName, userLastName, userID, userEmail,use
  */
 export const updateUser = async (userID, options) => {
     const docRef = doc(db, "users", userID)
-    const docSnap = await getDoc(docRef)
-
-    if (docSnap.exists()){
-        return updateDoc(docRef, options).then(() => getUser(userID, true))
-    } else {
-        console.log("No such document!");
-    }
+    return updateDoc(docRef, options)
 }
 
 /**
@@ -64,20 +53,6 @@ export const doesUserExist = async (userID) => {
     const docRef = doc(db, "users", userID)
     const docSnap = await getDoc(docRef)
     return docSnap.exists()
-}
-
-/**
- * updates the notification settings for a specific user
- * 
- * @param {String} userID ID of user to be updated
- * @param {Integer} notificationMode new notification mode
- */
-export const updateUserNotificationSettings = (userID, notificationMode) => {
-    const docRef = doc(db, "users", userID);
-    return updateDoc(docRef, {
-        notificationMode: notificationMode
-    });
-
 }
 
 /**

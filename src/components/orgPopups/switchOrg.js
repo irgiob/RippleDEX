@@ -42,9 +42,7 @@ const SwitchOrgPopup = props => {
           onClick={() => {
             updateUser(props.user?.id, {
               lastOpenedOrganization: allOrg.toString(),
-            })
-              .then(updatedUser => props.setUser(updatedUser))
-              .then(
+            }).then(
                 toast({
                   title: "Success",
                   description: "Organization has been changed",
