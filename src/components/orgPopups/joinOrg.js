@@ -1,5 +1,5 @@
-import React, { useState } from "react"
-import { getInvite, addUserToOrganization } from "../../models/Organisation"
+import React, { useState, useEffect } from "react"
+import { getInvitesByEmail, addUserToOrganization } from "../../models/Organisation"
 import { navigate } from "gatsby-link"
 
 import {
@@ -17,6 +17,7 @@ import {
     ModalCloseButton,
     Input,
     SimpleGrid,
+    Spacer,
     useToast,
   } from "@chakra-ui/react"
 
@@ -27,105 +28,40 @@ const JoinOrgPopup = (props) => {
     const [loading, setLoading] = useState(false)
     const [orgName, setOrgName] = useState("")
     const [orgDesc, setOrgDesc] = useState("")
-    const [invites, setInvites] = useState("")
+    const [invites, setInvites] = useState([])
 
-    const inviteList = async (currentUser) => {
-       const allInvites = await getInvite(currentUser)
-       if (allInvites){
-           setInvites(allInvites)
-       }else{
-            setInvites("no current invite")
-       }
-    }
+    useEffect( () => {
+            const currentInvite = getInvitesByEmail(props.userEmail)
+            if (currentInvite){
+                setInvites(currentInvite)
+            }else{
+                setInvites(["there are no invites"])
+            }
+         }, [])
+
+    const allInvite = invites.map((invites, i) => {
+        return (
+          <li w="100%" mt="10%" textAlign="left" key={i}>
+            <Button
+              bgColor="white"
+              h="50px"
+              textAlign="left"
+              _hover={{
+                transform: "scale(1.08)",
+              }}
+            >
+              {invites}
+            </Button>
+            <hr />
+          </li>
+        )
+      })
+    
     
 
-    // useEffect(() => {
-    //     const allInvites = getInvite(props.userID)
-    //     if (allInvites) {
-    //       setInvites(allInvites)
-    //     } else {
-    //       setInvites("no current invite")
-    //     }
-    //   }, [])
-    
 
 
-    
-
-    // const orgList = allOrg.map((allOrg, i) => {
-    //     return (
-    //       <li w="100%" mt="10%" textAlign="left" key={i}>
-    //         <Button
-    //           bgColor="white"
-    //           h="50px"
-    //           textAlign="left"
-    //           _hover={{
-    //             transform: "scale(1.08)",
-    //           }}
-    //           leftIcon={<RiArrowLeftRightLine />}
-    //           onClick={() => {
-    //             updateUser(props.user?.id, {
-    //               lastOpenedOrganization: allOrg.toString(),
-    //             })
-    //               .then(updatedUser => props.setUser(updatedUser))
-    //               .then(
-    //                 toast({
-    //                   title: "New Organization Added",
-    //                   description: "Organization has been changed",
-    //                   status: "success",
-    //                   duration: 5000,
-    //                   isClosable: true,
-    //                 }),
-    //                 window.location.reload(false)
-    //               )
-    //           }}
-    //         >
-    //           {allOrg}
-    //         </Button>
-    //         <hr />
-    //       </li>
-    //     )
-    //   })
-
-    // const handleSubmit = async event => {
-    //     setLoading(true)
-    //     event.preventDefault()
-    //     const org = await createNewOrganization(props.userID, orgName, orgDesc)
-    //     if (org) {
-    //       invites.forEach(async invite => {
-    //         if (invite.email) {
-    //           var inviteID = await inviteToOrganization(
-    //             invite.email,
-    //             org.id,
-    //             invite.position
-    //           )
-    //           console.log(inviteID)
-    //         }
-    //       })
-    //       navigate(`/dashboard`)
-    //       toast({
-    //         title: "New Organization Added",
-    //         description: "Welcome to the Dashboard!",
-    //         status: "success",
-    //         duration: 5000,
-    //         isClosable: true,
-    //       })
-    //     } else {
-    //       // Failed to create Organization
-    //       setLoading(false)
-    //       toast({
-    //         title: "Failed to create Organization",
-    //         description: "Please try again",
-    //         status: "error",
-    //         duration: 5000,
-    //         isClosable: true,
-    //       })
-    //     }
-    //   }
-
-
-
-    return <Modal isOpen={props.isOpen} onClose={props.onClose} onLoad={inviteList(props.userID)}>
+    return <Modal isOpen={props.isOpen} onClose={props.onClose}>
         <ModalOverlay/>
         <ModalContent pos="absolute" h="900px" minHeight="90%" maxW="80%" borderRadius="15px" value="inside">
             <ModalCloseButton m="15px"/>
@@ -136,9 +72,15 @@ const JoinOrgPopup = (props) => {
               fontSize="28px"
               color="ripple.200"
             >
-              Join Organization {props.userID} aaaaaaa {invites}
+              Join Organization <Spacer />{props.userEmail}
             </ModalHeader>
             <hr/>
+            <Box pt="30px" pb="30px" w="100%">
+              <ol style={{ listStyleType: "none" }}>
+                {allInvite}
+                <hr />
+              </ol>
+            </Box>
 
 
         </ModalContent>

@@ -98,6 +98,7 @@ const WelcomePage = ({ user, setUser, org, setOrg }) => {
           </Button>
           <JoinOrgPopup
             userID={user.id}
+            userEmail={user?.email}
             onOpen = {onJoinOpen}
             isOpen={isJoinOpen}
             onClose={onJoinClose}

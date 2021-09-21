@@ -46,7 +46,7 @@ const SwitchOrgPopup = props => {
               .then(updatedUser => props.setUser(updatedUser))
               .then(
                 toast({
-                  title: "New Organization Added",
+                  title: "Success",
                   description: "Organization has been changed",
                   status: "success",
                   duration: 5000,
