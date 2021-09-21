@@ -1,5 +1,5 @@
 import firebase from "../../plugins/gatsby-plugin-firebase-custom"
-import {getFirestore, doc, setDoc, getDoc, updateDoc, Timestamp,collection, query, where, getDocs }  from "firebase/firestore"
+import {getFirestore, doc, setDoc, getDoc, updateDoc, Timestamp,collection, query, where, getDocs, doc, deleteDoc }  from "firebase/firestore"
 
 const db = getFirestore(firebase)
 
@@ -16,8 +16,8 @@ const db = getFirestore(firebase)
  * 
  * @returns {DocumentReference} new contact just created
  */
-export const createNewContact = async (contactID, orgID, contactName, companyID, contactEmail, contactPhoneNumber ) => {
-    const docRef = doc(db, "contacts", contactID)
+export const createNewContact = async (orgID, contactName, companyID, contactEmail, contactPhoneNumber ) => {
+    const docRef = doc(db, "contacts")
     return setDoc(docRef, {
         registeredBy : orgID,
         name: contactName,
@@ -27,9 +27,7 @@ export const createNewContact = async (contactID, orgID, contactName, companyID,
         position : null,
         notes: null // Same like Interaction 's notes?
     }).then(()=>{
-        return getDoc(docRef).then((doc) => {
-            return doc.data()
-        })
+        return getContact(docRef.id);
     }).catch((error) => {
         console.log("Error adding new contact: ", error);
     })
@@ -69,7 +67,7 @@ export const getContactsByOrg = async (orgID) => {
     const querySnapshot = await getDocs(q);
     const contactList = [];
     querySnapshot.forEach((contact) => {
-        contactList.push(contact.id);
+        contactList.push(getContact(contact.id));
         return contactList
 }).catch((error) => {
     console.error("Error getting contacts: ", error);
@@ -87,10 +85,28 @@ export const getContact = async (contactID) =>{
     const docRef = doc(db, "contacts", contactID)    
     return getDoc(docRef).then((contact) => {
         const data = contact.data()
-        data.id = conatctID
+        data.id = contactID
         return data
     }).catch((error) => {
         console.error("Error getting contact: ", error);
     });
 
+}
+
+/**
+ * Delete contact 
+ * 
+ * @param {String} contactID ID of the contact
+ * 
+ * @returns {DocumentReference}
+ */
+export const deleteContact = async (contactID) => {
+    const docRef = doc(db, "contacts", contactID)
+    const docSnap = await getDoc(docRef)
+
+    if (docSnap.exists()){
+        return await deleteDoc(docRef);
+    } else {
+        console.log("No such document!");
+    }
 }

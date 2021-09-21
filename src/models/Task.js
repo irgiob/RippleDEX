@@ -15,8 +15,8 @@ const db = getFirestore(firebase)
  * 
  * @returns {DocumentReference} new task just created
  */
-export const createNewTask = async(taskID, dealID, taskDesc, taskName, orgID) => {
-    const docRef = doc(db, "tasks", taskID)
+export const createNewTask = async( dealID, taskDesc, taskName, orgID) => {
+    const docRef = doc(db, "tasks")
     return setDoc(docRef, {
         deal: dealID,
         name: taskName,
@@ -27,9 +27,7 @@ export const createNewTask = async(taskID, dealID, taskDesc, taskName, orgID) =>
         assignedUsers: [],
         forOrganization : orgID
     }).then(()=>{
-        return getDoc(docRef).then((doc) => {
-            return doc.data()
-        })
+        return getTask(docRef.id);
     }).catch((error) => {
         console.log("Error adding new task: ", error);
     })
@@ -67,7 +65,7 @@ export const updateTask = async (taskID, options) =>{
     const querySnapshot = await getDocs(q);
     const taskList = [];
     querySnapshot.forEach((task) => {
-        taskList.push(task.id);
+        taskList.push(getTask(task.id));
         return taskList
 }).catch((error) => {
     console.error("Error getting tasks: ", error);
@@ -92,4 +90,22 @@ export const getTask = async (taskID) =>{
     });
 
 
+}
+
+/**
+ * Delete task
+ * 
+ * @param {String} taskID ID of the task
+ * 
+ * @returns {DocumentReference}
+ */
+ export const deletetask = async (taskID) => {
+    const docRef = doc(db, "tasks", taskID)
+    const docSnap = await getDoc(docRef)
+
+    if (docSnap.exists()){
+        return await deleteDoc(docRef);
+    } else {
+        console.log("No such document!");
+    }
 }
