@@ -15,6 +15,7 @@ import { ChakraProvider, Spinner, Center, Text, VStack, Box } from "@chakra-ui/r
 
 const Layout = ({ children, location }) => {
   const pathname = location.pathname
+  const [loading, setLoading] = useState(true)
   const [user, setUser] = useState(null)
   const [org, setOrg] = useState(null)
 
@@ -27,10 +28,13 @@ const Layout = ({ children, location }) => {
           if (user.lastOpenedOrganization) {
             const org = await getOrganization(user.lastOpenedOrganization)
             setOrg(org)
+            setLoading(false)
           } else {
-            console.log(pathname)
-            if (pathname !== '/welcome/')
+            if (pathname !== '/welcome/') {
               navigate("/welcome/")
+            } else {
+              setLoading(false)
+            }
           }
         },
         () => navigate("/")
@@ -46,7 +50,7 @@ const Layout = ({ children, location }) => {
     </ChakraProvider>
     )
   } else {
-    if (!user) {
+    if (loading) {
       return (
         <ChakraProvider theme={theme}>
           <Center h="100vh">

@@ -84,10 +84,11 @@ export const updateUserNotificationSettings = (userID, notificationMode) => {
  * gets the last organization the user had opened while using the app
  * 
  * @param {String} userID ID of user to be updated
+ * @param {Boolean} updateLastOnline pass true if being use to get current user
  * 
  * @returns {DocumentReference}
  */
-export const getUser = async (userID, updateLastOnline) => {
+export const getUser = async (userID, updateLastOnline = false) => {
     const docRef = doc(db, "users", userID)
     // Logs the user activity for lastOnline
     if (updateLastOnline)
