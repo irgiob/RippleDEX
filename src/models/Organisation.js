@@ -5,7 +5,8 @@ import {
     where,
     doc, 
     addDoc, 
-    getDoc, 
+    getDoc,
+    getDocs, 
     updateDoc, 
     collection, 
     arrayUnion, 
@@ -80,7 +81,7 @@ export const getInvite = async (inviteID) => {
  */
 export const getInvitesByEmail = async (email) => {
     const q = query(collection(db, "invites"), where("email", "==", email))
-    return getDoc(q).then((invites) => {
+    return getDocs(q).then((invites) => {
         invites.forEach((invite, i) => {
             this[i] = this[i].data()
         })
