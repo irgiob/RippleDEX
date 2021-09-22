@@ -93,7 +93,7 @@ const Layout = ({ children, location }) => {
         <main
           style={
             pathname !== "/welcome/"
-              ? { paddingTop: "60px", paddingLeft: "90px" }
+              ? { paddingTop: "60px", paddingLeft: "80px" }
               : { paddingTop: "60px" }
           }
         >

@@ -79,7 +79,7 @@ const Contacts = props => {
       <Seo title="Contacts" />
       <Box p="25px">
         <Text
-          pb="20px"
+          pb="10px"
           fontFamily="Raleway-Bold"
           fontSize="28px"
           color="ripple.200"
@@ -99,6 +99,7 @@ const Contacts = props => {
               tableLayout: "auto",
               toolbarButtonAlignment: "left",
             }}
+            style={{ boxShadow: "none" }}
             title="Contacts"
             icons={tableIcons}
             columns={[
