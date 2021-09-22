@@ -1,5 +1,5 @@
 import firebase from "../../plugins/gatsby-plugin-firebase-custom"
-import {getFirestore, doc, setDoc, getDoc, updateDoc, collection, query, where, getDocs, doc, deleteDoc,addDoc,  }  from "firebase/firestore"
+import {getFirestore, doc, getDoc, updateDoc, collection, query, where, getDocs, doc, deleteDoc, addDoc}  from "firebase/firestore"
 
 const db = getFirestore(firebase)
 
@@ -7,35 +7,34 @@ const db = getFirestore(firebase)
  * creates new interaction
  * 
  * @param {String} contactID the ID of contact of the interaction 
- * @param {Object} interPart the participantes of the interaction
+ * @param {Array} interPart the participantes of the interaction
  * @param {String} userID the ID of the user adding the interaction
  * @param {String} orgID the ID of organizaiton 
- * @param {String} meetStart the start date of the meeting
- * @param {String} meetEnd the end date of the meeting
- * @param {String} meetType the type of the meeting
+ * @param {String} dealID the ID of deal
+ * @param {String} taskID the ID of task
+ * @param {String} start the start date of the meeting
+ * @param {String} end the end date of the meeting
+ * @param {String} type the type of the meeting
  * @param {String} interNote the note of the interaction
  * @param {Boolean} remind choose to remind the user or not
  * 
  * @return {DocumentReference} newly created interaction
  */
-export const createNewInteraction = async (contactID,interPart,userID,orgID,interNote,remind) =>{
+export const createNewInteraction = async (contactID,interPart,userID,orgID,dealID,taskID,start,end,type,interNote,remind) =>{
     const docRef = await addDoc(collection(db,"interactions"),{
         contact: contactID,
         participants: interPart,
         addedBy: userID,
-        forDeal: null,
-        forTask: null,
+        forDeal: dealID,
+        forTask: taskID,
         forOrganization: orgID,
-        meetingStart: null,
-        meetingEnd: null,
-        meetingType: null,
+        meetingStart: start,
+        meetingEnd: end,
+        meetingType: type,
         notes : interNote, // Or create structure so people can add comments?
         remindMe: remind
-    }).then(()=>{
-        return await getInteraction(docRef.id);
-    }).catch((error) => {
-        console.log("Error adding new interaction: ", error);
     })
+    return docRef.id
 }
 
 /**
@@ -48,13 +47,7 @@ export const createNewInteraction = async (contactID,interPart,userID,orgID,inte
  */
  export const updateInteraction = async (interID, options) =>{
     const docRef = doc(db, "interactions", interID)
-    const docSnap = await getDoc(docRef)
-
-    if (docSnap.exists()){
-        return updateDoc(docRef, options).then(() => getInteraction(interID))
-    } else {
-        console.log("No such document!");
-    }
+    return updateDoc(docRef, options)
 }
 
 /**
@@ -66,34 +59,40 @@ export const createNewInteraction = async (contactID,interPart,userID,orgID,inte
  */
  export const deleteInteraction = async (interID) => {
     const docRef = doc(db, "interactions", interID)
-    const docSnap = await getDoc(docRef)
+    return await deleteDoc(docRef)
+}
 
-    if (docSnap.exists()){
-        return await deleteDoc(docRef);
-    } else {
-        console.log("No such document!");
-    }
+export const getInteractionsByOrg = async (orgID) => {
+    return await getInteractionsByField("forOrganization", orgID)
+}
+
+export const getInteractionsByDeal = async (dealID) => {
+    return await getInteractionsByField("forDeal", dealID)
+}
+
+export const getInteractionsByTask = async (taskID) => {
+    return await getInteractionsByField("forTask", taskID)
 }
 
 /**
- * gets all interactions based on organizaiton ID
+ * gets all interactions where value in field is equal to foreignKey
  * 
- * @param {String} orgID ID of the organizaiton
+ * @param {String} field specific field in document to filter by
+ * @param {String} foreignKey the key to compare the value in the field too
  * 
  * @returns {Object} the list of all interactions
  */
- export const getInteractionByOrg = async (orgID) => {
-    const q = query(collection(db, "interactions"), where("forOrganizaiton", "==", orgID));
+const getInteractionsByField = async (field, foreignKey) => {
+    const q = query(collection(db, "interactions"), where(field, "==", foreignKey));
     const querySnapshot = await getDocs(q);
     const interactionList = [];
-    querySnapshot.forEach((interaction) => {
-        interactionList.push(getDeal(interaction.id));
-        return interactionList
-}).catch((error) => {
-    console.error("Error getting interactions: ", error);
-});
+    for await (const interaction of querySnapshot) {
+        const data = interaction.data()
+        data.id = interaction.id
+        interactionList.push(data)
+    }
+    return interactionList
 }
-
 
 /**
  * gets interaction based on its ID
@@ -111,5 +110,4 @@ export const getInteraction = async (interID) =>{
     }).catch((error) => {
         console.error("Error getting interaction: ", error);
     });
-
 }

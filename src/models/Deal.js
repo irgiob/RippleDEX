@@ -1,5 +1,5 @@
 import firebase from "../../plugins/gatsby-plugin-firebase-custom"
-import {getFirestore, doc, setDoc, getDoc, updateDoc, Timestamp,collection, query, where, getDocs, doc, deleteDoc,addDoc,  }  from "firebase/firestore"
+import {getFirestore, doc, getDoc, updateDoc, collection, query, where, getDocs, doc, deleteDoc, addDoc}  from "firebase/firestore"
 
 const db = getFirestore(firebase)
 
@@ -12,27 +12,26 @@ const db = getFirestore(firebase)
  * @param {Float} dealSize the size of deal being created 
  * @param {String} userID the user recording the deal 
  * @param {String} dealNote the note of the deal
- * 
+ * @param {String} stage current stage of deal
+ * @param {Date} closeDate date the deal was closed
+ * @param {Array} contacts contacts associated with the closing of a deal
  * 
  * @return {DocumentReference} newly created deal
  */
 
-export　const createNewDeal = (orgID, dealName,dealDesc, dealSize, userID, dealNote ) => {
+export　const createNewDeal = (orgID, dealName, dealDesc, dealSize, userID, dealNote, stage, closeDate, contacts) => {
     const docRef = await addDoc(collection(db, "deals"),{
         forOrganizaiton: orgID,
         name: dealName,
         description: dealDesc,
         dealSize: dealSize,
-        closeDate: null,
+        closeDate: closeDate,
         recordedBy: userID,
-        contacts: [],
-        stage: null,
+        contacts: contacts,
+        stage: stage,
         notes: dealNote
-    }).then(()=>{
-        return await getDeal(docRef.id);
-    }).catch((error) => {
-        console.log("Error adding new deal: ", error);
     })
+    return docRef.id
 }
 
 /**
@@ -45,13 +44,7 @@ export　const createNewDeal = (orgID, dealName,dealDesc, dealSize, userID, deal
  */
  export const updateDeal = async (dealID, options) =>{
     const docRef = doc(db, "deals", dealID)
-    const docSnap = await getDoc(docRef)
-
-    if (docSnap.exists()){
-        return updateDoc(docRef, options).then(() => getDeal(dealID))
-    } else {
-        console.log("No such document!");
-    }
+    return updateDoc(docRef, options)
 }
 
 /**
@@ -61,15 +54,9 @@ export　const createNewDeal = (orgID, dealName,dealDesc, dealSize, userID, deal
  * 
  * @returns {DocumentReference}
  */
- export const deleteComapny = async (dealID) => {
+ export const deleteDeal = async (dealID) => {
     const docRef = doc(db, "deals", dealID)
-    const docSnap = await getDoc(docRef)
-
-    if (docSnap.exists()){
-        return await deleteDoc(docRef);
-    } else {
-        console.log("No such document!");
-    }
+    return await deleteDoc(docRef)
 }
 
 /**
@@ -79,36 +66,16 @@ export　const createNewDeal = (orgID, dealName,dealDesc, dealSize, userID, deal
  * 
  * @returns {Object} the list of all deals
  */
- export const getDealByOrg = async (orgID) => {
+ export const getDealsByOrg = async (orgID) => {
     const q = query(collection(db, "deals"), where("forOrganizaiton", "==", orgID));
     const querySnapshot = await getDocs(q);
     const dealList = [];
-    querySnapshot.forEach((deal) => {
-        dealList.push(getDeal(deal.id));
-        return dealList
-}).catch((error) => {
-    console.error("Error getting deals: ", error);
-});
-}
-
-
-/**
- * gets all deals based on user ID
- * 
- * @param {String} userID ID of the organizaiton
- * 
- * @returns {Object} the list of all deals
- */
- export const getDealByUser = async (userID) => {
-    const q = query(collection(db, "deals"), where("recordedBy", "==", userID));
-    const querySnapshot = await getDocs(q);
-    const dealList = [];
-    querySnapshot.forEach((deal) => {
-        dealList.push(getDeal(deal.id));
-        return dealList
-}).catch((error) => {
-    console.error("Error getting deals: ", error);
-});
+    for await (const deal of querySnapshot) {
+        const data = deal.data()
+        data.id = deal.id
+        dealList.push(data)
+    }
+    return dealList
 }
 
 
@@ -128,5 +95,4 @@ export const getDeal = async (dealID) =>{
     }).catch((error) => {
         console.error("Error getting deal: ", error);
     });
-
 }
