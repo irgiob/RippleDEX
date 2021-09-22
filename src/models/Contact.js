@@ -17,8 +17,7 @@ const db = getFirestore(firebase)
  * @returns {DocumentReference} new contact just created
  */
 export const createNewContact = async (orgID, contactName, companyID, contactEmail, contactPhoneNumber ) => {
-    const docRef = doc(db, "contacts")
-    return setDoc(docRef, {
+    const docRef = await addDoc(collection(db, "contacts"), {
         registeredBy : orgID,
         name: contactName,
         company: companyID,
@@ -27,7 +26,7 @@ export const createNewContact = async (orgID, contactName, companyID, contactEma
         position : null,
         notes: null // Same like Interaction 's notes?
     }).then(()=>{
-        return getContact(docRef.id);
+        return await getContact(docRef.id);
     }).catch((error) => {
         console.log("Error adding new contact: ", error);
     })
@@ -60,7 +59,7 @@ export const updateContact = async (contactID, options) =>{
  * 
  * @param {String} orgID ID of the organizaiton
  * 
- * @returns {Object} the list of all tasks 
+ * @returns {Object} the list of all contact
  */
 export const getContactsByOrg = async (orgID) => {
     const q = query(collection(db, "contacts"), where("registeredBy", "==", orgID));
