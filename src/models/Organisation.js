@@ -76,15 +76,14 @@ export const getInvite = async (inviteID) => {
  */
 export const getInvitesByEmail = async (email) => {
     const q = query(collection(db, "invites"), where("email", "==", email))
-    return getDocs(q).then((invites) => {
-        invites.forEach((invite, i) => {
-            this[i] = this[i].data()
-        })
-        return invites
-    }).catch((error) => {
-        console.error("Error getting invite: ", error);
-        return null
+    const querySnapshot = await getDocs(q)
+    const inviteList = []
+    querySnapshot.forEach((invite) => {
+        const data = invite.data()
+        data.id = invite.id
+        inviteList.push(data)
     })
+    return inviteList
 }
 
 /**
