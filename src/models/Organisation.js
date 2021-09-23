@@ -20,8 +20,8 @@ const db = getFirestore(firebase)
  * creates new organization
  * 
  * @param {String} userID ID of user creating the organization
- * @param {string} orgName the name of the organization being created
- * @param {string} orgDesc description of the organization
+ * @param {String} orgName the name of the organization being created
+ * @param {String} orgDesc description of the organization
  * 
  * @return {DocumentReference} newly created organization
  */

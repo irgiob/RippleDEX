@@ -1,8 +1,7 @@
 import firebase from "../../plugins/gatsby-plugin-firebase-custom"
-import {getFirestore, doc, setDoc, getDoc, updateDoc, Timestamp,collection, query, where, getDocs, doc, deleteDoc }  from "firebase/firestore"
+import {getFirestore, doc, getDoc, updateDoc,collection, query, where, getDocs, doc, deleteDoc }  from "firebase/firestore"
 
 const db = getFirestore(firebase)
-
 
 /**
  * creates new contact (in the context of Firestore)
@@ -17,8 +16,7 @@ const db = getFirestore(firebase)
  * @returns {DocumentReference} new contact just created
  */
 export const createNewContact = async (orgID, contactName, companyID, contactEmail, contactPhoneNumber ) => {
-    const docRef = doc(db, "contacts")
-    return setDoc(docRef, {
+    const docRef = await addDoc(collection(db, "contacts"), {
         registeredBy : orgID,
         name: contactName,
         company: companyID,
@@ -26,14 +24,9 @@ export const createNewContact = async (orgID, contactName, companyID, contactEma
         phoneNumber: contactPhoneNumber,
         position : null,
         notes: null // Same like Interaction 's notes?
-    }).then(()=>{
-        return getContact(docRef.id);
-    }).catch((error) => {
-        console.log("Error adding new contact: ", error);
     })
-
+    return docRef.id
 }
-
 
 /**
  * updates information on contact
@@ -45,13 +38,7 @@ export const createNewContact = async (orgID, contactName, companyID, contactEma
  */
 export const updateContact = async (contactID, options) =>{
     const docRef = doc(db, "contacts", contactID)
-    const docSnap = await getDoc(docRef)
-
-    if (docSnap.exists()){
-        return updateDoc(docRef, options).then(() => getContact(contactID))
-    } else {
-        console.log("No such document!");
-    }
+    return await updateDoc(docRef, options)
     
 }
 
@@ -60,19 +47,38 @@ export const updateContact = async (contactID, options) =>{
  * 
  * @param {String} orgID ID of the organizaiton
  * 
- * @returns {Object} the list of all tasks 
+ * @returns {Object} the list of all contact
  */
 export const getContactsByOrg = async (orgID) => {
     const q = query(collection(db, "contacts"), where("registeredBy", "==", orgID));
     const querySnapshot = await getDocs(q);
     const contactList = [];
     querySnapshot.forEach((contact) => {
-        contactList.push(getContact(contact.id));
-        return contactList
-}).catch((error) => {
-    console.error("Error getting contacts: ", error);
-});
+        const data = contact.data()
+        data.id = contact.id
+        contactList.push(data)
+    })
+    return contactList
 }
+
+/**
+ * gets all contacts based on company ID
+ * @param {String} companyID ID of the company
+ * 
+ * @returns {Object} the list of all contacts
+ */
+ export const getContactsByCompany = async (companyID) => {
+    const q = query(collection(db, "contacts"), where("company", "==", companyID));
+    const querySnapshot = await getDocs(q);
+    const contactList = [];
+    querySnapshot.forEach((contact) => {
+        const data = contact.data()
+        data.id = contact.id
+        contactList.push(data)
+    })
+    return contactList
+}
+
 
 /**
  * gets contact based on its ID
@@ -102,11 +108,5 @@ export const getContact = async (contactID) =>{
  */
 export const deleteContact = async (contactID) => {
     const docRef = doc(db, "contacts", contactID)
-    const docSnap = await getDoc(docRef)
-
-    if (docSnap.exists()){
-        return await deleteDoc(docRef);
-    } else {
-        console.log("No such document!");
-    }
+    return await deleteDoc(docRef);
 }
