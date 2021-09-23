@@ -53,11 +53,11 @@ export const getContactsByOrg = async (orgID) => {
     const q = query(collection(db, "contacts"), where("registeredBy", "==", orgID));
     const querySnapshot = await getDocs(q);
     const contactList = [];
-    for await (const contact of querySnapshot) {
+    querySnapshot.forEach((contact) => {
         const data = contact.data()
         data.id = contact.id
         contactList.push(data)
-    }
+    })
     return contactList
 }
 
@@ -71,11 +71,11 @@ export const getContactsByOrg = async (orgID) => {
     const q = query(collection(db, "contacts"), where("company", "==", companyID));
     const querySnapshot = await getDocs(q);
     const contactList = [];
-    for await (const contact of querySnapshot) {
+    querySnapshot.forEach((contact) => {
         const data = contact.data()
         data.id = contact.id
         contactList.push(data)
-    }
+    })
     return contactList
 }
 

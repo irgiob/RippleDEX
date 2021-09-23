@@ -52,11 +52,11 @@ export const updateTask = async (taskID, options) =>{
     const q = query(collection(db, "tasks"), where("forOrganizaiton", "==", orgID));
     const querySnapshot = await getDocs(q);
     const taskList = [];
-    for await (const task of querySnapshot) {
+    querySnapshot.forEach((task) => {
         const data = task.data()
         data.id = task.id
         taskList.push(data)
-    }
+    })
     return taskList
 }
 
