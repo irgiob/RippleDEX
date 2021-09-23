@@ -1,6 +1,6 @@
 import firebase from "../../plugins/gatsby-plugin-firebase-custom"
 import {getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, GoogleAuthProvider,
-   signInWithPopup, signOut, onAuthStateChanged, setPersistence, browserSessionPersistence} from "firebase/auth";
+   signInWithPopup, signOut, onAuthStateChanged, browserSessionPersistence} from "firebase/auth";
 import { createNewUser, doesUserExist, updateUser } from "../models/User"
 
 

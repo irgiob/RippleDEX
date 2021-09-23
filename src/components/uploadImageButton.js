@@ -40,7 +40,6 @@ const UploadImageButton = (props) => {
 
   const [isSelected, setSelected] = useState(false)
   const [inProgress, setInProgress] = useState(false)
-  const [isUploaded, setUploaded] = useState(false)
 
   const { isOpen, onOpen, onClose } = useDisclosure()
 
@@ -98,15 +97,12 @@ const UploadImageButton = (props) => {
           default:
             break;
         }
-
         setProgress(false)
-        setUploaded(false)
       },
 
       // File upload is successfull
       () => {
         getDownloadURL(uploadTask.snapshot.ref).then( url => {
-          setUploaded(true)
           props.changeUrl(url)
           clearState()
           onClose()
@@ -120,7 +116,6 @@ const UploadImageButton = (props) => {
     setImage(null)
     setProgress(0)
     setInProgress(false)
-    setUploaded(false)
     setSelected(false)
   }
 
