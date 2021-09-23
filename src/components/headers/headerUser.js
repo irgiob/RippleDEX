@@ -23,7 +23,7 @@ import {
   Heading,
   Text,
   VStack,
-  useToast
+  useToast,
 } from "@chakra-ui/react"
 
 import {
@@ -40,7 +40,7 @@ import ProfileSettings from "../settings/profileSettings"
 const HeaderUser = props => {
   const { isOpen, onOpen, onClose } = useDisclosure()
   const [tab, setTab] = useState(0)
-  const {user, setUser, org, setOrg} = props
+  const { user, setUser, org, setOrg } = props
   const toast = useToast()
 
   const clickHandler = () => {
@@ -62,7 +62,7 @@ const HeaderUser = props => {
       duration: 5000,
       isClosable: true,
     })
-    navigate('/dashboard')
+    navigate("/dashboard")
   }
 
   return (
@@ -88,7 +88,7 @@ const HeaderUser = props => {
           </Box>
         </a>
         <Box pl="6.5em">
-          {org?.name  &&
+          {org?.name && (
             <Popover placement="bottom-start">
               <PopoverTrigger>
                 <Button
@@ -156,7 +156,7 @@ const HeaderUser = props => {
                     >
                       Switch Workspace
                     </Button>
-                    {org?.admin !== user?.id &&
+                    {org?.admin !== user?.id && (
                       <Button
                         bgColor="white"
                         color="red.600"
@@ -168,7 +168,7 @@ const HeaderUser = props => {
                       >
                         Leave Workspace
                       </Button>
-                    }
+                    )}
                   </VStack>
                 </PopoverBody>
               </PopoverContent>

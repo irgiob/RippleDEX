@@ -3,14 +3,31 @@ import * as React from "react"
 import Layout from "../components/layout"
 import Seo from "../components/seo"
 
-import { Box, Text, IconButton, Tooltip, useDisclosure } from "@chakra-ui/react"
+import {
+  Button,
+  Box,
+  Text,
+  IconButton,
+  Input,
+  Tooltip,
+  useDisclosure,
+  useToast,
+} from "@chakra-ui/react"
 
-import MaterialTable from "material-table"
+import ContactPopUp from "../components/contacts/contactPopup"
+
+import {
+  createNewContact,
+  getContactsByOrg,
+  deleteContact,
+} from "../models/Contact"
 
 import { createMuiTheme, MuiThemeProvider } from "@material-ui/core"
 import Pic from "../images/RippleDex.png"
 
 import { forwardRef } from "react"
+
+import MaterialTable from "material-table"
 
 import AddBox from "@material-ui/icons/AddBox"
 import ArrowDownward from "@material-ui/icons/ArrowDownward"
@@ -30,9 +47,11 @@ import ViewColumn from "@material-ui/icons/ViewColumn"
 
 import { FaExpandAlt } from "react-icons/fa"
 
-import ContactPopUp from "../components/contacts/contactPopup"
-
-const Contacts = props => {
+/**
+ * Renders the page content
+ */
+const ContactsPage = ({ user, setUser, org, setOrg }) => {
+  // Initialize table icons used
   const tableIcons = {
     Add: forwardRef((props, ref) => <AddBox {...props} ref={ref} />),
     Check: forwardRef((props, ref) => <Check {...props} ref={ref} />),
@@ -61,6 +80,7 @@ const Contacts = props => {
     ViewColumn: forwardRef((props, ref) => <ViewColumn {...props} ref={ref} />),
   }
 
+  // Create Material UI theme to style the table
   const theme = createMuiTheme({
     palette: {
       primary: {
@@ -72,99 +92,157 @@ const Contacts = props => {
     },
   })
 
+  const toast = useToast()
+
+  // Modal or Popup triggers
   const { isOpen, onOpen, onClose } = useDisclosure()
 
+  const tableRef = React.createRef()
+  const [contactList, setContactList] = React.useState([])
+
+  React.useEffect(() => {
+    var promise = Promise.resolve(getContactsByOrg(org))
+    promise.then(function (val) {
+      setContactList(val)
+    })
+  }, [])
+
+  return (
+    <Box p="25px">
+      <Text
+        pb="10px"
+        fontFamily="Raleway-Bold"
+        fontSize="28px"
+        color="ripple.200"
+      >
+        Contacts
+      </Text>
+
+      <MuiThemeProvider theme={theme}>
+        <MaterialTable
+          title="Contacts"
+          options={{
+            showTitle: false,
+            selection: true,
+            searchFieldAlignment: "right",
+            maxBodyHeight: "80vh",
+            padding: "dense",
+            filtering: true,
+            exportButton: true,
+            tableLayout: "auto",
+            toolbarButtonAlignment: "left",
+            actionsColumnIndex: 6,
+          }}
+          data={contactList}
+          style={{ boxShadow: "none" }}
+          tableRef={tableRef}
+          icons={tableIcons}
+          columns={[
+            {
+              render: rowData => (
+                <img src={Pic} style={{ width: 50, borderRadius: "50%" }} />
+              ),
+              width: "10%",
+            },
+            {
+              title: "Contact Name",
+              field: "name",
+              type: "string",
+              width: "18%",
+            },
+            {
+              title: "Company",
+              field: "company",
+              type: "string",
+              width: "18%",
+            },
+            {
+              title: "Position",
+              field: "position",
+              type: "string",
+              width: "18%",
+            },
+            { title: "ID", field: "id", type: "string", hidden: true },
+            { title: "Email", field: "email", type: "string", width: "18%" },
+            {
+              title: "Phone Number",
+              field: "phoneNumber",
+              type: "string",
+              width: "18%",
+              align: "left",
+            },
+            {
+              render: rowData => (
+                <Tooltip hasArrow label="View Contact">
+                  <IconButton
+                    pt="10px"
+                    pb="10px"
+                    color="ripple.200"
+                    variant="link"
+                    icon={<FaExpandAlt />}
+                    onClick={onOpen}
+                  />
+                </Tooltip>
+              ),
+              width: "0%",
+            },
+          ]}
+          editable={{
+            onRowAdd: newData => {
+              const contactID = createNewContact(
+                org,
+                newData.name,
+                newData.company,
+                newData.email,
+                newData.phoneNumber,
+                newData.position
+              )
+
+              window.location.reload()
+              if (contactID) {
+                toast({
+                  title: "New Contact Added",
+                  status: "success",
+                  duration: 5000,
+                  isClosable: true,
+                })
+              } else {
+                toast({
+                  title: "Failed to create Contact",
+                  description: "Please try again",
+                  status: "error",
+                  duration: 5000,
+                  isClosable: true,
+                })
+              }
+            },
+            onRowDelete: oldData => {
+              deleteContact(oldData.id)
+
+              window.location.reload()
+              toast({
+                title: "Contact Successfully Deleted",
+                status: "success",
+                duration: 5000,
+                isClosable: true,
+              })
+            },
+          }}
+        />
+      </MuiThemeProvider>
+      <ContactPopUp onOpen={onOpen} isOpen={isOpen} onClose={onClose} />
+    </Box>
+  )
+}
+
+/**
+ * Renders the page content wrapped in Layout
+ */
+const Contacts = props => {
   return (
     <Layout location={props.location}>
       <Seo title="Contacts" />
-      <Box p="25px">
-        <Text
-          pb="10px"
-          fontFamily="Raleway-Bold"
-          fontSize="28px"
-          color="ripple.200"
-        >
-          Contacts
-        </Text>
-        <MuiThemeProvider theme={theme}>
-          <MaterialTable
-            options={{
-              showTitle: false,
-              selection: true,
-              searchFieldAlignment: "right",
-              maxBodyHeight: "80vh",
-              padding: "dense",
-              filtering: true,
-              exportButton: true,
-              tableLayout: "auto",
-              toolbarButtonAlignment: "left",
-            }}
-            style={{ boxShadow: "none" }}
-            title="Contacts"
-            icons={tableIcons}
-            columns={[
-              {
-                render: rowData => (
-                  <img src={Pic} style={{ width: 50, borderRadius: "50%" }} />
-                ),
-                width: "10%",
-              },
-              {
-                title: "Contact Name",
-                field: "name",
-                type: "string",
-                width: "18%",
-              },
-              {
-                title: "Company",
-                field: "company",
-                type: "string",
-                width: "18%",
-              },
-              {
-                title: "Position",
-                field: "position",
-                type: "string",
-                width: "18%",
-              },
-              { title: "Email", field: "email", type: "string", width: "18%" },
-              {
-                title: "Phone Number",
-                field: "phone",
-                type: "numeric",
-                width: "18%",
-                align: "left",
-              },
-              {
-                render: rowData => (
-                  <Tooltip hasArrow label="View Contact">
-                    <IconButton
-                      pt="10px"
-                      pb="10px"
-                      color="ripple.200"
-                      variant="link"
-                      icon={<FaExpandAlt />}
-                      onClick={onOpen}
-                    />
-                  </Tooltip>
-                ),
-                width: "10%",
-              },
-            ]}
-            data={[
-              {
-                name: "Evan Flores",
-                company: "Louis Vuitton",
-                position: "Project Manager",
-                email: "evanflores@gmail.com",
-                phone: "+61 449 234 035",
-              },
-              { name: "Arlene Wilson" },
-            ]}
-          />
-        </MuiThemeProvider>
-        <ContactPopUp onOpen={onOpen} isOpen={isOpen} onClose={onClose} />
-      </Box>
+      <ContactsPage />
     </Layout>
   )
 }

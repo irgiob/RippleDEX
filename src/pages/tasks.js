@@ -19,7 +19,10 @@ import {
 
 import { HiOfficeBuilding, HiOutlineTrash } from "react-icons/hi"
 
-const Tasks = props => {
+/**
+ * Renders the page content
+ */
+const TasksPage = ({ user, setUser, org, setOrg }) => {
   const data = {
     lanes: [
       {
@@ -245,12 +248,12 @@ const Tasks = props => {
   }
 
   return (
-    <Layout location={props.location}>
-      <Seo title="Tasks" />
+    <>
       <Box pt="25px" pl="25px">
         <Text fontFamily="Raleway-Bold" fontSize="28px" color="ripple.200">
           Tasks
         </Text>
+        <Text></Text>
       </Box>
       <Board
         style={{
@@ -281,6 +284,15 @@ const Tasks = props => {
         draggable
         data={data}
       />
+    </>
+  )
+}
+
+const Tasks = props => {
+  return (
+    <Layout location={props.location}>
+      <Seo title="Tasks" />
+      <TasksPage />
     </Layout>
   )
 }
