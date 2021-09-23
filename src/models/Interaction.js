@@ -86,11 +86,11 @@ const getInteractionsByField = async (field, foreignKey) => {
     const q = query(collection(db, "interactions"), where(field, "==", foreignKey));
     const querySnapshot = await getDocs(q);
     const interactionList = [];
-    for await (const interaction of querySnapshot) {
+    querySnapshot.forEach((interaction) => {
         const data = interaction.data()
         data.id = interaction.id
         interactionList.push(data)
-    }
+    })
     return interactionList
 }
 

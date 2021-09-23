@@ -70,11 +70,11 @@ export　const createNewDeal = (orgID, dealName, dealDesc, dealSize, userID, dea
     const q = query(collection(db, "deals"), where("forOrganizaiton", "==", orgID));
     const querySnapshot = await getDocs(q);
     const dealList = [];
-    for await (const deal of querySnapshot) {
+    querySnapshot.forEach((deal) => {
         const data = deal.data()
         data.id = deal.id
         dealList.push(data)
-    }
+    })
     return dealList
 }
 

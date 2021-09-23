@@ -54,14 +54,14 @@ export const updateCompany = async (companyID, options) =>{
  * @returns {Object} the list of all companies
  */
  export const getCompanyByOrg = async (orgID) => {
-    const q = query(collection(db, "companies"), where("registeredBy", "==", orgID));
-    const querySnapshot = await getDocs(q);
-    const companyList = [];
-    for await (const company of querySnapshot) {
+    const q = query(collection(db, "companies"), where("registeredBy", "==", orgID))
+    const querySnapshot = await getDocs(q)
+    const companyList = []
+    querySnapshot.forEach((company) => {
         const data = company.data()
         data.id = company.id
         companyList.push(data)
-    }
+    })
     return companyList
 }
 
