@@ -1,5 +1,11 @@
-import React, { useState } from "react"
-import { updateUser } from "../../models/User"
+import React, { useEffect, useState } from "react"
+
+import { 
+  updateMemberPosition, 
+  updateOrganization, 
+  removeUserFromOrganization 
+} from "../../models/Organisation"
+import { updateUser, getUser } from "../../models/User"
 
 import {
   Box,
@@ -23,7 +29,7 @@ import {
   Switch,
   Stack,
   SkeletonCircle,
-  SkeletonText,
+  Skeleton,
   Text,
   Tabs,
   Tab,
@@ -31,7 +37,11 @@ import {
   TabPanels,
   TabPanel,
   VStack,
-  useToast
+  useToast,
+  Avatar,
+  Badge,
+  AvatarBadge,
+  Tooltip
 } from "@chakra-ui/react"
 
 import ProfilePicture from "../../images/RippleDEXWhite.svg"
@@ -42,10 +52,11 @@ import {
   BiBell,
   BiUserCircle,
   BiTrash,
+  BiUserMinus,
   BiSearch,
 } from "react-icons/bi"
+
 import UploadImageButton from "../uploadImageButton"
-import { updateMemberPosition, updateOrganization } from "../../models/Organisation"
 
 const ProfileSettings = props => {
   return (
@@ -141,9 +152,15 @@ const ProfileSettings = props => {
               <TabPanel>
                 <p>Coming Soon!</p>
               </TabPanel>
-              <TabPanel>
-                <OrganizationsTab org={props.org} setOrg={props.setOrg}/>
-              </TabPanel>
+              {props.org &&
+                <TabPanel>
+                  <OrganizationsTab 
+                    org={props.org} 
+                    setOrg={props.setOrg}
+                    user={props.user}
+                  />
+                </TabPanel>
+              }
             </TabPanels>
           </Tabs>
         </ModalBody>
@@ -166,47 +183,31 @@ const ProfileTab = props => {
     setPhotoUrl(newUrl)
   }
 
-  const handleClick = () => {
-    updateUser(props.user?.id, {
+  const handleClick = async () => {
+    const updatedUser = await updateUser(props.user?.id, {
       firstName: firstName,
       lastName: lastName,
       phoneNumber: phoneNumber,
       profilePicture: photoUrl
-    }).then((user) => {
-      props.setUser(user)
-      updateMemberPosition(
+    });
+    props.setUser(updatedUser)
+    if (props.org) {
+      const updatedOrg = await updateMemberPosition(
         props.org?.id, 
         props.user?.id, 
         props.org?.members.filter(
           member => member.userID === props.user?.id
         )[0].position,
         position
-      ).then((org) => {
-        props.setOrg(org)
-        toast({
-          title: "Success",
-          description: "Your details have been updated",
-          status: "success",
-          duration: 5000,
-          isClosable: true,
-        })
-      }).catch((error) => {
-        toast({
-          title: "Failed to update details",
-          description: error,
-          status: "error",
-          duration: 5000,
-          isClosable: true,
-        })
-      })
-    }).catch((error) => {
-      toast({
-        title: "Failed to update details",
-        description: error,
-        status: "error",
-        duration: 5000,
-        isClosable: true,
-      })
+      )
+      props.setOrg(updatedOrg)
+    }
+    toast({
+      title: "Success",
+      description: "Your details have been updated",
+      status: "success",
+      duration: 5000,
+      isClosable: true,
     })
   }
 
@@ -237,17 +238,19 @@ const ProfileTab = props => {
               onChange={event => setLastName(event.target.value)}
             />
           </Box>
-          <Box textAlign="left" w="300px">
-            <Text color="ripple.200" pb="5px" fontSize="12px">
-              Position at Company
-            </Text>
-            <Input 
-              placeholder="Position at Company" 
-              type="text" 
-              value={position}
-              onChange={event => setPosition(event.target.value)}
-            />
-          </Box>
+          {props.org &&
+            <Box textAlign="left" w="300px">
+              <Text color="ripple.200" pb="5px" fontSize="12px">
+                Position at Company
+              </Text>
+              <Input 
+                placeholder="Position at Company" 
+                type="text" 
+                value={position}
+                onChange={event => setPosition(event.target.value)}
+              />
+            </Box>
+          }
           <Box textAlign="left" w="300px">
             <Text color="ripple.200" pb="5px" fontSize="12px">
               Phone Number
@@ -263,7 +266,11 @@ const ProfileTab = props => {
         <Spacer />
         <VStack spacing={0}>
           <Center h="200px" w="200px" bgColor="ripple.100">
-            <Image src={photoUrl || props.user?.profilePicture || ProfilePicture} boxSize="200px"/>
+            <Image objectFit="cover" w="100%" h="100%" src={
+              photoUrl || 
+              props.user?.profilePicture || 
+              ProfilePicture}
+            />
           </Center>
           <Box h="10px" />
           <HStack spacing={1}>
@@ -278,8 +285,13 @@ const ProfileTab = props => {
               changeUrl={changePhotoUrl}
             />
             <Circle
-              _hover={{
-                transform: "scale(1.2)",
+              _hover={{ transform: "scale(1.2)" }}
+              onClick={async () => {
+                const newUser = await updateUser(
+                  props.user?.id, 
+                  {profilePicture: null}
+                )
+                props.setUser(newUser)
               }}
             >
               <BiTrash style={{ color: "red" }} />
@@ -367,8 +379,24 @@ const NotificationsTab = props => {
 const OrganizationsTab = props => {
   const [orgName, setOrgName] = useState(props.org.name)
   const [orgDesc, setOrgDesc] = useState(props.org.description)
-  const [photoUrl, setPhotoUrl] = useState(props.user?.profilePicture)
+  const [photoUrl, setPhotoUrl] = useState(props.org.profilePicture)
+  const [members, setMembers] = useState([props.user, props.user, props.user])
+  const [search, setSearch]   = useState("")  
+  const [loading, setLoading] = useState(true)
   const toast = useToast()
+
+  useEffect(() => {
+    const fetchMembers = async (membersList) => {
+      const orgMembers = []
+      for await (const memberObj of membersList) {
+        const member = await getUser(memberObj.userID)
+        orgMembers.push(member)
+      }
+      setMembers(orgMembers)
+      setLoading(false)
+    }
+    fetchMembers(props.org.members)
+  }, [props.org.members])
 
   const handleClick = () => {
     updateOrganization(props.org.id, {
@@ -395,10 +423,22 @@ const OrganizationsTab = props => {
     })
   } 
 
+  const removeUser = async (userID) => {
+    await removeUserFromOrganization(props.org.id, userID)
+    setMembers(members.filter(member => member.id !== userID))
+    toast({
+      title: "Success",
+      description: "Removed user from " + props.org?.name,
+      status: "success",
+      duration: 5000,
+      isClosable: true,
+    })
+  }
+
   return (
-    <VStack>
-      <HStack align="start" spacing={4}>
-        <VStack textAlign="left" spacing={5}>
+    <VStack h="25em">
+      <HStack align="start" spacing={4} h="100%">
+        <VStack textAlign="left" spacing={5} h="100%">
           <Box textAlign="left" w="300px">
             <Text color="ripple.200" pb="5px" fontSize="12px">
               Workspace Name
@@ -429,7 +469,12 @@ const OrganizationsTab = props => {
                 Manage Members
               </Text>
               <Spacer />
-              <Text color="green.400" pb="5px" fontSize="12px">
+              <Text 
+                color="green.400" 
+                pb="5px" 
+                fontSize="12px"
+                _hover={{ transform: "scale(1.1)" }}
+              >
                 Invite People +
               </Text>
             </HStack>
@@ -438,18 +483,38 @@ const OrganizationsTab = props => {
                 pointerEvents="none"
                 children={<BiSearch style={{ color: "#a2b1c0" }} />}
               />
-              <Input type="text" placeholder="Search" />
+              <Input 
+                type="text" 
+                placeholder="Search" 
+                onChange={(e) => setSearch(e.target.value)}
+              />
             </InputGroup>
           </Box>
-          <Box w="100%">
-            <SkeletonCircle size="10" />
-            <SkeletonText mt="4" noOfLines={4} spacing="4" />
+          <Box w="100%" h="100%" overflow="scroll">
+            <VStack spacing={1} align="start">
+              {members.filter((member) => {
+                // filter displayed members based on search box
+                return (member?.firstName + " " + member?.lastName)
+                  .toLowerCase()
+                  .includes(search.toLowerCase())
+              }).map((member, i) => 
+                <MemberTag
+                  key={"member_" + i}
+                  member={member} 
+                  adminID={props.user?.id} 
+                  loading={loading}
+                  removeUser={removeUser}
+                />
+              )}
+            </VStack>
           </Box>
         </VStack>
         <Spacer />
         <VStack spacing={0}>
           <Center h="200px" w="200px" bgColor="ripple.100">
-            <Image src={photoUrl || props.org?.profilePicture || ProfilePicture} />
+            <Image objectFit="cover" h="100%" w="100%" src={
+              photoUrl || props.org?.profilePicture || ProfilePicture} 
+            />
           </Center>
           <Box h="10px" />
           <HStack spacing={1}>
@@ -465,7 +530,16 @@ const OrganizationsTab = props => {
               buttonMessage="Change Workspace Icon"
               changeUrl={setPhotoUrl}
             />
-            <Circle _hover={{ transform: "scale(1.2)" }}>
+            <Circle 
+              _hover={{ transform: "scale(1.2)" }}
+              onClick={async () => {
+                const newOrg = await updateOrganization(
+                  props.org?.id, 
+                  {profilePicture: null}
+                )
+                props.setOrg(newOrg)
+              }}
+            >
               <BiTrash style={{ color: "red" }} />
             </Circle>
           </HStack>
@@ -487,6 +561,58 @@ const OrganizationsTab = props => {
         </VStack>
       </HStack>
     </VStack>
+  )
+}
+
+const MemberTag = ({member, adminID, loading, removeUser}) => {
+  return (
+    <HStack p="0.5em" spacing={3} w="100%">
+      <SkeletonCircle isLoaded={!loading} size="12" >
+        <Avatar
+          size="md"
+          name={member?.firstName + " " + member?.lastName}
+          src={member?.profilePicture || ProfilePicture}
+          _hover={{ transform: "scale(1.01)" }}
+        >
+          <AvatarBadge
+            boxSize="20px"
+            borderColor="black"
+            bg={member?.isInvisible || 
+              (Date.now() / 1000 - member?.lastOnline.seconds) > 300 
+                ? "gray.300" 
+                : "green.300"
+            }
+          />
+        </Avatar>
+      </SkeletonCircle>
+      <Center h="100%" w="100%">
+        <Box textAlign="left" ml  w="100%">
+          <Skeleton isLoaded={!loading}>
+            <Text fontWeight="bold">
+              {member?.firstName + " " + member?.lastName}
+              {member?.id === adminID &&
+                <Badge ml="1" colorScheme="green">
+                  You
+                </Badge>
+              }
+            </Text>
+          </Skeleton>
+          <Skeleton isLoaded={!loading}>
+            <Text color="gray" fontSize="sm">{member?.email}</Text>
+          </Skeleton>
+        </Box>
+      </Center>
+      {member?.id !== adminID &&
+        <Tooltip  label="Remove user" hasArrow bg="red.600">
+          <Circle 
+            _hover={{ transform: "scale(1.2)" }}
+            onClick={() => removeUser(member?.id)}
+          >
+            <BiUserMinus style={{ color: "red" }} />
+          </Circle>
+        </Tooltip>
+      }
+    </HStack>
   )
 }
 

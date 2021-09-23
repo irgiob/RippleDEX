@@ -3,7 +3,7 @@ import * as React from "react"
 import Layout from "../components/layout"
 import Seo from "../components/seo"
 
-import LogoDark from "../images/RippleDEXDark.svg" 
+import LogoDark from "../images/RippleDEXDark.svg"
 
 import CreateOrgPopup from "../components/orgPopups/createOrg"
 import JoinOrgPopup from "../components/orgPopups/joinOrg"
@@ -15,45 +15,46 @@ import {
   VStack,
   Button,
   Center,
-  useDisclosure
+  useDisclosure,
 } from "@chakra-ui/react"
 
-const WelcomePage = ({user, setUser, org, setOrg}) => {
-  const { 
-    isOpen: isCreateOpen, 
-    onOpen: onCreateOpen, 
-    onClose: onCreateClose 
-  } = useDisclosure()
-  const { 
-    isOpen: isJoinOpen, 
-    onOpen: onJoinOpen, 
-    onClose: onJoinClose 
+const WelcomePage = ({ user, setUser, org, setOrg }) => {
+  const {
+    isOpen: isCreateOpen,
+    onOpen: onCreateOpen,
+    onClose: onCreateClose,
   } = useDisclosure()
 
-  return( 
-    <Center h="90vh" >
-      <VStack spacing={10} align="center" >
+  const {
+    isOpen: isJoinOpen,
+    onOpen: onJoinOpen,
+    onClose: onJoinClose,
+  } = useDisclosure()
+
+  return (
+    <Center h="90vh">
+      <VStack spacing={10} align="center">
         <Box h="2em">
           <Image
-            style={{opacity: "0.5" ,  filter: "grayscale(100%)" }}
+            style={{ opacity: "0.5", filter: "grayscale(100%)" }}
             w="8em"
             src={LogoDark}
           />
         </Box>
         <Box width="30em">
-          <Text 
+          <Text
             fontSize="2rem"
-            color="darkgray" 
-            align="center" 
-            fontFamily="Nunito-Bold" 
+            color="darkgray"
+            align="center"
+            fontFamily="Nunito-Bold"
             variant="solid"
-          > 
-              You don’t have an active workspace at the moment
+          >
+            You don’t have an active workspace at the moment
           </Text>
         </Box>
         <Box>
           <Button
-            p = "1em"
+            p="1em"
             bgColor="ripple.200"
             color="white"
             fontFamily="Raleway-Bold"
@@ -61,24 +62,28 @@ const WelcomePage = ({user, setUser, org, setOrg}) => {
             variant="solid"
             fontSize="1.5rem"
             w="15em"
-            _hover={{transform: "scale(1.05)"}}
+            _hover={{ transform: "scale(1.05)" }}
             onClick={onCreateOpen}
           >
             Create a workspace
           </Button>
-          <CreateOrgPopup userID={user.id} isOpen={isCreateOpen} onClose={onCreateClose}/>
-          <Text 
+          <CreateOrgPopup
+            userID={user.id}
+            isOpen={isCreateOpen}
+            onClose={onCreateClose}
+          />
+          <Text
             m="0.25em"
             fontSize="1.5rem"
-            color="darkgray" 
-            align="center" 
-            fontFamily="Nunito-Bold" 
+            color="darkgray"
+            align="center"
+            fontFamily="Nunito-Bold"
             variant="solid"
-          > 
-              or
+          >
+            or
           </Text>
           <Button
-            p = "1em"
+            p="1em"
             bgColor="ripple.200"
             color="white"
             fontFamily="Raleway-Bold"
@@ -86,12 +91,16 @@ const WelcomePage = ({user, setUser, org, setOrg}) => {
             variant="solid"
             fontSize="1.5rem"
             w="15em"
-            _hover={{transform: "scale(1.05)"}}
+            _hover={{ transform: "scale(1.05)" }}
             onClick={onJoinOpen}
           >
             Join a workspace
           </Button>
-          <JoinOrgPopup userID={user.id} isOpen={isJoinOpen} onClose={onJoinClose}/>
+          <JoinOrgPopup
+            userID={user.id}
+            isOpen={isJoinOpen}
+            onClose={onJoinClose}
+          />
         </Box>
       </VStack>
     </Center>
@@ -101,8 +110,8 @@ const WelcomePage = ({user, setUser, org, setOrg}) => {
 const Welcome = props => {
   return (
     <Layout location={props.location}>
-      <Seo title="Tasks" />
-      <WelcomePage/>
+      <Seo title="Welcome" />
+      <WelcomePage />
     </Layout>
   )
 }
