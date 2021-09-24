@@ -5,14 +5,12 @@ import dayGridPlugin from '@fullcalendar/daygrid'
 import interactionPlugin from '@fullcalendar/interaction'
 import timeGridPlugin from '@fullcalendar/timegrid'
 
-import tippy from "tippy.js"
-import 'tippy.js/dist/tippy.css';
-import 'tippy.js/animations/scale.css';
-import './tooltipStyle.css';
-
-import {eventAsHTMLContent} from "./eventDetails"
+import {EventDetails} from "./eventDetails"
+import { Button } from '@chakra-ui/button'
+import { Box } from '@chakra-ui/layout'
 
 let todayStr = new Date().toISOString().replace(/T.*$/, '')
+let count = 4;
 
 const CalendarComponent = () => {
 
@@ -31,35 +29,66 @@ const CalendarComponent = () => {
         start: todayStr
       },
       {
+        id: "003",
+        title: 'All-day event2',
+        start: todayStr
+      },
+      {
         id: "002",
         title: 'Timed event',
+        start: todayStr + 'T12:00:00'
+      },
+      {
+        id: "004",
+        title: 'Timed event 2',
         start: todayStr + 'T12:00:00'
       }
     ]
   }
 
-  // Handles when an event is clicked by user
-  const handleEventHover = (info)=>{
-      const onRightHalf = info.jsEvent.screenX > (info.jsEvent.clientX/2)
-      // Create a popover when the event is clicked
-      setTooltip( new tippy(info.el, {
-        theme:"ripple",
-        arrow:true,
-        allowHTML: true,
-        content: eventAsHTMLContent(info.event),
-        placement: onRightHalf ? 'left' : 'right',
-        animation:'scale',
-        trigger:'click',
-    }));
-
-
-  }
-
   // Handle when a date is selected, in this case we want to add an event
   const handleDateSelected = (selectInfo) => {
+    const title = prompt("enter:")
     console.log(selectInfo)
     let calendarApi = selectInfo.view.calendar
     calendarApi.unselect() // clear date selection
+
+    if (title) {
+      calendarApi.addEvent({
+        id: String(count++),
+        title,
+        start: selectInfo.startStr,
+        end: selectInfo.endStr,
+        allDay: selectInfo.allDay
+      })
+    }
+  }
+
+  // Handle when date is selected, which creates a new evemt
+  const createNewEventDate = (dateInfo) => {
+    return (
+      <>
+        <Box w="100%" backgroundColor="red"><h1>TEST</h1></Box>
+      </>
+    )
+  }
+
+  // Modifies the content of the event component
+  const renderEventContent = (eventInfo) => {
+    console.log(eventInfo)
+    return (
+      <>
+        <EventDetails
+          eventInfo={eventInfo}
+          deleteEvent={()=>{eventInfo.event.remove() }}
+          editEvent={()=>{}}
+        />
+      </>
+    )
+  }
+
+  // Update the event changes in database
+  const updateEvent = () => {
   }
 
   return (
@@ -70,13 +99,16 @@ const CalendarComponent = () => {
         headerToolbar={{
           left: 'prev,next today',
           center: 'title',
-          right: 'dayGridMonth,timeGridWeek,timeGridDay'
+          right: 'dayGridMonth,timeGridWeek'
         }}
         selectable={true}
+        editable={true}
         select={handleDateSelected}
+        // dayCellContent={createNewEventDate}
         initialEvents={loadEvents()}
-        aspectRatio={2}
-        eventMouseEnter={handleEventHover}
+        aspectRatio={2.5}
+        eventContent = {renderEventContent}
+        eventsSet={updateEvent}
       />
     </>
   )
