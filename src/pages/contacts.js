@@ -113,6 +113,8 @@ const ContactsPage = ({ user, setUser, org, setOrg }) => {
     onOpen()
   }
 
+  const currTime = new Date().toLocaleString()
+
   return (
     <Box p="25px">
       <Text
@@ -126,7 +128,7 @@ const ContactsPage = ({ user, setUser, org, setOrg }) => {
 
       <MuiThemeProvider theme={theme}>
         <MaterialTable
-          title="Contacts"
+          title={`Contacts for ${org.name} (${currTime})`}
           options={{
             showTitle: false,
             selection: true,
