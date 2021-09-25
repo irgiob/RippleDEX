@@ -198,43 +198,50 @@ const ContactsPage = ({ user, setUser, org, setOrg }) => {
           ]}
           editable={{
             onRowAdd: newData => {
-              const contactID = createNewContact(
-                org,
-                newData.name,
-                newData.company,
-                newData.email,
-                newData.phoneNumber,
-                newData.position
-              )
+              setTimeout(() => {
+                const contactID = createNewContact(
+                  org,
+                  newData.name,
+                  newData.company,
+                  newData.email,
+                  newData.phoneNumber,
+                  newData.position
+                )
 
-              window.location.reload()
-              if (contactID) {
+                if (contactID) {
+                  toast({
+                    title: "New Contact Added",
+                    status: "success",
+                    duration: 5000,
+                    isClosable: true,
+                  })
+                  alert("New Contact Added")
+                  window.location.reload()
+                } else {
+                  alert("Failed to create Contact. Please try again.")
+                  window.location.reload()
+                  toast({
+                    title: "Failed to create Contact",
+                    description: "Please try again",
+                    status: "error",
+                    duration: 5000,
+                    isClosable: true,
+                  })
+                }
+              }, 1000)
+            },
+            onRowDelete: oldData => {
+              setTimeout(() => {
+                deleteContact(oldData.id)
+                alert("Contact Successfully deleted")
                 toast({
-                  title: "New Contact Added",
+                  title: "Contact Successfully Deleted",
                   status: "success",
                   duration: 5000,
                   isClosable: true,
                 })
-              } else {
-                toast({
-                  title: "Failed to create Contact",
-                  description: "Please try again",
-                  status: "error",
-                  duration: 5000,
-                  isClosable: true,
-                })
-              }
-            },
-            onRowDelete: oldData => {
-              deleteContact(oldData.id)
-
-              window.location.reload()
-              toast({
-                title: "Contact Successfully Deleted",
-                status: "success",
-                duration: 5000,
-                isClosable: true,
-              })
+                window.location.reload()
+              }, 1000)
             },
           }}
         />
