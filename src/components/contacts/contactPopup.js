@@ -10,18 +10,19 @@ import {
   useMediaQuery,
   Text,
   Image,
+  VStack,
 } from "@chakra-ui/react"
 
-const ContactPopUp = props => {
+const ContactPopUp = ({ isOpen, onClose, value }) => {
   const [isLargeSize] = useMediaQuery("(min-width: 42em)")
-  const { isOpen, onClose } = props
   return (
-    <Modal size="full" isOpen={isOpen} onClose={onClose}>
+    <Modal isCentered isOpen={isOpen} onClose={onClose}>
       <ModalOverlay />
       <ModalContent>
         <ModalCloseButton m="20px" />
         <ModalBody m="20px">
-          <Text>Hi</Text>
+          {value.id} {value.name} {value.company} {value.email}{" "}
+          {value.phoneNumber} {value.position}
         </ModalBody>
       </ModalContent>
     </Modal>

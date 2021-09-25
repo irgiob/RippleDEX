@@ -45,7 +45,7 @@ import SaveAlt from "@material-ui/icons/SaveAlt"
 import Search from "@material-ui/icons/Search"
 import ViewColumn from "@material-ui/icons/ViewColumn"
 
-import { FaExpandAlt } from "react-icons/fa"
+import { AiFillEdit } from "react-icons/ai"
 
 /**
  * Renders the page content
@@ -99,6 +99,7 @@ const ContactsPage = ({ user, setUser, org, setOrg }) => {
 
   const tableRef = React.createRef()
   const [contactList, setContactList] = React.useState([])
+  const [value, setValue] = React.useState("")
 
   React.useEffect(() => {
     var promise = Promise.resolve(getContactsByOrg(org))
@@ -106,6 +107,11 @@ const ContactsPage = ({ user, setUser, org, setOrg }) => {
       setContactList(val)
     })
   }, [])
+
+  const handlePopUp = value => {
+    setValue(value)
+    onOpen()
+  }
 
   return (
     <Box p="25px">
@@ -173,14 +179,15 @@ const ContactsPage = ({ user, setUser, org, setOrg }) => {
             },
             {
               render: rowData => (
-                <Tooltip hasArrow label="View Contact">
+                <Tooltip hasArrow label="Edit Contact">
                   <IconButton
-                    pt="10px"
+                    pt="11px"
                     pb="10px"
-                    color="ripple.200"
+                    color="black"
                     variant="link"
-                    icon={<FaExpandAlt />}
-                    onClick={onOpen}
+                    size="lg"
+                    icon={<AiFillEdit />}
+                    onClick={() => handlePopUp(rowData)}
                   />
                 </Tooltip>
               ),
@@ -230,7 +237,12 @@ const ContactsPage = ({ user, setUser, org, setOrg }) => {
           }}
         />
       </MuiThemeProvider>
-      <ContactPopUp onOpen={onOpen} isOpen={isOpen} onClose={onClose} />
+      <ContactPopUp
+        value={value}
+        onOpen={onOpen}
+        isOpen={isOpen}
+        onClose={onClose}
+      />
     </Box>
   )
 }
