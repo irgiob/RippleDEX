@@ -49,13 +49,13 @@ const SwitchOrgPopup = props => {
         pos="absolute"
         minH="50%"
         maxH="80%"
-        maxW="30%"
+        maxW="25%"
         borderRadius="15px"
         value="inside"
         scrollBehavior="inside"
       >
         <ModalCloseButton m="15px" />
-        <Box textAlign="left" w="100%" h="100%" p="2em" overflow="scroll">
+        <Box textAlign="left" w="100%" h="100%" p="2em" overflowY="scroll">
           <Text
             mb="0.5em"
             fontFamily="Nunito-Bold"
@@ -134,7 +134,7 @@ const OrgListItem = ({onClick, org, isCurrentOrg}) => {
             </Badge>
           }
         </Text>
-        <Text fontSize="sm">{org.description}</Text>
+        <Text maxW = "100%" fontSize="sm">{org.description}</Text>
       </Box>
     </Flex>
   )
