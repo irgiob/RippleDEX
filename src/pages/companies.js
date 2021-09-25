@@ -14,13 +14,7 @@ import {
   useToast,
 } from "@chakra-ui/react"
 
-import ContactPopUp from "../components/contacts/contactPopup"
-
-import {
-  createNewContact,
-  getContactsByOrg,
-  deleteContact,
-} from "../models/Contact"
+import CompanyPopUp from "../components/companies/companyPopup"
 
 import {
   createNewCompany,
@@ -252,7 +246,7 @@ const CompaniesPage = ({ user, setUser, org, setOrg }) => {
           }}
         />
       </MuiThemeProvider>
-      <ContactPopUp
+      <CompanyPopUp
         value={value}
         onOpen={onOpen}
         isOpen={isOpen}
