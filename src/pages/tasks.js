@@ -28,7 +28,6 @@ const TasksPage = ({ user, setUser, org, setOrg }) => {
       {
         id: "lane1",
         title: "Backlog",
-        label: "2",
         cards: [
           {
             id: "Card1",
@@ -52,19 +51,16 @@ const TasksPage = ({ user, setUser, org, setOrg }) => {
       {
         id: "lane2",
         title: "Selected",
-        label: "0",
         cards: [],
       },
       {
         id: "lane3",
         title: "In Progress",
-        label: "0",
         cards: [],
       },
       {
         id: "lane4",
         title: "Finished",
-        label: "0",
         cards: [],
       },
     ],
@@ -90,7 +86,7 @@ const TasksPage = ({ user, setUser, org, setOrg }) => {
     const { onCancel, t } = props
     const [LaneName, setLaneName] = React.useState("")
 
-    const handleAdd = () => props.onAdd({ title: LaneName, label: "0" })
+    const handleAdd = () => props.onAdd({ title: LaneName })
 
     return (
       <VStack p="10px">
