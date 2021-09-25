@@ -11,10 +11,11 @@ import { onAuthLoad } from "../utils/AuthFunctions"
 import { getUser } from "../models/User"
 import { getOrganization } from "../models/Organisation"
 
-import { ChakraProvider, Spinner, Center, Text, VStack, Box } from "@chakra-ui/react"
+import { ChakraProvider, Spinner, Center, Text, VStack, Box, useToast } from "@chakra-ui/react"
 
 const Layout = ({ children, location }) => {
   const pathname = location.pathname
+  const toast = useToast()
   const [loading, setLoading] = useState(true)
   const [user, setUser] = useState(null)
   const [org, setOrg] = useState(null)
@@ -36,11 +37,12 @@ const Layout = ({ children, location }) => {
               setLoading(false)
             }
           }
+          setTimeout(() => toast.closeAll(), 1000)
         },
         () => navigate("/")
       )
     }
-  }, [pathname])
+  }, [pathname, toast])
   
   if (pathname === '/') {
     return (
