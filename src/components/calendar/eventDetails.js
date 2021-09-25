@@ -35,7 +35,7 @@ import {
  * @property {function} editEvent function to edit current event
  * @returns 
  */
-export function EventDetails(props) {
+const EventDetails = (props) => {
     const { isOpen, onOpen, onClose } = useDisclosure()
     return (
         <>
@@ -47,7 +47,11 @@ export function EventDetails(props) {
         >
         <PopoverTrigger>
             <Box
-            width="100%"
+                width="100%"
+                backgroundColor="#78cfec"
+                padding="5px"
+                borderRadius="10px"
+                color = "white"
             >{props.eventInfo.event.title}</Box>
         </PopoverTrigger>
         <Portal>
@@ -108,3 +112,5 @@ export function EventDetails(props) {
         </>
     )
 }
+
+export default EventDetails

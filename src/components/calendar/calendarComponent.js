@@ -1,14 +1,15 @@
-import React, { useState } from 'react'
+import React, { useState, useRef } from 'react'
 import FullCalendar from '@fullcalendar/react'
 
 import dayGridPlugin from '@fullcalendar/daygrid'
 import interactionPlugin from '@fullcalendar/interaction'
 import timeGridPlugin from '@fullcalendar/timegrid'
 
-import {EventDetails} from "./eventDetails"
-import { Button } from '@chakra-ui/button'
+import EventDetails from "./eventDetails"
 import { Box } from '@chakra-ui/layout'
+import CreateEventButton from './createEventButton'
 
+// Only for sample data
 let todayStr = new Date().toISOString().replace(/T.*$/, '')
 let count = 4;
 
@@ -19,8 +20,9 @@ const CalendarComponent = () => {
   const [detailsRequested, setDetailsRequested] = useState("TEST")
   const [children, setChildren] = useState(()=>{ return(<h1>{detailsRequested}</h1>) })
   const [tooltip, setTooltip] = useState(null)
+  const calendarRef = useRef(null); 
 
-  // Load the events of this user
+  // Load the events of this user, currently sample events
   const loadEvents = () => {
     return [
       {
@@ -48,68 +50,85 @@ const CalendarComponent = () => {
 
   // Handle when a date is selected, in this case we want to add an event
   const handleDateSelected = (selectInfo) => {
-    const title = prompt("enter:")
+    // const title = prompt("enter:")
     console.log(selectInfo)
     let calendarApi = selectInfo.view.calendar
     calendarApi.unselect() // clear date selection
 
-    if (title) {
-      calendarApi.addEvent({
-        id: String(count++),
-        title,
-        start: selectInfo.startStr,
-        end: selectInfo.endStr,
-        allDay: selectInfo.allDay
-      })
-    }
   }
 
   // Handle when date is selected, which creates a new evemt
-  const createNewEventDate = (dateInfo) => {
-    return (
-      <>
-        <Box w="100%" backgroundColor="red"><h1>TEST</h1></Box>
-      </>
-    )
+  const createNewEventDate = (title, startDate, startTime, endTime, isAllDay) => {
+
+    // Parse time into date
+    let date = new Date(startDate)
+    const startTimeFormat = startTime.split(":").map(x=>parseInt(x))
+    const endTimeFormat = endTime.split(":").map(x=>parseInt(x))
+    const start = date.setHours(startTimeFormat[0], startTimeFormat[1])  
+    const end = date.setHours(endTimeFormat[0], endTimeFormat[1])
+
+    // Create new event object in API
+    let calendarAPI =  calendarRef.current.getApi()
+    calendarAPI.addEvent({
+      id : String(count++),
+      title: title,
+      start : start,
+      end : end,
+      allDay: isAllDay
+    })
+
+    // Create new firebase doc
+    //...
   }
 
   // Modifies the content of the event component
   const renderEventContent = (eventInfo) => {
-    console.log(eventInfo)
     return (
       <>
         <EventDetails
           eventInfo={eventInfo}
-          deleteEvent={()=>{eventInfo.event.remove() }}
-          editEvent={()=>{}}
+          deleteEvent={()=>{eventInfo.event.remove() }} // Also delete in database
+          editEvent={()=>{}} // Edit the event details
         />
       </>
     )
   }
 
   // Update the event changes in database
-  const updateEvent = () => {
+  // Note: event is automatically updated in the calendar API
+  const updateEvent = (changeInfo) => {
+    // console.log(changeInfo.event)
   }
 
   return (
     <>
-      <FullCalendar
-        plugins={[dayGridPlugin, interactionPlugin, timeGridPlugin]}
-        initialView = "dayGridMonth"
-        headerToolbar={{
-          left: 'prev,next today',
-          center: 'title',
-          right: 'dayGridMonth,timeGridWeek'
-        }}
-        selectable={true}
-        editable={true}
-        select={handleDateSelected}
-        // dayCellContent={createNewEventDate}
-        initialEvents={loadEvents()}
-        aspectRatio={2.5}
-        eventContent = {renderEventContent}
-        eventsSet={updateEvent}
-      />
+      <Box
+        pt="10px"
+        borderBottom="10px"
+      >
+        <FullCalendar
+          ref={calendarRef}
+          plugins={[dayGridPlugin, interactionPlugin, timeGridPlugin]}
+          initialView = "dayGridMonth"
+          headerToolbar={{
+            left: 'prev,next today',
+            center: 'title',
+            right: 'dayGridMonth,timeGridWeek'
+          }}
+          selectable={true}
+          editable={true}
+          select={handleDateSelected}
+          // dayCellContent={createNewEventDate}
+          initialEvents={loadEvents()}
+          aspectRatio={2.5}
+          eventContent = {renderEventContent}
+          eventChange={updateEvent}
+          eventColor="rgba(0,0,0,0)"
+          eventTextColor = "white"
+          
+        />
+      </Box>
+      <CreateEventButton createEventObject={createNewEventDate}/>
     </>
   )
 }
