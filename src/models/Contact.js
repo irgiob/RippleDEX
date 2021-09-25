@@ -1,8 +1,7 @@
 import firebase from "../../plugins/gatsby-plugin-firebase-custom"
-import {getFirestore, doc, setDoc, getDoc, updateDoc, Timestamp,collection, query, where, getDocs, doc, deleteDoc }  from "firebase/firestore"
+import {getFirestore, doc, getDoc, updateDoc,collection, query, where, getDocs, doc, deleteDoc }  from "firebase/firestore"
 
 const db = getFirestore(firebase)
-
 
 /**
  * creates new contact (in the context of Firestore)
@@ -25,14 +24,9 @@ export const createNewContact = async (orgID, contactName, companyID, contactEma
         phoneNumber: contactPhoneNumber,
         position : null,
         notes: null // Same like Interaction 's notes?
-    }).then(()=>{
-        return await getContact(docRef.id);
-    }).catch((error) => {
-        console.log("Error adding new contact: ", error);
     })
-
+    return docRef.id
 }
-
 
 /**
  * updates information on contact
@@ -44,13 +38,7 @@ export const createNewContact = async (orgID, contactName, companyID, contactEma
  */
 export const updateContact = async (contactID, options) =>{
     const docRef = doc(db, "contacts", contactID)
-    const docSnap = await getDoc(docRef)
-
-    if (docSnap.exists()){
-        return updateDoc(docRef, options).then(() => getContact(contactID))
-    } else {
-        console.log("No such document!");
-    }
+    return await updateDoc(docRef, options)
     
 }
 
@@ -66,11 +54,11 @@ export const getContactsByOrg = async (orgID) => {
     const querySnapshot = await getDocs(q);
     const contactList = [];
     querySnapshot.forEach((contact) => {
-        contactList.push(getContact(contact.id));
-        return contactList
-}).catch((error) => {
-    console.error("Error getting contacts: ", error);
-});
+        const data = contact.data()
+        data.id = contact.id
+        contactList.push(data)
+    })
+    return contactList
 }
 
 /**
@@ -84,11 +72,11 @@ export const getContactsByOrg = async (orgID) => {
     const querySnapshot = await getDocs(q);
     const contactList = [];
     querySnapshot.forEach((contact) => {
-        contactList.push(getContact(contact.id));
-        return contactList
-}).catch((error) => {
-    console.error("Error getting contacts: ", error);
-});
+        const data = contact.data()
+        data.id = contact.id
+        contactList.push(data)
+    })
+    return contactList
 }
 
 
@@ -120,11 +108,5 @@ export const getContact = async (contactID) =>{
  */
 export const deleteContact = async (contactID) => {
     const docRef = doc(db, "contacts", contactID)
-    const docSnap = await getDoc(docRef)
-
-    if (docSnap.exists()){
-        return await deleteDoc(docRef);
-    } else {
-        console.log("No such document!");
-    }
+    return await deleteDoc(docRef);
 }

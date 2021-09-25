@@ -1,9 +1,7 @@
 import firebase from "../../plugins/gatsby-plugin-firebase-custom"
-import {getFirestore, doc, setDoc, getDoc, updateDoc, Timestamp,collection, query, where, getDocs, doc, deleteDoc,addDoc,  }  from "firebase/firestore"
+import {getFirestore, doc, getDoc, updateDoc, collection, query, where, getDocs, doc, deleteDoc, addDoc}  from "firebase/firestore"
 
 const db = getFirestore(firebase)
-
-
 
 /**
  * creates new company
@@ -20,7 +18,7 @@ const db = getFirestore(firebase)
  * 
  * @return {DocumentReference} newly created company 
  */
-export const createNewCompany = async (orgID, companyName, companyDesc, companyWeb, personnel,annualRevenue, companyAddress,contactID) =>{
+export const createNewCompany = async (orgID, companyName, companyDesc, companyWeb, personnel,annualRevenue, relationship, companyAddress, primaryContact) =>{
     const docRef = await addDoc(collection(db, "organizations"),{
         registeredBy: orgID,
         name: companyName,
@@ -29,18 +27,11 @@ export const createNewCompany = async (orgID, companyName, companyDesc, companyW
         personnel: personnel,
         annualRevenue : annualRevenue,
         address: companyAddress,
-        relationship: null,
-        primaryContact: contactID,
-        contactID: null
-    }).then(()=>{
-        return await getCompany(docRef.id);
-    }).catch((error) => {
-        console.log("Error adding new company: ", error);
+        relationship: relationship,
+        primaryContact: primaryContact,
     })
-
+    return docRef.id
 }
-
-
 
 /**
  * updates information on company
@@ -52,13 +43,7 @@ export const createNewCompany = async (orgID, companyName, companyDesc, companyW
  */
 export const updateCompany = async (companyID, options) =>{
     const docRef = doc(db, "companies", companyID)
-    const docSnap = await getDoc(docRef)
-
-    if (docSnap.exists()){
-        return updateDoc(docRef, options).then(() => getCompany(companyID))
-    } else {
-        console.log("No such document!");
-    }
+    return await updateDoc(docRef, options)
 }
 
 /**
@@ -69,15 +54,15 @@ export const updateCompany = async (companyID, options) =>{
  * @returns {Object} the list of all companies
  */
  export const getCompanyByOrg = async (orgID) => {
-    const q = query(collection(db, "companies"), where("registeredBy", "==", orgID));
-    const querySnapshot = await getDocs(q);
-    const companyList = [];
+    const q = query(collection(db, "companies"), where("registeredBy", "==", orgID))
+    const querySnapshot = await getDocs(q)
+    const companyList = []
     querySnapshot.forEach((company) => {
-        companyList.push(getCompany(company.id));
-        return companyList
-}).catch((error) => {
-    console.error("Error getting companies: ", error);
-});
+        const data = company.data()
+        data.id = company.id
+        companyList.push(data)
+    })
+    return companyList
 }
 
 /**
@@ -87,7 +72,7 @@ export const updateCompany = async (companyID, options) =>{
  * 
  * @returns {DocumentReference}
  */
- export const getContact = async (companyID) =>{
+ export const getCompany = async (companyID) =>{
     const docRef = doc(db, "companies", companyID)    
     return getDoc(docRef).then((company) => {
         const data = company.data()
@@ -96,7 +81,6 @@ export const updateCompany = async (companyID, options) =>{
     }).catch((error) => {
         console.error("Error getting company: ", error);
     });
-
 }
 
 /**
@@ -108,13 +92,7 @@ export const updateCompany = async (companyID, options) =>{
  */
  export const deleteComapny = async (companyID) => {
     const docRef = doc(db, "companies", companyID)
-    const docSnap = await getDoc(docRef)
-
-    if (docSnap.exists()){
-        return await deleteDoc(docRef);
-    } else {
-        console.log("No such document!");
-    }
+    return await deleteDoc(docRef)
 }
 
 

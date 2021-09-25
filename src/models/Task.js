@@ -1,8 +1,7 @@
 import firebase from "../../plugins/gatsby-plugin-firebase-custom"
-import {getFirestore, doc, setDoc, getDoc, updateDoc, Timestamp} from "firebase/firestore"
+import {getFirestore, doc, addDoc, getDoc, getDocs, updateDoc} from "firebase/firestore"
 
 const db = getFirestore(firebase)
-
 
 /**
  * creates a new task (in the context of Firestore)
@@ -15,9 +14,8 @@ const db = getFirestore(firebase)
  * 
  * @returns {DocumentReference} new task just created
  */
-export const createNewTask = async( dealID, taskDesc, taskName, orgID) => {
-    const docRef = doc(db, "tasks")
-    return setDoc(docRef, {
+export const createNewTask = async(dealID, taskDesc, taskName, orgID) => {
+    const docRef = await addDoc(collection(db, "tasks"), {
         deal: dealID,
         name: taskName,
         description: taskDesc,
@@ -26,11 +24,8 @@ export const createNewTask = async( dealID, taskDesc, taskName, orgID) => {
         interactions : [],
         assignedUsers: [],
         forOrganization : orgID
-    }).then(()=>{
-        return getTask(docRef.id);
-    }).catch((error) => {
-        console.log("Error adding new task: ", error);
     })
+    return docRef.id
 }
 
 /**
@@ -43,15 +38,8 @@ export const createNewTask = async( dealID, taskDesc, taskName, orgID) => {
  */
 export const updateTask = async (taskID, options) =>{
     const docRef = doc(db, "tasks", taskID)
-    const docSnap = await getDoc(docRef)
-
-    if (docSnap.exists()){
-        return updateDoc(docRef, options).then(() => getTask(taskID))
-    } else {
-        console.log("No such document!");
-    }
+    return await updateDoc(docRef, options)
 }
-
 
 /**
  * gets all tasks based on organizaiton ID
@@ -61,16 +49,16 @@ export const updateTask = async (taskID, options) =>{
  * @returns {Object} the list of all tasks
  */
  export const getTasksByOrg = async (orgID) => {
-    const q = query(collection(db, "tasks"), where("forOrganization", "==", orgID));
+    const q = query(collection(db, "tasks"), where("forOrganizaiton", "==", orgID));
     const querySnapshot = await getDocs(q);
     const taskList = [];
     querySnapshot.forEach((task) => {
-        taskList.push(getTask(task.id));
-        return taskList
-}).catch((error) => {
-    console.error("Error getting tasks: ", error);
-});
- }
+        const data = task.data()
+        data.id = task.id
+        taskList.push(data)
+    })
+    return taskList
+}
 
 /**
 * gets task based on task ID
@@ -88,8 +76,6 @@ export const getTask = async (taskID) =>{
     }).catch((error) => {
         console.error("Error getting task: ", error);
     });
-
-
 }
 
 /**
@@ -99,13 +85,7 @@ export const getTask = async (taskID) =>{
  * 
  * @returns {DocumentReference}
  */
- export const deletetask = async (taskID) => {
+ export const deleteTask = async (taskID) => {
     const docRef = doc(db, "tasks", taskID)
-    const docSnap = await getDoc(docRef)
-
-    if (docSnap.exists()){
-        return await deleteDoc(docRef);
-    } else {
-        console.log("No such document!");
-    }
+    return await deleteDoc(docRef)
 }
