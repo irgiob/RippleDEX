@@ -200,48 +200,54 @@ const CompaniesPage = ({ user, setUser, org, setOrg }) => {
           ]}
           editable={{
             onRowAdd: newData => {
-              setTimeout(() => {
-                const companyID = createNewCompany(
-                  org,
-                  newData.name,
-                  newData.primaryContact,
-                  newData.annualRevenue,
-                  newData.industry,
-                  newData.website
-                )
-
-                if (companyID) {
-                  toast({
-                    title: "New Company Added",
-                    status: "success",
-                    duration: 5000,
-                    isClosable: true,
-                  })
-                  alert("New Company Added")
-                  window.location.reload()
-                } else {
-                  toast({
-                    title: "Failed to create Contact",
-                    description: "Please try again",
-                    status: "error",
-                    duration: 5000,
-                    isClosable: true,
-                  })
-                  alert("Failed to create Company. Please try again.")
-                  window.location.reload()
-                }
-              }, 1000)
+              const promise = new Promise((resolve, reject) => {
+                setTimeout(() => {
+                  const companyID = createNewCompany(
+                    org,
+                    newData.name,
+                    newData.primaryContact,
+                    newData.annualRevenue,
+                    newData.industry,
+                    newData.website
+                  )
+                  if (companyID) {
+                    setCompanyList([...companyList, newData])
+                    resolve()
+                  } else {
+                    reject()
+                  }
+                }, 1000)
+              })
+              promise.then(
+                toast({
+                  title: "New Company Added",
+                  status: "success",
+                  duration: 5000,
+                  isClosable: true,
+                })
+              )
+              return promise
             },
             onRowDelete: oldData => {
-              deleteCompany(oldData.id)
-              alert("Company Successfully deleted")
-              window.location.reload()
-              toast({
-                title: "Contact Successfully Deleted",
-                status: "success",
-                duration: 5000,
-                isClosable: true,
+              const promise = new Promise(resolve => {
+                setTimeout(() => {
+                  const dataDelete = [...companyList]
+                  const index = oldData.tableData.id
+                  dataDelete.splice(index, 1)
+                  setCompanyList([...dataDelete])
+                  deleteCompany(oldData.id)
+                  resolve()
+                }, 1000)
               })
+              promise.then(
+                toast({
+                  title: "Company Successfully Deleted",
+                  status: "success",
+                  duration: 5000,
+                  isClosable: true,
+                })
+              )
+              return promise
             },
           }}
         />

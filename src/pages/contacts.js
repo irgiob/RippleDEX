@@ -198,50 +198,54 @@ const ContactsPage = ({ user, setUser, org, setOrg }) => {
           ]}
           editable={{
             onRowAdd: newData => {
-              setTimeout(() => {
-                const contactID = createNewContact(
-                  org,
-                  newData.name,
-                  newData.company,
-                  newData.email,
-                  newData.phoneNumber,
-                  newData.position
-                )
-
-                if (contactID) {
-                  toast({
-                    title: "New Contact Added",
-                    status: "success",
-                    duration: 5000,
-                    isClosable: true,
-                  })
-                  alert("New Contact Added")
-                  window.location.reload()
-                } else {
-                  alert("Failed to create Contact. Please try again.")
-                  window.location.reload()
-                  toast({
-                    title: "Failed to create Contact",
-                    description: "Please try again",
-                    status: "error",
-                    duration: 5000,
-                    isClosable: true,
-                  })
-                }
-              }, 1000)
+              const promise = new Promise((resolve, reject) => {
+                setTimeout(() => {
+                  const contactID = createNewContact(
+                    org,
+                    newData.name,
+                    newData.company,
+                    newData.email,
+                    newData.phoneNumber,
+                    newData.position
+                  )
+                  if (contactID) {
+                    setContactList([...contactList, newData])
+                    resolve()
+                  } else {
+                    reject()
+                  }
+                }, 1000)
+              })
+              promise.then(
+                toast({
+                  title: "New Contact Added",
+                  status: "success",
+                  duration: 5000,
+                  isClosable: true,
+                })
+              )
+              return promise
             },
             onRowDelete: oldData => {
-              setTimeout(() => {
-                deleteContact(oldData.id)
-                alert("Contact Successfully deleted")
+              const promise = new Promise(resolve => {
+                setTimeout(() => {
+                  const dataDelete = [...contactList]
+                  const index = oldData.tableData.id
+                  dataDelete.splice(index, 1)
+                  setContactList([...dataDelete])
+                  deleteContact(oldData.id)
+                  resolve()
+                }, 1000)
+              })
+              promise.then(
                 toast({
                   title: "Contact Successfully Deleted",
                   status: "success",
                   duration: 5000,
                   isClosable: true,
                 })
-                window.location.reload()
-              }, 1000)
+              )
+              return promise
             },
           }}
         />
