@@ -8,6 +8,7 @@ import {
     getDoc,
     getDocs, 
     updateDoc, 
+    deleteDoc,
     collection, 
     arrayUnion, 
     arrayRemove
@@ -84,6 +85,18 @@ export const getInvitesByEmail = async (email) => {
         inviteList.push(data)
     })
     return inviteList
+}
+
+/**
+ * Delete invite 
+ * 
+ * @param {String} inviteID ID of the invite
+ * 
+ * @returns {DocumentReference}
+ */
+ export const deleteInvite = async (inviteID) => {
+    const docRef = doc(db, "invites", inviteID)
+    return await deleteDoc(docRef);
 }
 
 /**
