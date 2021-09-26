@@ -19,7 +19,7 @@ const db = getFirestore(firebase)
  * @return {DocumentReference} newly created deal
  */
 
-export　const createNewDeal = (orgID, dealName, dealDesc, dealSize, userID, dealNote, stage, closeDate, contacts) => {
+export const createNewDeal = async (orgID, dealName, dealDesc, dealSize, userID, dealNote, stage, closeDate, contacts) => {
     const docRef = await addDoc(collection(db, "deals"),{
         forOrganizaiton: orgID,
         name: dealName,

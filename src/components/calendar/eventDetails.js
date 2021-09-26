@@ -23,10 +23,10 @@ import {
 
 import {
     AiOutlineClose,
-    AiOutlineEdit,
-    AiOutlineDelete,
     AiOutlineClockCircle
 } from "react-icons/ai"
+
+import {RiNotificationOffLine} from "react-icons/ri"
 
 /**
  * 
@@ -59,26 +59,25 @@ const EventDetails = (props) => {
             >
                 <PopoverArrow />
                 <PopoverHeader
-                    
                 >
                     <Flex>
                         <Spacer/>
                         <HStack>
                             {/* Close , delete and edit button on top right*/}
-                            <Tooltip label="Delete">
+                            <Tooltip label="Don't remind me">
                                 <IconButton 
                                     aria-label="Delete" 
                                     backgroundColor="white" 
-                                    icon={<AiOutlineDelete size={24}/>} 
+                                    icon={<RiNotificationOffLine size={24}/>} 
                                     onClick ={()=>{props.deleteEvent(); onClose();}}/>
                             </Tooltip>
 
-                            <Tooltip label = "Edit"> 
+                            {/* <Tooltip label = "Edit"> 
                             <IconButton 
                                     aria-label="Edit" 
                                     backgroundColor="white"
                                     icon={<AiOutlineEdit size={24}/>} />
-                            </Tooltip>
+                            </Tooltip> */}
 
                             <Tooltip label = "Close">
                                 <IconButton 
@@ -99,7 +98,8 @@ const EventDetails = (props) => {
                     >
                         {/* Display event details*/}
                         <Text fontSize="2xl" pb="30px">{props.eventInfo.event.title}</Text>
-                        <HStack><AiOutlineClockCircle/><Text >{props.eventInfo.event.startStr}</Text></HStack>
+                        <HStack><Text width="50px">from: </Text><Text >{props.eventInfo.event.start.toLocaleString('en-GB')}</Text></HStack>
+                        <HStack><Text width="50px">to: </Text> <Text >{props.eventInfo.event.end.toLocaleString('en-GB')}</Text></HStack>
                     </Box>
                 </PopoverBody>
                 <PopoverFooter>

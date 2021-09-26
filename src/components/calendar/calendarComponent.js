@@ -9,51 +9,19 @@ import EventDetails from "./eventDetails"
 import { Box } from '@chakra-ui/layout'
 import CreateEventButton from './createEventButton'
 
-import {createNewInteraction, getInteractionsByOrg, } from "../../models/Interaction"
-
-// Only for sample data
-let todayStr = new Date().toISOString().replace(/T.*$/, '')
-let count = 4;
+import {createNewInteraction, getInteractionsByOrg, updateInteraction } from "../../models/Interaction"
+import {createNewDeal, getDeal} from "../../models/Deal"
 
 const CalendarComponent = ({user,org}) => {
 
-  console.log(user,org)
-  useEffect(()=>{loadEvents()},[])
-
-  const [currentEvents, setCurrentEvents] = useState([])
-  const [detailsRequested, setDetailsRequested] = useState("TEST")
-  const [children, setChildren] = useState(()=>{ return(<h1>{detailsRequested}</h1>) })
-  const [tooltip, setTooltip] = useState(null)
   const calendarRef = useRef(null); 
 
-  const sampleEvents = [
-      {
-        id: "001",
-        title: 'All-day event',
-        start: todayStr
-      },
-      {
-        id: "003",
-        title: 'All-day event2',
-        start: todayStr
-      },
-      {
-        id: "002",
-        title: 'Timed event',
-        start: todayStr + 'T12:00:00'
-      },
-      {
-        id: "004",
-        title: 'Timed event 2',
-        start: todayStr + 'T12:00:00'
-      }
-    ]
+  useEffect(()=>{loadEvents();},[])
 
-  // Load the events of this user, currently sample events
+  // Load the events of this user
   const loadEvents = async () => {
 
-    // createNewInteraction("test", [user.id], user.id, org.id, "test", "test", "1632648933", "1632652529", "test", "test", true)
-
+    // Fetch all data from firestore
     const interactions = await getInteractionsByOrg(org.id)
     console.log(interactions)
 
@@ -62,34 +30,27 @@ const CalendarComponent = ({user,org}) => {
       return doc.participants.includes(user.id) && doc.remindMe
     })
 
-    events.forEach((doc) => {
-      // Create new event object in API
+    // Add every interactions meeting into calendar
+    events.forEach(async (doc) => {
+      const deal = await getDeal(doc.forDeal)
       let calendarAPI =  calendarRef.current.getApi()
       calendarAPI.addEvent({
         id : doc.id,
-        title: doc.forDeal,
+        title: deal.name,
         start : new Date(0).setUTCSeconds(parseInt(doc.meetingStart)),
         end : new Date(0).setUTCSeconds(parseInt(doc.meetingEnd)),
-        // allDay: isAllDay
       })
     })
-
-
-    console.log(events)
-    
     
   }
 
   // Handle when a date is selected, in this case we want to add an event
   const handleDateSelected = (selectInfo) => {
-    // const title = prompt("enter:")
     console.log(selectInfo)
-    let calendarApi = selectInfo.view.calendar
-    calendarApi.unselect() // clear date selection
-
   }
 
-  // Handle when date is selected, which creates a new evemt
+  // Handle when date is selected, which creates a new event
+  // Currently not in use
   const createNewEventDate = (title, startDate, startTime, endTime, isAllDay, id) => {
 
     // Parse time into date
@@ -109,8 +70,6 @@ const CalendarComponent = ({user,org}) => {
       allDay: isAllDay
     })
 
-    // Create new firebase doc
-    //...
   }
 
   // Modifies the content of the event component
@@ -119,17 +78,25 @@ const CalendarComponent = ({user,org}) => {
       <>
         <EventDetails
           eventInfo={eventInfo}
-          deleteEvent={()=>{eventInfo.event.remove() }} // Also delete in database
-          editEvent={()=>{}} // Edit the event details
+          deleteEvent={()=>{
+            eventInfo.event.remove() 
+            updateInteraction(eventInfo.event.id, {remindMe:false})
+          }} 
+          // editEvent={()=>{}} // Edit the event details
         />
       </>
     )
   }
 
+  // Convert date object to epoch time
+  const dateToEpoch = (date) => {return Math.floor(date.getTime()/1000.0);}
+
   // Update the event changes in database
-  // Note: event is automatically updated in the calendar API
-  const updateEvent = (changeInfo) => {
-    // console.log(changeInfo.event)
+  const updateEvent = async (changeInfo) => {
+    await updateInteraction(changeInfo.event.id, {
+      meetingStart: dateToEpoch(changeInfo.event.start),
+      meetingEnd: dateToEpoch(changeInfo.event.end)
+    })
   }
 
   return (
@@ -147,10 +114,9 @@ const CalendarComponent = ({user,org}) => {
             center: 'title',
             right: 'dayGridMonth,timeGridWeek'
           }}
-          selectable={true}
+          // selectable={true}
+          // select={handleDateSelected}
           editable={true}
-          select={handleDateSelected}
-          initialEvents={sampleEvents}
           aspectRatio={2.5}
           eventContent = {renderEventContent}
           eventChange={updateEvent}
@@ -159,7 +125,7 @@ const CalendarComponent = ({user,org}) => {
           
         />
       </Box>
-      <CreateEventButton createEventObject={createNewEventDate}/>
+      {/* <CreateEventButton createEventObject={createNewEventDate}/> */}
     </>
   )
 }
