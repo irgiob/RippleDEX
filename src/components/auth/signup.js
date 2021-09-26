@@ -2,13 +2,18 @@ import React, { useState } from "react"
 import { signup } from "../../utils/AuthFunctions"
 import { navigate } from "gatsby"
 
+import CreateAccount from "../../images/PopUps/CreateAccount.png"
+
 import {
   Box,
   Button,
   Input,
   InputGroup,
   InputRightElement,
-  useToast,
+  useToast, 
+  Image, 
+  Center, 
+  Text
 } from "@chakra-ui/react"
 
 const SignUp = () => {
@@ -42,11 +47,35 @@ const SignUp = () => {
     } else {
       navigate(`/dashboard`)
       toast({
-        title: "Account created",
-        description: "Welcome to RippleDEX!",
-        status: "success",
-        duration: 5000,
-        isClosable: true,
+        duration: 3000,
+        render: () => (
+          <Center 
+            h="200vh" w="200vw" 
+            transform="translate(-40%, 25%)" 
+            bg="rgba(0,0,0,0.5)"
+          >
+            <Box 
+              bg="white" 
+              borderRadius="3xl" 
+              p="2em" pl="4em" 
+              pr="4em" pb="0.75em" 
+              textAlign="center"
+            >
+              <Text
+                mb="-1em"
+                w="10em"
+                fontFamily="Nunito-Bold"
+                fontSize="1.5rem"
+                color="ripple.200"
+              >
+                Account Successfully Created!
+              </Text>
+              <Center>
+                <Image w="10em" src={CreateAccount} alignSelf="center"/>
+              </Center>
+            </Box>
+          </Center>
+        )
       })
     }
   }

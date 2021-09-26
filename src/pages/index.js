@@ -1,4 +1,4 @@
-import React, { useEffect } from "react"
+import React, { useEffect, useRef } from "react"
 import { onAuthLoad } from "../utils/AuthFunctions"
 
 import Layout from "../components/layout"
@@ -37,6 +37,8 @@ import { navigate } from "gatsby-link"
 const IndexPage = (props) => {
   const [isLargeSize] = useMediaQuery("(min-width: 42em)")
   const { isOpen, onOpen, onClose } = useDisclosure()
+  const homeInfo = useRef()
+  const scrollToDiv = (ref) => window.scrollTo(0, ref.current.offsetTop - 10);
 
   useEffect( () => {
     onAuthLoad((user) => navigate("/dashboard"), () => {})
@@ -92,6 +94,7 @@ const IndexPage = (props) => {
                   </Button>
                   <AuthPopUp isOpen={isOpen} onClose={onClose} type="SignUp" />
                   <Button
+                    onClick={() => scrollToDiv(homeInfo)}
                     color="ripple.200"
                     fontFamily="Raleway-Bold"
                     borderRadius="20px"
@@ -189,7 +192,7 @@ const IndexPage = (props) => {
         </div>
       </Box>
 
-      <Center>
+      <Center ref={homeInfo}>
         <VStack pt="60px" maxW={["85vw", "80vw"]}>
           <Stack
             direction={["column", "row"]}

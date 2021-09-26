@@ -7,19 +7,18 @@ import { navigate } from "gatsby-link"
 
 import LogoWhite from "../../images/RippleDEXWhite.svg"
 import Worker from "../../images/HomePage/Worker.png"
+import CreateWorkspace from "../../images/PopUps/CreateWorkspace.png"
 
 import {
   Box,
   Image,
   Text,
   HStack,
-  VStack,
   Button,
   Center,
   Modal,
   ModalOverlay,
   ModalContent,
-  ModalHeader,
   ModalCloseButton,
   Input,
   SimpleGrid,
@@ -55,11 +54,35 @@ const CreateOrgPopup = props => {
       })
       navigate(`/dashboard`)
       toast({
-        title: "New Organization Added",
-        description: "Welcome to the Dashboard!",
-        status: "success",
-        duration: 5000,
-        isClosable: true,
+        duration: 3000,
+        render: () => (
+          <Center 
+            h="200vh" w="200vw" 
+            transform="translate(-40%, 25%)" 
+            bg="rgba(0,0,0,0.5)"
+          >
+            <Box 
+              bg="white" 
+              borderRadius="3xl" 
+              p="2em" pl="4em" 
+              pr="4em" pb="0.75em" 
+              textAlign="center"
+            >
+              <Text
+                mb="-1em"
+                w="10em"
+                fontFamily="Nunito-Bold"
+                fontSize="1.5rem"
+                color="ripple.200"
+              >
+                Workspace Successfully Created!
+              </Text>
+              <Center>
+                <Image w="10em" src={CreateWorkspace} alignSelf="center"/>
+              </Center>
+            </Box>
+          </Center>
+        )
       })
     } else {
       // Failed to create Organization
