@@ -40,17 +40,11 @@ const CreateOrgPopup = props => {
   const handleSubmit = async event => {
     setLoading(true)
     event.preventDefault()
-    const org = await createNewOrganization(props.userID, orgName, orgDesc)
-    if (org) {
+    const orgID = await createNewOrganization(props.userID, orgName, orgDesc)
+    if (orgID) {
       invites.forEach(async invite => {
-        if (invite.email) {
-          var inviteID = await inviteToOrganization(
-            invite.email,
-            org.id,
-            invite.position
-          )
-          console.log(inviteID)
-        }
+        if (invite.email)
+          await inviteToOrganization(invite.email, orgID, invite.position)
       })
       navigate(`/dashboard`)
       toast({
