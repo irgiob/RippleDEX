@@ -2,7 +2,6 @@ import React, { useState } from "react"
 import { logout } from "../../utils/AuthFunctions"
 import { updateUser } from "../../models/User"
 import { removeUserFromOrganization } from "../../models/Organisation"
-import { Link } from "gatsby"
 import { navigate } from "gatsby-link"
 
 import {

@@ -13,10 +13,10 @@ const db = getFirestore(firebase)
  * 
  * @returns {User} new user just created
  */
-export const createNewUser = (userFirstName, userLastName, userID, 
+export const createNewUser = async (userFirstName, userLastName, userID, 
     userEmail,userPhoneNumber, userProfilePicture) => {
     const docRef = doc(db, "users", userID)
-    return setDoc(docRef, {
+    await setDoc(docRef, {
         firstName: userFirstName,
         lastName: userLastName,
         email: userEmail,
@@ -28,6 +28,7 @@ export const createNewUser = (userFirstName, userLastName, userID,
         notificationMode: "000",
         isInvisible: false
     })
+    return userID
 }
 
 /**
