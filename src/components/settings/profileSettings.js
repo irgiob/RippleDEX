@@ -57,6 +57,7 @@ import {
 } from "react-icons/bi"
 
 import UploadImageButton from "../uploadImageButton"
+import InviteOrgPopup from "../orgPopups/inviteOrg"
 
 const ProfileSettings = props => {
   return (
@@ -462,14 +463,16 @@ const OrganizationsTab = props => {
                 Manage Members
               </Text>
               <Spacer />
-              <Text 
-                color="green.400" 
-                pb="5px" 
-                fontSize="12px"
-                _hover={{ transform: "scale(1.1)" }}
-              >
-                Invite People +
-              </Text>
+              <InviteOrgPopup orgID={props.org.id} placement="bottom">
+                <Text 
+                  color="green.400" 
+                  pb="5px" 
+                  fontSize="12px"
+                  _hover={{ transform: "scale(1.1)" }}
+                >
+                  Invite People +
+                </Text>
+              </InviteOrgPopup>
             </HStack>
             <InputGroup>
               <InputLeftElement

@@ -41,6 +41,7 @@ import ProfileSettings from "../settings/profileSettings"
 import SwitchOrgPopup from "../orgPopups/switchOrg"
 import CreateOrgPopup from "../orgPopups/createOrg"
 import JoinOrgPopup from "../orgPopups/joinOrg"
+import InviteOrgPopup from "../orgPopups/inviteOrg"
 
 const HeaderUser = props => {
   const { isOpen, onOpen, onClose } = useDisclosure()
@@ -142,14 +143,16 @@ const HeaderUser = props => {
                     </HStack>
                     {org?.admin === user?.id && <>
                       <Divider />
-                      <Button
-                        bgColor="white"
-                        _hover={{
-                          transform: "scale(1.08)",
-                        }}
-                      >
-                        <Link to="/Invite"> Invite people to {org?.name || "loading..."}</Link>
-                      </Button>
+                      <InviteOrgPopup orgID={org?.id} placement="right">
+                        <Button
+                          bgColor="white"
+                          _hover={{
+                            transform: "scale(1.08)",
+                          }}
+                        >
+                          Invite people to {org?.name || "loading..."}
+                        </Button>
+                      </InviteOrgPopup>
                       <Button
                         bgColor="white"
                         _hover={{
