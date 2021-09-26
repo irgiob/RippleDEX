@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react'
+import React, { useState, useRef, useEffect } from 'react'
 import FullCalendar from '@fullcalendar/react'
 
 import dayGridPlugin from '@fullcalendar/daygrid'
@@ -9,12 +9,16 @@ import EventDetails from "./eventDetails"
 import { Box } from '@chakra-ui/layout'
 import CreateEventButton from './createEventButton'
 
+import {createNewInteraction, getInteractionsByOrg, } from "../../models/Interaction"
+
 // Only for sample data
 let todayStr = new Date().toISOString().replace(/T.*$/, '')
 let count = 4;
 
-const CalendarComponent = () => {
+const CalendarComponent = ({user,org}) => {
 
+  console.log(user,org)
+  useEffect(()=>{loadEvents()},[])
 
   const [currentEvents, setCurrentEvents] = useState([])
   const [detailsRequested, setDetailsRequested] = useState("TEST")
@@ -22,9 +26,7 @@ const CalendarComponent = () => {
   const [tooltip, setTooltip] = useState(null)
   const calendarRef = useRef(null); 
 
-  // Load the events of this user, currently sample events
-  const loadEvents = () => {
-    return [
+  const sampleEvents = [
       {
         id: "001",
         title: 'All-day event',
@@ -46,6 +48,36 @@ const CalendarComponent = () => {
         start: todayStr + 'T12:00:00'
       }
     ]
+
+  // Load the events of this user, currently sample events
+  const loadEvents = async () => {
+
+    // createNewInteraction("test", [user.id], user.id, org.id, "test", "test", "1632648933", "1632652529", "test", "test", true)
+
+    const interactions = await getInteractionsByOrg(org.id)
+    console.log(interactions)
+
+    const events = interactions.filter((doc) => {
+      // Remove non assigned  and non remindMe interactions
+      return doc.participants.includes(user.id) && doc.remindMe
+    })
+
+    events.forEach((doc) => {
+      // Create new event object in API
+      let calendarAPI =  calendarRef.current.getApi()
+      calendarAPI.addEvent({
+        id : doc.id,
+        title: doc.forDeal,
+        start : new Date(0).setUTCSeconds(parseInt(doc.meetingStart)),
+        end : new Date(0).setUTCSeconds(parseInt(doc.meetingEnd)),
+        // allDay: isAllDay
+      })
+    })
+
+
+    console.log(events)
+    
+    
   }
 
   // Handle when a date is selected, in this case we want to add an event
@@ -58,7 +90,7 @@ const CalendarComponent = () => {
   }
 
   // Handle when date is selected, which creates a new evemt
-  const createNewEventDate = (title, startDate, startTime, endTime, isAllDay) => {
+  const createNewEventDate = (title, startDate, startTime, endTime, isAllDay, id) => {
 
     // Parse time into date
     let date = new Date(startDate)
@@ -70,7 +102,7 @@ const CalendarComponent = () => {
     // Create new event object in API
     let calendarAPI =  calendarRef.current.getApi()
     calendarAPI.addEvent({
-      id : String(count++),
+      id : id,
       title: title,
       start : start,
       end : end,
@@ -118,8 +150,7 @@ const CalendarComponent = () => {
           selectable={true}
           editable={true}
           select={handleDateSelected}
-          // dayCellContent={createNewEventDate}
-          initialEvents={loadEvents()}
+          initialEvents={sampleEvents}
           aspectRatio={2.5}
           eventContent = {renderEventContent}
           eventChange={updateEvent}
