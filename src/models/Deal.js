@@ -1,5 +1,5 @@
 import firebase from "../../plugins/gatsby-plugin-firebase-custom"
-import {getFirestore, doc, getDoc, updateDoc, collection, query, where, getDocs, doc, deleteDoc, addDoc}  from "firebase/firestore"
+import {getFirestore, doc, getDoc, updateDoc, collection, query, where, getDocs, deleteDoc, addDoc}  from "firebase/firestore"
 
 const db = getFirestore(firebase)
 
