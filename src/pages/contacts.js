@@ -102,7 +102,7 @@ const ContactsPage = ({ user, setUser, org, setOrg }) => {
   const [value, setValue] = React.useState("")
 
   React.useEffect(() => {
-    var promise = Promise.resolve(getContactsByOrg(org))
+    var promise = Promise.resolve(getContactsByOrg(org.id))
     promise.then(function (val) {
       setContactList(val)
     })
@@ -201,7 +201,7 @@ const ContactsPage = ({ user, setUser, org, setOrg }) => {
               const promise = new Promise((resolve, reject) => {
                 setTimeout(() => {
                   const contactID = createNewContact(
-                    org,
+                    org.id,
                     newData.name,
                     newData.company,
                     newData.email,

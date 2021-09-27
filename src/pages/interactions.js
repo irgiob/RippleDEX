@@ -100,7 +100,7 @@ const InteractionsPage = ({ user, setUser, org, setOrg }) => {
   const [value, setValue] = React.useState("")
 
   React.useEffect(() => {
-    var promise = Promise.resolve(getInteractionsByOrg(org))
+    var promise = Promise.resolve(getInteractionsByOrg(org.id))
     promise.then(function (val) {
       setInteractionList(val)
     })
@@ -210,7 +210,7 @@ const InteractionsPage = ({ user, setUser, org, setOrg }) => {
               const promise = new Promise((resolve, reject) => {
                 setTimeout(() => {
                   const interactionID = createNewInteraction(
-                    org,
+                    org.id,
                     newData.contact,
                     newData.addedBy,
                     newData.forDeal,

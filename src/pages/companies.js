@@ -99,7 +99,7 @@ const CompaniesPage = ({ user, setUser, org, setOrg }) => {
   const [value, setValue] = React.useState("")
 
   React.useEffect(() => {
-    var promise = Promise.resolve(getCompanyByOrg(org))
+    var promise = Promise.resolve(getCompanyByOrg(org.id))
     promise.then(function (val) {
       setCompanyList(val)
     })
@@ -203,7 +203,7 @@ const CompaniesPage = ({ user, setUser, org, setOrg }) => {
               const promise = new Promise((resolve, reject) => {
                 setTimeout(() => {
                   const companyID = createNewCompany(
-                    org,
+                    org.id,
                     newData.name,
                     newData.primaryContact,
                     newData.annualRevenue,

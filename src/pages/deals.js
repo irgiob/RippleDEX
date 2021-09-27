@@ -96,7 +96,7 @@ const DealsPage = ({ user, setUser, org, setOrg }) => {
   const [value, setValue] = React.useState("")
 
   React.useEffect(() => {
-    var promise = Promise.resolve(getDealsByOrg(org))
+    var promise = Promise.resolve(getDealsByOrg(org.id))
     promise.then(function (val) {
       setDealList(val)
     })
@@ -206,7 +206,7 @@ const DealsPage = ({ user, setUser, org, setOrg }) => {
               const promise = new Promise((resolve, reject) => {
                 setTimeout(() => {
                   const dealID = createNewDeal(
-                    org,
+                    org.id,
                     newData.name,
                     newData.dealSize,
                     newData.stage,
