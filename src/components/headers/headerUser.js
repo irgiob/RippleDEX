@@ -30,7 +30,7 @@ import {
   RiArrowLeftRightLine,
   RiLogoutBoxLine,
   RiAddLine,
-  RiBuilding2Line
+  RiBuilding2Line,
 } from "react-icons/ri"
 
 import Logo from "../../images/RippleDEXWhite.svg"
@@ -67,13 +67,13 @@ const HeaderUser = props => {
   const {
     isOpen: isJoinOpen,
     onOpen: onJoinOpen,
-    onClose: onJoinClose
+    onClose: onJoinClose,
   } = useDisclosure()
 
   const {
     isOpen: isCreateOpen,
     onOpen: onCreateOpen,
-    onClose: onCreateClose
+    onClose: onCreateClose,
   } = useDisclosure()
 
   const leaveWorkspace = async () => {
@@ -142,30 +142,32 @@ const HeaderUser = props => {
                         </Text>
                       </Box>
                     </HStack>
-                    {org?.admin === user?.id && <>
-                      <Divider />
-                      <InviteOrgPopup orgID={org?.id} placement="right">
+                    {org?.admin === user?.id && (
+                      <>
+                        <Divider />
+                        <InviteOrgPopup orgID={org?.id} placement="right">
+                          <Button
+                            bgColor="white"
+                            _hover={{
+                              transform: "scale(1.08)",
+                            }}
+                          >
+                            Invite people to {org?.name || "loading..."}
+                          </Button>
+                        </InviteOrgPopup>
                         <Button
                           bgColor="white"
                           _hover={{
                             transform: "scale(1.08)",
                           }}
+                          onClick={() => {
+                            handleOpen(3)
+                          }}
                         >
-                          Invite people to {org?.name || "loading..."}
+                          Settings & Administration
                         </Button>
-                      </InviteOrgPopup>
-                      <Button
-                        bgColor="white"
-                        _hover={{
-                          transform: "scale(1.08)",
-                        }}
-                        onClick={() => {
-                          handleOpen(3)
-                        }}
-                      >
-                        Settings & Administration
-                      </Button>
-                    </>}
+                      </>
+                    )}
                     <Divider />
                     <Button
                       bgColor="white"
@@ -176,7 +178,7 @@ const HeaderUser = props => {
                       Switch Workspace
                     </Button>
                     <SwitchOrgPopup
-                      user={user} 
+                      user={user}
                       setUser={setUser}
                       org={org}
                       setOrg={setOrg}
@@ -211,7 +213,7 @@ const HeaderUser = props => {
                       isOpen={isCreateOpen}
                       onClose={onCreateClose}
                     />
-                    {org?.admin !== user?.id &&
+                    {org?.admin !== user?.id && (
                       <Button
                         bgColor="white"
                         color="red.600"
@@ -308,8 +310,8 @@ const HeaderUser = props => {
                     bgColor="white"
                     _hover={{ transform: "scale(1.08)" }}
                     onClick={() => {
-                      updateUser(user?.id, {isInvisible: !user?.isInvisible})
-                      setUser({...user, isInvisible: !user?.isInvisible})
+                      updateUser(user?.id, { isInvisible: !user?.isInvisible })
+                      setUser({ ...user, isInvisible: !user?.isInvisible })
                     }}
                   >
                     Set as {user?.isInvisible ? "Visible" : "Invisible"}
