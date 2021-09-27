@@ -2,7 +2,6 @@ import React, { useState } from "react"
 import { logout } from "../../utils/AuthFunctions"
 import { updateUser } from "../../models/User"
 import { removeUserFromOrganization } from "../../models/Organisation"
-import { Link } from "gatsby"
 import { navigate } from "gatsby-link"
 
 import {
@@ -30,12 +29,18 @@ import {
   RiArrowDropDownLine,
   RiArrowLeftRightLine,
   RiLogoutBoxLine,
+  RiAddLine,
+  RiBuilding2Line
 } from "react-icons/ri"
 
 import Logo from "../../images/RippleDEXWhite.svg"
 import ProfilePicture from "../../images/RippleDEXWhite.svg"
 
 import ProfileSettings from "../settings/profileSettings"
+import SwitchOrgPopup from "../orgPopups/switchOrg"
+import CreateOrgPopup from "../orgPopups/createOrg"
+import JoinOrgPopup from "../orgPopups/joinOrg"
+import InviteOrgPopup from "../orgPopups/inviteOrg"
 
 const HeaderUser = props => {
   const { isOpen, onOpen, onClose } = useDisclosure()
@@ -52,6 +57,24 @@ const HeaderUser = props => {
     setTab(val)
     onOpen()
   }
+
+  const {
+    isOpen: isSwitchOpen,
+    onOpen: onSwitchOpen,
+    onClose: onSwitchClose,
+  } = useDisclosure()
+
+  const {
+    isOpen: isJoinOpen,
+    onOpen: onJoinOpen,
+    onClose: onJoinClose
+  } = useDisclosure()
+
+  const {
+    isOpen: isCreateOpen,
+    onOpen: onCreateOpen,
+    onClose: onCreateClose
+  } = useDisclosure()
 
   const leaveWorkspace = async () => {
     await removeUserFromOrganization(org?.id, user?.id)
@@ -119,44 +142,76 @@ const HeaderUser = props => {
                         </Text>
                       </Box>
                     </HStack>
-                    {org?.admin === user?.id && (
-                      <>
-                        <Divider />
+                    {org?.admin === user?.id && <>
+                      <Divider />
+                      <InviteOrgPopup orgID={org?.id} placement="right">
                         <Button
                           bgColor="white"
                           _hover={{
                             transform: "scale(1.08)",
                           }}
                         >
-                          <Link to="/Invite">
-                            {" "}
-                            Invite people to {org?.name || "loading..."}
-                          </Link>
+                          Invite people to {org?.name || "loading..."}
                         </Button>
-                        <Button
-                          bgColor="white"
-                          _hover={{
-                            transform: "scale(1.08)",
-                          }}
-                          onClick={() => {
-                            handleOpen(3)
-                          }}
-                        >
-                          Settings & Administration
-                        </Button>
-                      </>
-                    )}
+                      </InviteOrgPopup>
+                      <Button
+                        bgColor="white"
+                        _hover={{
+                          transform: "scale(1.08)",
+                        }}
+                        onClick={() => {
+                          handleOpen(3)
+                        }}
+                      >
+                        Settings & Administration
+                      </Button>
+                    </>}
                     <Divider />
                     <Button
                       bgColor="white"
-                      _hover={{
-                        transform: "scale(1.08)",
-                      }}
+                      _hover={{ transform: "scale(1.08)" }}
                       leftIcon={<RiArrowLeftRightLine />}
+                      onClick={onSwitchOpen}
                     >
                       Switch Workspace
                     </Button>
-                    {org?.admin !== user?.id && (
+                    <SwitchOrgPopup
+                      user={user} 
+                      setUser={setUser}
+                      org={org}
+                      setOrg={setOrg}
+                      isOpen={isSwitchOpen}
+                      onClose={onSwitchClose}
+                    />
+                    <Button
+                      bgColor="white"
+                      _hover={{ transform: "scale(1.08)" }}
+                      leftIcon={<RiAddLine />}
+                      onClick={onJoinOpen}
+                    >
+                      Join Workspace
+                    </Button>
+                    <JoinOrgPopup
+                      userID={user.id}
+                      userEmail={user?.email}
+                      isOpen={isJoinOpen}
+                      onOpen={onJoinOpen}
+                      onClose={onJoinClose}
+                    />
+                    <Button
+                      bgColor="white"
+                      _hover={{ transform: "scale(1.08)" }}
+                      leftIcon={<RiBuilding2Line />}
+                      onClick={onCreateOpen}
+                    >
+                      Create Workspace
+                    </Button>
+                    <CreateOrgPopup
+                      userID={user.id}
+                      isOpen={isCreateOpen}
+                      onClose={onCreateClose}
+                    />
+                    {org?.admin !== user?.id &&
                       <Button
                         bgColor="white"
                         color="red.600"
@@ -253,9 +308,8 @@ const HeaderUser = props => {
                     bgColor="white"
                     _hover={{ transform: "scale(1.08)" }}
                     onClick={() => {
-                      updateUser(user?.id, {
-                        isInvisible: !user?.isInvisible,
-                      }).then(updatedUser => setUser(updatedUser))
+                      updateUser(user?.id, {isInvisible: !user?.isInvisible})
+                      setUser({...user, isInvisible: !user?.isInvisible})
                     }}
                   >
                     Set as {user?.isInvisible ? "Visible" : "Invisible"}

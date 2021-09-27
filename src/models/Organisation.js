@@ -8,6 +8,7 @@ import {
     getDoc,
     getDocs, 
     updateDoc, 
+    deleteDoc,
     collection, 
     arrayUnion, 
     arrayRemove
@@ -34,11 +35,7 @@ export const createNewOrganization = async (userID, orgName, orgDesc) => {
         profilePicture: null
     })
     await addUserToOrganization(docRef.id, userID, "Admin")
-    return await getDoc(docRef).then((doc) => {
-        const data = doc.data()
-        data.id = doc.id
-        return data
-    })
+    return docRef.id
 }
 
 /**
@@ -54,8 +51,7 @@ export const inviteToOrganization = async (email, orgID, position) => {
         organizationID: orgID,
         position: position
     })
-    const docSnap = await getDoc(docRef)
-    return docSnap.id
+    return docRef.id
 }
 
 
@@ -81,15 +77,26 @@ export const getInvite = async (inviteID) => {
  */
 export const getInvitesByEmail = async (email) => {
     const q = query(collection(db, "invites"), where("email", "==", email))
-    return getDocs(q).then((invites) => {
-        invites.forEach((invite, i) => {
-            this[i] = this[i].data()
-        })
-        return invites
-    }).catch((error) => {
-        console.error("Error getting invite: ", error);
-        return null
+    const querySnapshot = await getDocs(q)
+    const inviteList = []
+    querySnapshot.forEach((invite) => {
+        const data = invite.data()
+        data.id = invite.id
+        inviteList.push(data)
     })
+    return inviteList
+}
+
+/**
+ * Delete invite 
+ * 
+ * @param {String} inviteID ID of the invite
+ * 
+ * @returns {DocumentReference}
+ */
+ export const deleteInvite = async (inviteID) => {
+    const docRef = doc(db, "invites", inviteID)
+    return await deleteDoc(docRef);
 }
 
 /**
@@ -169,13 +176,7 @@ export const isUserInOrganization = async (orgID, userID) => {
  */
  export const updateOrganization = async (orgID, options) => {
     const docRef = doc(db, "organizations", orgID)
-    const docSnap = await getDoc(docRef)
-
-    if (docSnap.exists()){
-        return updateDoc(docRef, options).then(() => getOrganization(orgID))
-    } else {
-        console.log("No such document!");
-    }
+    return updateDoc(docRef, options)
 }
 
 export const updateMemberPosition = async (orgID, userID, oldPosition, newPosition) => {

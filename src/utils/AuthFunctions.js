@@ -1,8 +1,8 @@
 import firebase from "../../plugins/gatsby-plugin-firebase-custom"
 import {getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, GoogleAuthProvider,
-   signInWithPopup, signOut, onAuthStateChanged, setPersistence, browserSessionPersistence} from "firebase/auth";
-import { createNewUser, doesUserExist, updateUser } from "../models/User"
+   signInWithPopup, signOut, onAuthStateChanged, browserSessionPersistence} from "firebase/auth";
 
+import { createNewUser, doesUserExist } from "../models/User"
 
 /**
  * @param {String} name
@@ -17,9 +17,10 @@ export async function signup(firstName, lastName, email, password, phoneNumber) 
   return createUserWithEmailAndPassword(auth, email, password)
   .then( (userCredential) => {
     const userID = userCredential.user.uid
-    return createNewUser(firstName, lastName, userID, email, phoneNumber)
+    return createNewUser(firstName, lastName, userID, email, phoneNumber, null)
   })
   .catch((error) => { 
+    console.log("Error signing up: ", error)
     return null 
   })
 }
@@ -81,10 +82,8 @@ export async function signInGoogle(){
     const email = result.user.email
     const number = result.user.phoneNumber
     const profilePicture = result.user.photoURL.split("=")[0] + "=s400-c" 
-    if (!(await doesUserExist(userID))) {
-      await createNewUser(firstName, lastName, userID, email, number)
-      await updateUser(userID, {profilePicture: profilePicture})
-    }
+    if (!doesUserExist(userID))
+      await createNewUser(firstName, lastName, userID, email, number, profilePicture)
     return userID;
   })
   .catch( (err) => {

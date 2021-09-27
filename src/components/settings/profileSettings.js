@@ -57,6 +57,7 @@ import {
 } from "react-icons/bi"
 
 import UploadImageButton from "../uploadImageButton"
+import InviteOrgPopup from "../orgPopups/inviteOrg"
 
 const ProfileSettings = props => {
   return (
@@ -184,23 +185,27 @@ const ProfileTab = props => {
   }
 
   const handleClick = async () => {
-    const updatedUser = await updateUser(props.user?.id, {
+    const options = {
       firstName: firstName,
       lastName: lastName,
       phoneNumber: phoneNumber,
       profilePicture: photoUrl
-    });
-    props.setUser(updatedUser)
+    }
+    await updateUser(props.user?.id, options)
+    props.setUser({...props.user, ...options})
     if (props.org) {
-      const updatedOrg = await updateMemberPosition(
-        props.org?.id, 
-        props.user?.id, 
-        props.org?.members.filter(
-          member => member.userID === props.user?.id
-        )[0].position,
-        position
-      )
-      props.setOrg(updatedOrg)
+      const oldPosition = props.org?.members.filter(
+        member => member.userID === props.user?.id
+      )[0].position
+      if (oldPosition !== position) {
+        const updatedOrg = await updateMemberPosition(
+          props.org?.id, 
+          props.user?.id, 
+          oldPosition,
+          position
+        )
+        props.setOrg(updatedOrg)
+      }
     }
     toast({
       title: "Success",
@@ -287,11 +292,8 @@ const ProfileTab = props => {
             <Circle
               _hover={{ transform: "scale(1.2)" }}
               onClick={async () => {
-                const newUser = await updateUser(
-                  props.user?.id, 
-                  {profilePicture: null}
-                )
-                props.setUser(newUser)
+                await updateUser(props.user?.id, {profilePicture: null})
+                props.setUser({...props.user, profilePicture: null})
               }}
             >
               <BiTrash style={{ color: "red" }} />
@@ -324,10 +326,10 @@ const NotificationsTab = props => {
   const [switch2, setSwitch2] = useState(parseInt(notificationMode.substr(1,1)))
   const [radio, setRadio] = useState(parseInt(notificationMode.substr(2,1)))
 
-  const updateNotifs = (switch1Val, switch2Val, radioVal) => {
-    updateUser(props.user?.id, {
-      notificationMode: switch1Val.toString() + switch2Val.toString() + radioVal.toString() 
-    }).then((updatedUser) => props.setUser(updatedUser))
+  const updateNotifs = async (switch1Val, switch2Val, radioVal) => {
+    const newNotifMode = switch1Val.toString() + switch2Val.toString() + radioVal.toString()
+    await updateUser(props.user?.id, {notificationMode: newNotifMode})
+    props.setUser({...props.user, notificationMode: newNotifMode})
     setSwitch1(switch1Val)
     setSwitch2(switch2Val)
     setRadio(radioVal)
@@ -398,28 +400,20 @@ const OrganizationsTab = props => {
     fetchMembers(props.org.members)
   }, [props.org.members])
 
-  const handleClick = () => {
-    updateOrganization(props.org.id, {
+  const handleClick = async () => {
+    const options = {
       name: orgName,
       description: orgDesc,
       profilePicture: photoUrl
-    }).then((org) => {
-      props.setOrg(org)
-      toast({
-        title: "Success",
-        description: "Organization details have been updated",
-        status: "success",
-        duration: 5000,
-        isClosable: true,
-      })
-    }).catch((error) => {
-      toast({
-        title: "Failed to update details",
-        description: error,
-        status: "error",
-        duration: 5000,
-        isClosable: true,
-      })
+    }
+    await updateOrganization(props.org.id, options)
+    props.setOrg({...props.org, ...options})
+    toast({
+      title: "Success",
+      description: "Organization details have been updated",
+      status: "success",
+      duration: 5000,
+      isClosable: true,
     })
   } 
 
@@ -469,14 +463,16 @@ const OrganizationsTab = props => {
                 Manage Members
               </Text>
               <Spacer />
-              <Text 
-                color="green.400" 
-                pb="5px" 
-                fontSize="12px"
-                _hover={{ transform: "scale(1.1)" }}
-              >
-                Invite People +
-              </Text>
+              <InviteOrgPopup orgID={props.org.id} placement="bottom">
+                <Text 
+                  color="green.400" 
+                  pb="5px" 
+                  fontSize="12px"
+                  _hover={{ transform: "scale(1.1)" }}
+                >
+                  Invite People +
+                </Text>
+              </InviteOrgPopup>
             </HStack>
             <InputGroup>
               <InputLeftElement
@@ -533,11 +529,8 @@ const OrganizationsTab = props => {
             <Circle 
               _hover={{ transform: "scale(1.2)" }}
               onClick={async () => {
-                const newOrg = await updateOrganization(
-                  props.org?.id, 
-                  {profilePicture: null}
-                )
-                props.setOrg(newOrg)
+                await updateOrganization(props.org?.id, {profilePicture: null})
+                props.setOrg({...props.org, profilePicture: null})
               }}
             >
               <BiTrash style={{ color: "red" }} />
