@@ -2,6 +2,7 @@ import firebase from "../../plugins/gatsby-plugin-firebase-custom"
 import {
   getFirestore,
   doc,
+  addDoc,
   getDoc,
   updateDoc,
   collection,
