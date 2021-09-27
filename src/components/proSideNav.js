@@ -35,7 +35,7 @@ const ProSideNav = ({ location }) => {
   const pathname = location.pathname
 
   return (
-    <Box>
+    <Box position="fixed">
       <ProSidebar
         collapsedWidth="80px"
         width="190px"
