@@ -111,7 +111,7 @@ const EventDetails = props => {
                   </>
                 ) : (
                   <>
-                    All day
+                    <Text fontFamily="Nunito-bold">All day</Text>
                     <HStack>
                       <Text width="50px">from: </Text>
                       <Text width="300px">
