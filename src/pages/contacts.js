@@ -180,6 +180,12 @@ const ContactsPage = ({ user, setUser, org, setOrg }) => {
               align: "left",
             },
             {
+              title: "Notes",
+              field: "notes",
+              type: "string",
+              hidden: true,
+            },
+            {
               render: rowData => (
                 <Tooltip hasArrow label="Edit Contact">
                   <IconButton

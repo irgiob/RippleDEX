@@ -1,7 +1,5 @@
 import React, { useEffect, useState } from "react"
-import {
-  updateContact,
-} from "../../models/Contact"
+import { updateContact } from "../../models/Contact"
 
 import {
   Modal,
@@ -26,7 +24,11 @@ import {
   useToast,
 } from "@chakra-ui/react"
 
-import { RiArrowLeftSLine, RiMailAddFill, RiCalendarEventFill } from "react-icons/ri"
+import {
+  RiArrowLeftSLine,
+  RiMailAddFill,
+  RiCalendarEventFill,
+} from "react-icons/ri"
 
 import LogoLight from "../../images/RippleDEXWhite.svg"
 
@@ -39,16 +41,23 @@ import LogoLight from "../../images/RippleDEXWhite.svg"
 
 const ContactPopUp = ({ isOpen, onClose, value }) => {
   const [isLargeSize] = useMediaQuery("(min-width: 42em)")
-  const [contactName, SetContactName] = useState(value.name)
-  const [contactEmail, SetContactEmail] = useState(value.email)
-  const [contactPhoneNumber, SetContactPhoneNumber] = useState(
-    value.phoneNumber
-  )
-  const [contactCompany, SetContactCompany] = useState(value.company)
-  const [contactPosition, SetContactPosition] = useState(value.position)
-  const [contactMemo, SetContactMemo] = useState(
-    "There are currently No Memo's"
-  )
+
+  const [contactName, setContactName] = useState("")
+  const [contactEmail, setContactEmail] = useState("")
+  const [contactPhoneNumber, setContactPhoneNumber] = useState("")
+  const [contactCompany, setContactCompany] = useState("")
+  const [contactPosition, setContactPosition] = useState("")
+  const [contactMemo, setContactMemo] = useState("")
+
+  useEffect(() => {
+    setContactName(value.name)
+    setContactEmail(value.email)
+    setContactPhoneNumber(value.phoneNumber)
+    setContactCompany(value.company)
+    setContactPosition(value.position)
+    setContactMemo(value.notes)
+  }, [value])
+
   const toast = useToast()
 
   // couldnt get the whole show memo from the database working
@@ -56,7 +65,7 @@ const ContactPopUp = ({ isOpen, onClose, value }) => {
   //   const getMemo = async contactID => {
   //     const currentMemo = await getContact(contactID)
   //     if (currentMemo) {
-  //         SetContactMemo(currentMemo?.notes)
+  //         setContactMemo(currentMemo?.notes)
   //       }
   //     }
   //   getMemo(value.id)
@@ -132,10 +141,10 @@ const ContactPopUp = ({ isOpen, onClose, value }) => {
                   <Text fontSize="20px">Name</Text>
                   <Input
                     variant="outline"
-                    placeholder={value.name}
+                    placeholder="Contact Name"
                     type="text"
                     value={contactName}
-                    onChange={e => SetContactName(e.target.value)}
+                    onChange={e => setContactName(e.target.value)}
                   />
 
                   <Text pt="20px" mt="25px" fontSize="20px">
@@ -143,20 +152,20 @@ const ContactPopUp = ({ isOpen, onClose, value }) => {
                   </Text>
                   <Input
                     variant="outline"
-                    placeholder={value.email}
+                    placeholder="Contact Email"
                     type="text"
                     value={contactEmail}
-                    onChange={e => SetContactEmail(e.target.value)}
+                    onChange={e => setContactEmail(e.target.value)}
                   />
                   <Text pt="20px" mt="25px" fontSize="20px">
                     Phone Number
                   </Text>
                   <Input
                     variant="outline"
-                    placeholder={value.phoneNumber}
+                    placeholder="Contact Phone Number"
                     type="text"
                     value={contactPhoneNumber}
-                    onChange={e => SetContactPhoneNumber(e.target.value)}
+                    onChange={e => setContactPhoneNumber(e.target.value)}
                   />
                 </VStack>
               </GridItem>
@@ -165,10 +174,10 @@ const ContactPopUp = ({ isOpen, onClose, value }) => {
                   <Text fontSize="20px">Company</Text>
                   <Input
                     variant="outline"
-                    placeholder={value.company}
+                    placeholder="Contact's Company"
                     type="text"
                     value={contactCompany}
-                    onChange={e => SetContactCompany(e.target.value)}
+                    onChange={e => setContactCompany(e.target.value)}
                   />
 
                   <Text pt="20px" mt="25px" fontSize="20px">
@@ -176,10 +185,10 @@ const ContactPopUp = ({ isOpen, onClose, value }) => {
                   </Text>
                   <Input
                     variant="outline"
-                    placeholder={value.position}
+                    placeholder="Contact Position"
                     type="text"
                     value={contactPosition}
-                    onChange={e => SetContactPosition(e.target.value)}
+                    onChange={e => setContactPosition(e.target.value)}
                   />
                   <Text pt="20px" mt="25px" fontSize="20px">
                     Details
@@ -187,9 +196,9 @@ const ContactPopUp = ({ isOpen, onClose, value }) => {
                   <Textarea
                     resize="none"
                     h="15vh"
-                    placeholder={contactMemo}
+                    placeholder="Notes"
                     value={contactMemo}
-                    onChange={e => SetContactMemo(e.target.value)}
+                    onChange={e => setContactMemo(e.target.value)}
                   />
                   <Box align="right">
                     <Button
@@ -219,7 +228,7 @@ const ContactPopUp = ({ isOpen, onClose, value }) => {
                     borderRadius="30px"
                     variant="solid"
                     w="100%"
-                    leftIcon={<RiMailAddFill size={20}/>}
+                    leftIcon={<RiMailAddFill size={20} />}
                     _hover={{
                       transform: "scale(1.05)",
                     }}
@@ -234,7 +243,7 @@ const ContactPopUp = ({ isOpen, onClose, value }) => {
                     borderRadius="30px"
                     variant="solid"
                     w="100%"
-                    leftIcon={<RiCalendarEventFill size={20}/>}
+                    leftIcon={<RiCalendarEventFill size={20} />}
                     _hover={{
                       transform: "scale(1.05)",
                     }}
@@ -251,18 +260,17 @@ const ContactPopUp = ({ isOpen, onClose, value }) => {
             </Grid>
           </Box>
           <VStack w="100%" align="left">
-            <Text fontSize="25px"
-              color="ripple.200"
-              fontFamily="Raleway-Bold">Deals</Text>
-              <hr/>
+            <Text fontSize="25px" color="ripple.200" fontFamily="Raleway-Bold">
+              Deals
+            </Text>
+            <hr />
             <Box>Deals Table Here</Box>
-            <Text fontSize="25px"
-              color="ripple.200"
-              fontFamily="Raleway-Bold">Interactions</Text>
-              <hr/>
+            <Text fontSize="25px" color="ripple.200" fontFamily="Raleway-Bold">
+              Interactions
+            </Text>
+            <hr />
             <Box>Interactions Table Here</Box>
           </VStack>
-          
         </ModalBody>
       </ModalContent>
     </Modal>
