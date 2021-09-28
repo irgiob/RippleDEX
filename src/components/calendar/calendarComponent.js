@@ -6,7 +6,8 @@ import interactionPlugin from "@fullcalendar/interaction"
 import timeGridPlugin from "@fullcalendar/timegrid"
 
 import EventDetails from "./eventDetails"
-import { Box, useToast } from "@chakra-ui/react"
+import { Box, useToast, useDisclosure } from "@chakra-ui/react"
+import CreateEventPopUp from "./createEventPopUp"
 import CreateEventButton from "./createEventButton"
 
 import {
@@ -24,6 +25,9 @@ import {
 const CalendarComponent = ({ user, org }) => {
   const calendarRef = useRef(null)
   const toast = useToast()
+  const { isOpen, onOpen, onClose } = useDisclosure()
+  const [createInfo, setCreateInfo] = useState({})
+  const [date, setDate] = useState(new Date())
 
   useEffect(() => {
     clearEvents()
@@ -34,7 +38,6 @@ const CalendarComponent = ({ user, org }) => {
   const loadEvents = async () => {
     // Fetch all data from firestore
     const interactions = await getInteractionsByOrg(org.id)
-    console.log(interactions)
 
     const events = interactions.filter(doc => {
       // Remove non assigned  and non remindMe interactions
@@ -43,7 +46,6 @@ const CalendarComponent = ({ user, org }) => {
 
     // Add every interactions meeting into calendar
     events.forEach(async doc => {
-      console.log(doc)
       let calendarApi = calendarRef.current.getApi()
       calendarApi.addEvent({
         id: doc.id,
@@ -65,7 +67,8 @@ const CalendarComponent = ({ user, org }) => {
 
   // Handle when a date is selected, in this case we want to add an event
   const handleDateSelected = selectInfo => {
-    console.log(selectInfo)
+    setDate(selectInfo.date)
+    onOpen()
   }
 
   // Handle when date is selected, which creates a new event
@@ -91,7 +94,6 @@ const CalendarComponent = ({ user, org }) => {
       end = date.setHours(endTimeFormat[0], endTimeFormat[1], 0, 0)
     }
 
-    console.log(start, end)
     // Add interaction document to database
     createNewInteraction(
       org.id,
@@ -148,6 +150,8 @@ const CalendarComponent = ({ user, org }) => {
     })
   }
 
+  // H
+
   return (
     <>
       <Box pt="10px" borderBottom="10px">
@@ -160,6 +164,7 @@ const CalendarComponent = ({ user, org }) => {
             center: "title",
             right: "dayGridMonth,timeGridWeek",
           }}
+          dateClick={handleDateSelected}
           // selectable={true}
           // select={handleDateSelected}
           editable={true}
@@ -170,7 +175,17 @@ const CalendarComponent = ({ user, org }) => {
           eventTextColor="white"
         />
       </Box>
-      <CreateEventButton createEventObject={createNewEventDate} />
+      <CreateEventPopUp
+        createEventObject={createNewEventDate}
+        createInfo={createInfo}
+        onOpen={onOpen}
+        isOpen={isOpen}
+        onClose={onClose}
+        date={date}
+        setDate={setDate}
+      />
+
+      <CreateEventButton onOpen={onOpen} />
     </>
   )
 }
