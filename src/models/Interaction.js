@@ -38,20 +38,25 @@ export const createNewInteraction = async (
   dealID,
   start,
   type,
-  interNote
+  interNote,
+  remindMe = false,
+  name = "",
+  end = null,
+  interPart = []
 ) => {
   const docRef = await addDoc(collection(db, "interactions"), {
     contact: contactID,
-    participants: null,
+    participants: interPart,
     addedBy: userID,
     forDeal: dealID,
     forTask: null,
     forOrganization: orgID,
     meetingStart: start,
-    meetingEnd: null,
+    meetingEnd: end,
     meetingType: type,
     notes: interNote, // Or create structure so people can add comments?
-    remindMe: null,
+    name : name,
+    remindMe: remindMe,
   })
   return docRef.id
 }
