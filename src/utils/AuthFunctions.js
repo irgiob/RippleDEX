@@ -82,9 +82,12 @@ export async function signInGoogle(){
     const email = result.user.email
     const number = result.user.phoneNumber
     const profilePicture = result.user.photoURL.split("=")[0] + "=s400-c" 
-    if (!doesUserExist(userID))
-      await createNewUser(firstName, lastName, userID, email, number, profilePicture)
-    return userID;
+    const userExists = await doesUserExist(userID)
+    if (!userExists) {
+      return createNewUser(firstName, lastName, userID, email, number, profilePicture)
+    } else {
+      return userID;
+    }
   })
   .catch( (err) => {
     console.log(err)
