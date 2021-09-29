@@ -14,25 +14,45 @@ import {
   createNewInteraction,
   getInteractionsByOrg,
   updateInteraction,
+  getInteraction,
 } from "../../models/Interaction"
-import {
-  dateToEpoch,
-  epochToDate,
-  msToEpoch,
-  msToSeconds,
-} from "../../utils/DateTimeHelperFunctions"
 
+import InteractionPopUp from "../interactions/interactionPopup"
+
+/**
+ *
+ * @property {Object} user User object
+ * @property {Object} org Organization object
+ * @returns
+ */
 const CalendarComponent = ({ user, org }) => {
   const calendarRef = useRef(null)
   const toast = useToast()
   const { isOpen, onOpen, onClose } = useDisclosure()
-  const [createInfo, setCreateInfo] = useState({})
+  const {
+    isOpen: isOpenEdit,
+    onOpen: onOpenEdit,
+    onClose: onCloseEdit,
+  } = useDisclosure()
   const [date, setDate] = useState(new Date())
+  const [editDoc, setEditDoc] = useState(null)
 
   useEffect(() => {
     clearEvents()
     loadEvents()
   }, [])
+
+  // Add event from firestore document
+  const addEvent = doc => {
+    let calendarApi = calendarRef.current.getApi()
+    calendarApi.addEvent({
+      id: doc.id,
+      title: doc.name,
+      start: doc.meetingStart.toDate(),
+      end: doc.meetingEnd == null ? null : doc.meetingEnd.toDate(),
+      allDay: doc.meetingEnd == null ? true : false,
+    })
+  }
 
   // Load the events for this user
   const loadEvents = async () => {
@@ -45,16 +65,7 @@ const CalendarComponent = ({ user, org }) => {
     })
 
     // Add every interactions meeting into calendar
-    events.forEach(async doc => {
-      let calendarApi = calendarRef.current.getApi()
-      calendarApi.addEvent({
-        id: doc.id,
-        title: doc.name,
-        start: epochToDate(doc.meetingStart),
-        end: doc.meetingEnd == null ? null : epochToDate(doc.meetingEnd),
-        allDay: doc.meetingEnd == null ? true : false,
-      })
-    })
+    events.forEach(doc => addEvent(doc))
   }
 
   // Clear all events currently rendered in the calendar
@@ -83,15 +94,16 @@ const CalendarComponent = ({ user, org }) => {
     type = ""
   ) => {
     // Parse time into date
-    let date = new Date(startDate)
+    let start = new Date(startDate)
     const startTimeFormat = startTime.split(":").map(x => parseInt(x))
-    const start = date.setHours(startTimeFormat[0], startTimeFormat[1], 0, 0)
+    start.setHours(startTimeFormat[0], startTimeFormat[1], 0, 0)
 
-    let end = null
     // Process end if it exists
+    let end = null
     if (endTime && !isAllDay) {
+      end = new Date(startDate)
       const endTimeFormat = endTime.split(":").map(x => parseInt(x))
-      end = date.setHours(endTimeFormat[0], endTimeFormat[1], 0, 0)
+      end.setHours(endTimeFormat[0], endTimeFormat[1], 0, 0)
     }
 
     // Add interaction document to database
@@ -100,12 +112,12 @@ const CalendarComponent = ({ user, org }) => {
       contactID,
       user.id,
       dealID,
-      msToEpoch(start),
+      start,
       type,
       "",
       true,
       title,
-      msToEpoch(end),
+      end,
       [user.id]
     ).then(docID => {
       // Create new event object in API
@@ -136,7 +148,9 @@ const CalendarComponent = ({ user, org }) => {
             eventInfo.event.remove()
             updateInteraction(eventInfo.event.id, { remindMe: false })
           }}
-          // editEvent={()=>{}} // Edit the event details
+          editEvent={() => {
+            handleEdit(eventInfo.event.id)
+          }}
         />
       </>
     )
@@ -145,12 +159,18 @@ const CalendarComponent = ({ user, org }) => {
   // Update the event changes in database
   const updateEvent = async changeInfo => {
     await updateInteraction(changeInfo.event.id, {
-      meetingStart: dateToEpoch(changeInfo.event.start),
-      meetingEnd: dateToEpoch(changeInfo.event.end),
+      meetingStart: changeInfo.event.start,
+      meetingEnd: changeInfo.event.end,
     })
   }
 
-  // H
+  // Handle when edit pop up is requested
+  const handleEdit = async id => {
+    getInteraction(id).then(doc => {
+      setEditDoc(doc)
+      onOpenEdit()
+    })
+  }
 
   return (
     <>
@@ -177,15 +197,24 @@ const CalendarComponent = ({ user, org }) => {
       </Box>
       <CreateEventPopUp
         createEventObject={createNewEventDate}
-        createInfo={createInfo}
-        onOpen={onOpen}
         isOpen={isOpen}
         onClose={onClose}
         date={date}
         setDate={setDate}
       />
-
       <CreateEventButton onOpen={onOpen} />
+      <InteractionPopUp
+        isOpen={isOpenEdit}
+        onClose={onCloseEdit}
+        value={editDoc}
+        afterUpdate={async () => {
+          let calendarApi = calendarRef.current.getApi()
+          calendarApi.getEventById(editDoc.id).remove()
+          const doc = await getInteraction(editDoc.id)
+          console.log(doc)
+          addEvent(doc)
+        }}
+      />
     </>
   )
 }

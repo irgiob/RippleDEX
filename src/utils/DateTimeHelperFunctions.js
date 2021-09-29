@@ -35,9 +35,27 @@ export const epochToDate = epoch => {
   return d
 }
 
+/**
+ *
+ * @param {Number} ms
+ * @returns converts milliseconds to epoch time in string
+ */
 export const msToEpoch = ms => {
   if (!ms) {
     return null
   }
   return msToSeconds(ms).toString()
+}
+
+/**
+ *
+ * @param {Date} date
+ * @returns {String} Time of the date in "HH:MM"
+ */
+export const getTimeFromDate = date => {
+  return date.toLocaleTimeString([], {
+    hour: "2-digit",
+    minute: "2-digit",
+    hour12: false,
+  })
 }

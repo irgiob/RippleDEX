@@ -22,26 +22,28 @@ import "react-datepicker/dist/react-datepicker.css"
 /**
  *
  * @property {function} createEventObject function to create event object on parent
- * @returns JSX component
+ * @property {function} onOpen function to open up another popover or trigger
+ * @property {bool} isOpen checks if the modal is open
+ * @property {function} onClose function to run when popover is to be closed
+ * @property {Date} date date object for creating new interaction
+ * @property {funciton} setDate function to modify the date property
+ * @returns {JSX}
  */
 const CreateEventPopUp = ({
   createEventObject,
-  createInfo,
   onOpen,
   isOpen,
   onClose,
   date,
   setDate,
 }) => {
-  // const { isOpen, onOpen, onClose } = useDisclosure()
   const [title, setTitle] = useState("")
-  // const [startDate, setStartDate] = useState(new Date())
-  // const [endDate, setEndDate] = useState(new Date())
   const [isAllDay, setAllDay] = useState(false)
   const [startTime, setStartTime] = useState("10:00")
   const [endTime, setEndTime] = useState("11:00")
 
   const DatePickerInput = forwardRef(({ value, onClick }, ref) => (
+    // Custom input for styling
     <Button onClick={onClick} ref={ref}>
       {value}
     </Button>

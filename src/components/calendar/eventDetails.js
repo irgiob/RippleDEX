@@ -18,7 +18,7 @@ import {
   Tooltip,
 } from "@chakra-ui/react"
 
-import { AiOutlineClose, AiOutlineClockCircle } from "react-icons/ai"
+import { AiOutlineClose, AiOutlineEdit } from "react-icons/ai"
 
 import { RiNotificationOffLine } from "react-icons/ri"
 
@@ -29,7 +29,7 @@ import { RiNotificationOffLine } from "react-icons/ri"
  * @property {function} editEvent function to edit current event
  * @returns
  */
-const EventDetails = props => {
+const EventDetails = ({ eventInfo, deleteEvent, editEvent }) => {
   const { isOpen, onOpen, onClose } = useDisclosure()
   return (
     <>
@@ -47,7 +47,7 @@ const EventDetails = props => {
             borderRadius="10px"
             color="white"
           >
-            {props.eventInfo.event.title}
+            {eventInfo.event.title}
           </Box>
         </PopoverTrigger>
         <Portal>
@@ -64,18 +64,23 @@ const EventDetails = props => {
                       backgroundColor="white"
                       icon={<RiNotificationOffLine size={24} />}
                       onClick={() => {
-                        props.deleteEvent()
+                        deleteEvent()
                         onClose()
                       }}
                     />
                   </Tooltip>
 
-                  {/* <Tooltip label = "Edit"> 
-                            <IconButton 
-                                    aria-label="Edit" 
-                                    backgroundColor="white"
-                                    icon={<AiOutlineEdit size={24}/>} />
-                            </Tooltip> */}
+                  <Tooltip label="Edit">
+                    <IconButton
+                      aria-label="Edit"
+                      backgroundColor="white"
+                      icon={<AiOutlineEdit size={24} />}
+                      onClick={() => {
+                        editEvent()
+                        onClose()
+                      }}
+                    />
+                  </Tooltip>
 
                   <Tooltip label="Close">
                     <IconButton
@@ -92,20 +97,20 @@ const EventDetails = props => {
               <Box>
                 {/* Display event details*/}
                 <Text fontSize="2xl" pb="30px">
-                  {props.eventInfo.event.title}
+                  {eventInfo.event.title}
                 </Text>
-                {props.eventInfo.event.end != null ? (
+                {eventInfo.event.end != null ? (
                   <>
                     <HStack>
                       <Text width="50px">from: </Text>
                       <Text width="300px">
-                        {props.eventInfo.event.start.toLocaleString("en-US")}
+                        {eventInfo.event.start.toLocaleString("en-US")}
                       </Text>
                     </HStack>
                     <HStack>
                       <Text width="50px">to: </Text>
                       <Text width="300px">
-                        {props.eventInfo.event.end.toLocaleString("en-US")}
+                        {eventInfo.event.end.toLocaleString("en-US")}
                       </Text>
                     </HStack>
                   </>
@@ -115,7 +120,7 @@ const EventDetails = props => {
                     <HStack>
                       <Text width="50px">from: </Text>
                       <Text width="300px">
-                        {props.eventInfo.event.start.toLocaleString("en-US")}
+                        {eventInfo.event.start.toLocaleString("en-US")}
                       </Text>
                     </HStack>
                   </>
