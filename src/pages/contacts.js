@@ -23,7 +23,7 @@ import {
 } from "../models/Contact"
 
 import { createMuiTheme, MuiThemeProvider } from "@material-ui/core"
-import Pic from "../images/RippleDex.png"
+import Pic from "../images/RippleDEX.png"
 
 import { forwardRef } from "react"
 
