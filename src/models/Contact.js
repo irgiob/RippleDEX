@@ -32,7 +32,8 @@ export const createNewContact = async (
   companyID,
   contactEmail,
   contactPhoneNumber,
-  position
+  position,
+  profilePicture = null
 ) => {
   const docRef = await addDoc(collection(db, "contacts"), {
     registeredBy: orgID,
@@ -42,6 +43,7 @@ export const createNewContact = async (
     phoneNumber: contactPhoneNumber,
     position: position,
     notes: null, // Same like Interaction 's notes?
+    profilePicture: profilePicture,
   })
   return docRef.id
 }

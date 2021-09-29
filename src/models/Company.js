@@ -35,7 +35,8 @@ export const createNewCompany = async (
   primaryContact,
   annualRevenue,
   industry,
-  companyWeb
+  companyWeb,
+  profilePicture = null
 ) => {
   const docRef = await addDoc(collection(db, "companies"), {
     registeredBy: orgID,
@@ -48,6 +49,7 @@ export const createNewCompany = async (
     relationship: null,
     primaryContact: primaryContact,
     industry: industry,
+    profilePicture: profilePicture,
   })
   return docRef.id
 }
