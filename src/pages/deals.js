@@ -1,31 +1,36 @@
-import * as React from "react"
+import React, { useState, forwardRef, useEffect, createRef } from "react"
+import { navigate } from "gatsby-link"
 
 import Layout from "../components/layout"
 import Seo from "../components/seo"
-
-import { Heading } from "@chakra-ui/react"
-
-import {
-  Button,
-  Box,
-  Text,
-  IconButton,
-  Input,
-  Tooltip,
-  useDisclosure,
-  useToast,
-} from "@chakra-ui/react"
-
 import DealPopUp from "../components/deals/dealPopup"
 
+import { dateToFirebaseTimestamp } from "../utils/DateTimeHelperFunctions"
+
+import {
+  Box,
+  Text,
+  Input,
+  NumberInput,
+  NumberInputField,
+  Select,
+  useDisclosure,
+  useToast,
+  Badge,
+} from "@chakra-ui/react"
+
+import { getUser } from "../models/User"
 import { createNewDeal, getDealsByOrg, deleteDeal } from "../models/Deal"
+import { getCompanyByOrg, getCompany } from "../models/Company"
 
-import { createMuiTheme, MuiThemeProvider } from "@material-ui/core"
-import Pic from "../images/RippleDEX.png"
-
-import { forwardRef } from "react"
+import { MuiThemeProvider, createMuiTheme } from "@material-ui/core"
 
 import MaterialTable from "material-table"
+import DatePicker from "react-datepicker"
+import {
+  CustomAutoComplete,
+  AutoCompleteListItem,
+} from "../components/CustomAutoComplete"
 
 import AddBox from "@material-ui/icons/AddBox"
 import ArrowDownward from "@material-ui/icons/ArrowDownward"
@@ -42,10 +47,19 @@ import Remove from "@material-ui/icons/Remove"
 import SaveAlt from "@material-ui/icons/SaveAlt"
 import Search from "@material-ui/icons/Search"
 import ViewColumn from "@material-ui/icons/ViewColumn"
-
 import { AiFillEdit } from "react-icons/ai"
 
 const DealsPage = ({ user, setUser, org, setOrg }) => {
+  const stageOptions = {
+    Prospect: "gray",
+    Lead: "red",
+    Pitch: "yellow",
+    Qualified: "orange",
+    "Proposal Sent": "purple",
+    Negotiation: "blue",
+    Closed: "green",
+  }
+
   const tableIcons = {
     Add: forwardRef((props, ref) => <AddBox {...props} ref={ref} />),
     Check: forwardRef((props, ref) => <Check {...props} ref={ref} />),
@@ -84,30 +98,86 @@ const DealsPage = ({ user, setUser, org, setOrg }) => {
         main: "#168aa8",
       },
     },
+    overrides: {
+      MuiTableRow: {
+        root: {
+          "&[mode=add]": {
+            "& td": {
+              verticalAlign: "top",
+              paddingTop: "2em",
+              "& button": {
+                marginTop: "1.5em",
+              },
+              "& .chakra-form__label": {
+                display: "none",
+              },
+              "& .chakra-stack": {
+                marginTop: 0,
+              },
+            },
+          },
+        },
+      },
+      ".react-datepicker-popper": {
+        zIndex: 11,
+      },
+    },
   })
 
   const toast = useToast()
 
   // Modal or Popup triggers
   const { isOpen, onOpen, onClose } = useDisclosure()
+  const tableRef = createRef()
+  const [dealList, setDealList] = useState([])
+  const [members, setMembers] = useState([])
+  const [companies, setCompanies] = useState([])
+  const [value, setValue] = useState("")
 
-  const tableRef = React.createRef()
-  const [dealList, setDealList] = React.useState([])
-  const [value, setValue] = React.useState("")
+  useEffect(() => {
+    const fetchDeals = async orgID => {
+      const deals = await getDealsByOrg(orgID)
+      for await (const deal of deals) {
+        if (deal.recordedBy) {
+          const recordedBy = await getUser(deal.recordedBy)
+          recordedBy.label = recordedBy.firstName + " " + recordedBy.lastName
+          deal.recordedBy = recordedBy
+        }
+        if (deal.company) {
+          const company = await getCompany(deal.company)
+          company.label = company.name
+          deal.company = company
+        }
+      }
+      setDealList(deals)
+    }
 
-  React.useEffect(() => {
-    var promise = Promise.resolve(getDealsByOrg(org.id))
-    promise.then(function (val) {
-      setDealList(val)
-    })
-  }, [])
+    const fetchMembers = async members => {
+      const memberList = []
+      for await (const member of members) {
+        const memberData = await getUser(member.userID)
+        memberData.label = memberData.firstName + " " + memberData.lastName
+        memberList.push(memberData)
+      }
+      setMembers(memberList)
+    }
+
+    const fetchCompanies = async orgID => {
+      const companyList = await getCompanyByOrg(orgID)
+      for (const company of companyList) company.label = company.name
+      setCompanies(companyList)
+    }
+
+    fetchDeals(org.id)
+    fetchMembers(org.members)
+    fetchCompanies(org.id)
+  }, [org])
 
   const handlePopUp = value => {
     setValue(value)
     onOpen()
   }
 
-  const currTime = new Date().toLocaleString()
   return (
     <Box p="25px">
       <Text
@@ -121,7 +191,6 @@ const DealsPage = ({ user, setUser, org, setOrg }) => {
 
       <MuiThemeProvider theme={theme}>
         <MaterialTable
-          title={`Deals for ${org.name} (${currTime})`}
           options={{
             showTitle: false,
             selection: true,
@@ -132,7 +201,7 @@ const DealsPage = ({ user, setUser, org, setOrg }) => {
             exportButton: true,
             tableLayout: "auto",
             toolbarButtonAlignment: "left",
-            actionsColumnIndex: 7,
+            actionsColumnIndex: 6,
           }}
           data={dealList}
           style={{ boxShadow: "none" }}
@@ -140,87 +209,243 @@ const DealsPage = ({ user, setUser, org, setOrg }) => {
           icons={tableIcons}
           columns={[
             {
-              render: rowData => (
-                <img src={Pic} style={{ width: 50, borderRadius: "50%" }} />
-              ),
-              width: "10%",
-            },
-            {
               title: "Deal Name",
               field: "name",
               type: "string",
-              width: "18%",
+              editComponent: props => {
+                return (
+                  <Input
+                    value={props.value}
+                    placeholder="Enter deal name"
+                    onChange={e => props.onChange(e.target.value)}
+                    size="sm"
+                    variant="flushed"
+                    focusBorderColor="ripple.200"
+                  />
+                )
+              },
             },
             {
               title: "Company",
               field: "company",
-              type: "string",
-              width: "18%",
+              editComponent: props => {
+                const companyItem = company => {
+                  return (
+                    <AutoCompleteListItem
+                      name={company.name}
+                      profilePicture={company.profilePicture}
+                    />
+                  )
+                }
+                return (
+                  <CustomAutoComplete
+                    placeholder="Select company"
+                    items={companies}
+                    itemRenderer={companyItem}
+                    disableCreateItem={false}
+                    onCreateItem={() => navigate("/companies")}
+                    value={props.value}
+                    onChange={props.onChange}
+                    valueInputAttribute="name"
+                  />
+                )
+              },
+              render: rowData => {
+                return rowData.company ? (
+                  <AutoCompleteListItem
+                    name={rowData.company.name}
+                    profilePicture={rowData.company.profilePicture}
+                  />
+                ) : (
+                  <Text>Unassigned</Text>
+                )
+              },
             },
             {
               title: "Deal Size",
               field: "dealSize",
-              type: "string",
-              width: "18%",
+              editComponent: props => {
+                const format = val =>
+                  `$` + val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")
+                const parse = val => val.replace(/^\$/, "")
+                return (
+                  <NumberInput
+                    precision={2}
+                    min={0}
+                    value={props.value ? format(props.value) : format("")}
+                    onChange={e => props.onChange(parse(e))}
+                    size="sm"
+                    variant="flushed"
+                    focusBorderColor="ripple.200"
+                  >
+                    <NumberInputField />
+                  </NumberInput>
+                )
+              },
+              render: rowData => {
+                return (
+                  <Text>
+                    $
+                    {parseFloat(rowData.dealSize)
+                      .toFixed(2)
+                      .toString()
+                      .replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
+                  </Text>
+                )
+              },
             },
             {
               title: "Stage",
               field: "stage",
-              type: "string",
-              width: "18%",
-              align: "left",
+              editComponent: props => {
+                return (
+                  <Select
+                    size="sm"
+                    variant="flushed"
+                    focusBorderColor="ripple.200"
+                    onChange={e =>
+                      props.onChange(e.target.selectedOptions[0].value)
+                    }
+                  >
+                    {Object.keys(stageOptions).map((stage, i) => (
+                      <option key={"stage_" + i} value={stage}>
+                        {stage}
+                      </option>
+                    ))}
+                  </Select>
+                )
+              },
+              render: rowData => {
+                return (
+                  <Badge
+                    variant="outline"
+                    colorScheme={stageOptions[rowData.stage]}
+                  >
+                    {rowData.stage}
+                  </Badge>
+                )
+              },
             },
             {
               title: "Close Date",
               field: "closeDate",
-              type: "string",
-              width: "18%",
+              editComponent: props => {
+                const DateCustomInput = forwardRef(
+                  ({ value, onClick }, ref) => (
+                    <Input
+                      className="datepicker-custom-input"
+                      ref={ref}
+                      onClick={onClick}
+                      value={value || "Not Closed"}
+                      size="sm"
+                      variant="flushed"
+                      focusBorderColor="ripple.200"
+                      isReadOnly
+                    />
+                  )
+                )
+                return (
+                  <DatePicker
+                    dateFormat="dd/MM/yyyy"
+                    selected={Date.parse(props.value)}
+                    onChange={date => props.onChange(date)}
+                    customInput={<DateCustomInput />}
+                    portalId="root-portal"
+                  />
+                )
+              },
+              render: rowData => {
+                return rowData.closeDate ? (
+                  <Text>{rowData.closeDate.toDate().toLocaleDateString()}</Text>
+                ) : (
+                  <Text>Not Closed</Text>
+                )
+              },
             },
-
-            { title: "ID", field: "id", type: "string", hidden: true },
+            {
+              title: "ID",
+              field: "id",
+              type: "string",
+              hidden: true,
+            },
             {
               title: "Recorded By",
               field: "recordedBy",
-              type: "string",
-              width: "18%",
-            },
-            {
-              render: rowData => (
-                <Tooltip hasArrow label="Edit Contact">
-                  <IconButton
-                    pt="11px"
-                    pb="10px"
-                    color="black"
-                    variant="link"
-                    size="lg"
-                    icon={<AiFillEdit />}
-                    onClick={() => handlePopUp(rowData)}
+              editComponent: props => {
+                const memberItem = member => {
+                  return (
+                    <AutoCompleteListItem
+                      name={member.firstName + " " + member.lastName}
+                      profilePicture={member.profilePicture}
+                      showImage={true}
+                    />
+                  )
+                }
+                return (
+                  <CustomAutoComplete
+                    placeholder="Select member"
+                    items={members}
+                    itemRenderer={memberItem}
+                    disableCreateItem={true}
+                    onCreateItem={() => null}
+                    value={props.value}
+                    onChange={props.onChange}
+                    valueInputAttribute="label"
                   />
-                </Tooltip>
-              ),
-              width: "0%",
+                )
+              },
+              render: rowData => {
+                if (rowData.recordedBy) {
+                  const name =
+                    rowData.recordedBy.firstName +
+                    " " +
+                    rowData.recordedBy.lastName
+                  return (
+                    <AutoCompleteListItem
+                      name={name}
+                      profilePicture={rowData.recordedBy.profilePicture}
+                    />
+                  )
+                } else {
+                  return <Text>Unassigned</Text>
+                }
+              },
+            },
+          ]}
+          actions={[
+            {
+              icon: () => <AiFillEdit />,
+              tooltip: "Edit Contact",
+              onClick: (event, rowData) => handlePopUp(rowData),
+              position: "row",
             },
           ]}
           editable={{
             onRowAdd: newData => {
               const promise = new Promise((resolve, reject) => {
                 setTimeout(() => {
-                  const dealID = createNewDeal(
+                  newData.stage = newData.stage
+                    ? newData.stage
+                    : Object.keys(stageOptions)[0]
+                  newData.closeDate = newData.closeDate
+                    ? dateToFirebaseTimestamp(newData.closeDate)
+                    : null
+                  createNewDeal(
                     org.id,
                     newData.name,
-                    newData.dealSize,
+                    parseFloat(newData.dealSize),
                     newData.stage,
-                    newData.recordedBy,
+                    newData.recordedBy?.id || null,
                     newData.closeDate,
-                    newData.company
-                  )
-
-                  if (dealID) {
-                    setDealList([...dealList, newData])
-                    resolve()
-                  } else {
-                    reject()
-                  }
+                    newData.company?.id || null
+                  ).then(dealID => {
+                    if (dealID) {
+                      setDealList([...dealList, { ...newData, id: dealID }])
+                      resolve()
+                    } else {
+                      reject()
+                    }
+                  })
                 }, 1000)
               })
               promise.then(
