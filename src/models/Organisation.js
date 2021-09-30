@@ -33,7 +33,7 @@ export const createNewOrganization = async (userID, orgName, orgDesc) => {
     description: orgDesc,
     members: [],
     profilePicture: null,
-    kanbanLanes: ["backlog"],
+    kanbanLanes: ["To-Do"],
   })
   await addUserToOrganization(docRef.id, userID, "Admin")
   return docRef.id
