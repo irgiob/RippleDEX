@@ -15,55 +15,93 @@ import {
   Spacer,
   Icon,
   Input,
+  Tooltip,
+  useDisclosure,
+  useToast,
 } from "@chakra-ui/react"
 
 import { HiOfficeBuilding, HiOutlineTrash } from "react-icons/hi"
+import { AiOutlineMore } from "react-icons/ai"
+
+import {
+  createNewTask,
+  getTask,
+  getTasksByOrg,
+  updateTask,
+} from "../models/Task"
+import { getDeal } from "../models/Deal"
+import { updateOrganization } from "../models/Organisation"
+import TaskPopUp from "../components/tasks/taskPopup"
 
 /**
  * Renders the page content
  */
 const TasksPage = ({ user, setUser, org, setOrg }) => {
-  const data = {
-    lanes: [
-      {
-        id: "lane1",
-        title: "Backlog",
-        cards: [
-          {
-            id: "Card1",
-            img: "https://avatars.dicebear.com/v2/female/ce46c0eff797ed7ebbc372c013c24923.svg",
-            name: "Arlene Wilson",
-            dealName: "January Advertisement",
-            dealSize: "3,546",
-            company: "Johnson & Johnson",
-          },
-          {
-            id: "Card2",
-            name: "Evan Flores",
-            dealName: "July Advertisement",
-            dealSize: "984",
-            company: "Louis Vuitton",
-            tags: [{ title: "High", color: "white", bgcolor: "#EB5A46" }],
-            bgColor: "#FFDFD3",
-          },
-        ],
-      },
-      {
-        id: "lane2",
-        title: "Selected",
+  const [eventBus, setEventBus] = React.useState(undefined)
+  const [lanes, setLane] = React.useState([])
+  const toast = useToast()
+  const { isOpen, onOpen, onClose } = useDisclosure()
+  const [editDoc, setEditDoc] = React.useState({})
+
+  React.useEffect(() => {
+    loadData()
+  }, [eventBus, isOpen])
+
+  // Initialize lanes
+  const initLanes = () => {
+    let lanesArr = []
+    org.kanbanLanes.forEach(lane => {
+      lanesArr.push({
+        title: lane,
+        id: lane.toLowerCase(),
         cards: [],
-      },
-      {
-        id: "lane3",
-        title: "In Progress",
-        cards: [],
-      },
-      {
-        id: "lane4",
-        title: "Finished",
-        cards: [],
-      },
-    ],
+      })
+    })
+    return { lanes: lanesArr }
+  }
+
+  const loadData = async () => {
+    if (eventBus) {
+      // await createNewTask(
+      //   "Deal ID 2",
+      //   "This is another task",
+      //   "Sample task 2",
+      //   org.id
+      // )
+      try {
+        const docs = await getTasksByOrg(org.id)
+        console.log(docs)
+        docs.forEach(async doc => {
+          const deal = await getDeal(doc.deal)
+          console.log(doc)
+          eventBus.publish({
+            type: "ADD_CARD",
+            laneId: org.kanbanLanes
+              .map(lane => lane.toLowerCase())
+              .includes(doc.status.toLowerCase())
+              ? doc.status
+              : "backlog",
+            card: {
+              id: doc.id,
+              title: doc.name,
+              dealName: deal?.name ? deal.name : "Does not exist",
+              dealSize: deal?.dealSize ? deal.dealSize : 0,
+              description: doc.description,
+            },
+          })
+        })
+      } catch (err) {
+        console.log(err)
+      }
+    }
+  }
+
+  const updateCardMoveAcrossLanes = async (id, origin, destination) => {
+    try {
+      await updateTask(id, { status: destination })
+    } catch (err) {
+      console.error("Error in updating card into firestore")
+    }
   }
 
   const NewLaneSection = ({ t, onClick }) => (
@@ -86,7 +124,20 @@ const TasksPage = ({ user, setUser, org, setOrg }) => {
     const { onCancel, t } = props
     const [LaneName, setLaneName] = React.useState("")
 
-    const handleAdd = () => props.onAdd({ title: LaneName })
+    const handleAdd = async () => {
+      props.onAdd({ id: LaneName.toLowerCase(), title: LaneName })
+      org.kanbanLanes.push(LaneName)
+      try {
+        await updateOrganization(org.id, { kanbanLanes: org.kanbanLanes })
+        toast({
+          title: "Success",
+          description: "New lane successfully added",
+          status: "success",
+          duration: 5000,
+          isClosable: true,
+        })
+      } catch (err) {}
+    }
 
     return (
       <VStack p="10px">
@@ -124,39 +175,57 @@ const TasksPage = ({ user, setUser, org, setOrg }) => {
 
   const NewCardForm = props => {
     const [name, setName] = React.useState("")
-    const [company, setCompany] = React.useState("")
-    const [dealName, setDealName] = React.useState("")
-    const [dealSize, setDealSize] = React.useState("")
+    const [description, setDescription] = React.useState("")
+    // const [dealName, setDealName] = React.useState("")
+    // const [dealSize, setDealSize] = React.useState("")
+    const [dealId, setDealId] = React.useState("")
 
-    const handleAdd = () =>
+    const handleAdd = async () => {
+      const deal = await getDeal(dealId)
       props.onAdd({
-        name: name,
-        company: company,
-        dealName: dealName,
-        dealSize: dealSize,
+        title: name,
+        description: description,
+        dealName: deal?.name ? deal.name : "Does not exist",
+        dealSize: deal?.dealSize ? deal.dealSize : 0,
       })
+      console.log(props.laneId)
+      try {
+        await createNewTask(dealId, description, name, org.id, props.laneId)
+        toast({
+          title: "Success",
+          description: "New task successfully added",
+          status: "success",
+          duration: 5000,
+          isClosable: true,
+        })
+      } catch (err) {
+        console.log(err)
+        toast({
+          title: "Fail",
+          description: "Fail to add task",
+          status: "fail",
+          duration: 5000,
+          isClosable: true,
+        })
+      }
+    }
 
     return (
       <VStack pt="10px">
         <Input
-          placeholder="Contact Name"
+          placeholder="Title"
           size="sm"
           onChange={event => setName(event.target.value)}
         />
         <Input
-          placeholder="Company"
+          placeholder="Description"
           size="sm"
-          onChange={event => setCompany(event.target.value)}
+          onChange={event => setDescription(event.target.value)}
         />
         <Input
-          placeholder="Deal Name"
+          placeholder="Deal ID" // In this case ID, will be replaced with search bar
           size="sm"
-          onChange={event => setDealName(event.target.value)}
-        />
-        <Input
-          placeholder="Deal Size ($)"
-          size="sm"
-          onChange={event => setDealSize(event.target.value)}
+          onChange={event => setDealId(event.target.value)}
         />
         <HStack pt="5px" pb="10px">
           <Button
@@ -189,9 +258,14 @@ const TasksPage = ({ user, setUser, org, setOrg }) => {
   }
 
   const CustomCard = props => {
-    const clickDelete = e => {
-      props.onDelete()
-      e.stopPropagation()
+    const handleMoreInfoClick = async () => {
+      try {
+        const doc = await getTask(props.id)
+        setEditDoc(doc)
+        onOpen()
+      } catch (err) {
+        console.log(err)
+      }
     }
 
     return (
@@ -205,7 +279,7 @@ const TasksPage = ({ user, setUser, org, setOrg }) => {
         boxShadow="rgba(17, 17, 26, 0.1) 0px 1px 0px"
       >
         <HStack spacing="10px">
-          {props.img != null && <Image pt="10px" h="40px" src={props.img} />}
+          {/* {props.img != null && <Image pt="10px" h="40px" src={props.img} />} */}
           <VStack align="initial" w="100%" spacing={0}>
             <HStack spacing={0}>
               <Text
@@ -215,17 +289,16 @@ const TasksPage = ({ user, setUser, org, setOrg }) => {
                 fontFamily="Nunito-Bold"
                 fontSize="15px"
               >
-                {props.name}
+                {props.title}
               </Text>
               <Spacer />
-              <Box onClick={clickDelete}>
-                <Icon color="red" height="13px" as={HiOutlineTrash} />
+              <Box onClick={handleMoreInfoClick}>
+                <Icon height="24px" as={AiOutlineMore} />
               </Box>
             </HStack>
             <HStack spacing="2px">
-              <Icon paddingBottom="2px" height="15px" as={HiOfficeBuilding} />
               <Text maxW="160px" isTruncated fontSize="13px">
-                {props.company}
+                {props.description}
               </Text>
             </HStack>
             <HStack spacing={1}>
@@ -276,9 +349,22 @@ const TasksPage = ({ user, setUser, org, setOrg }) => {
           NewLaneSection: NewLaneSection,
           NewLaneForm: NewLaneForm,
         }}
+        eventBusHandle={setEventBus}
         editable
         draggable
-        data={data}
+        data={initLanes()}
+        handleDragEnd={updateCardMoveAcrossLanes}
+        onCardClick={() => {
+          console.log("I am clicked")
+        }}
+      />
+      <TaskPopUp
+        isOpen={isOpen}
+        onClose={onClose}
+        value={editDoc}
+        setValue={setEditDoc}
+        afterUpdate={() => {}}
+        org={org}
       />
     </>
   )
