@@ -12,6 +12,7 @@ import {
   Text,
   Input,
   Switch,
+  VStack,
   HStack,
   Box,
   useMediaQuery,
@@ -98,71 +99,70 @@ const TaskPopUp = ({ isOpen, onClose, value, setValue, afterUpdate, org }) => {
     <Modal isCentered isOpen={isOpen} onClose={onClose}>
       <ModalOverlay />
 
-      <ModalContent
-        h="60vh"
-        maxW="60vw"
-        borderRadius="15px"
-        overflowY="scroll"
-        value="inside"
-      >
-        <ModalHeader m="10px" fontSize="36px">
-          Edit Task
-        </ModalHeader>
+      <ModalContent isCentered maxW="700px" borderRadius="15px">
         <ModalCloseButton m="20px" />
         <ModalBody m="20px">
-          <HStack margin="10px">
-            <Text width="12vw">Name :</Text>
-            <Box>
-              <Input
-                placeholder="Task name"
-                value={name}
-                onChange={event => {
-                  setName(event?.target.value)
-                }}
-                width="20vw"
-              />
-            </Box>
-          </HStack>
-          <HStack margin="10px">
-            <Text width="12vw">Description :</Text>
-            <Box>
-              <Textarea
-                resize="none"
-                h="10vh"
-                placeholder="Task description"
-                value={description}
-                onChange={e => setDescription(e.target.value)}
-              />
-            </Box>
-          </HStack>
-          <HStack margin="10px">
-            <Text width="12vw">Deal :</Text>
-            <Box>
-              <Input
-                placeholder="Deal"
-                value={deal}
-                onChange={event => {
-                  setDeal(event?.target.value)
-                }}
-              />
-            </Box>
-          </HStack>
-          <HStack margin="10px">
-            <Text width="12vw">Status :</Text>
-            <Box>
-              <Select
-                value={status}
-                onChange={event => setStatus(event?.target.value)}
-              >
-                {
-                  // Interate options from kanban lanes
-                  lanes.map(lane => (
-                    <option value={lane}>{lane}</option>
-                  ))
-                }
-              </Select>
-            </Box>
-          </HStack>
+          <Text
+            pb="20px"
+            fontSize="30px"
+            fontFamily="Raleway-Bold"
+            color="ripple.200"
+          >
+            Edit Task
+          </Text>
+          <VStack align="start" spacing="10px">
+            <HStack w="100%">
+              <Text width="12vw">Name :</Text>
+              <Box w="60%">
+                <Input
+                  placeholder="Task name"
+                  value={name}
+                  onChange={event => {
+                    setName(event?.target.value)
+                  }}
+                />
+              </Box>
+            </HStack>
+            <HStack w="100%" align="start">
+              <Text width="12vw">Description :</Text>
+              <Box w="60%">
+                <Textarea
+                  resize="none"
+                  placeholder="Task description"
+                  value={description}
+                  onChange={e => setDescription(e.target.value)}
+                />
+              </Box>
+            </HStack>
+            <HStack w="100%">
+              <Text width="12vw">Deal :</Text>
+              <Box w="60%">
+                <Input
+                  placeholder="Deal"
+                  value={deal}
+                  onChange={event => {
+                    setDeal(event?.target.value)
+                  }}
+                />
+              </Box>
+            </HStack>
+            <HStack w="60%">
+              <Text width="12vw">Status :</Text>
+              <Box w="40%">
+                <Select
+                  value={status}
+                  onChange={event => setStatus(event?.target.value)}
+                >
+                  {
+                    // Interate options from kanban lanes
+                    lanes.map(lane => (
+                      <option value={lane}>{lane}</option>
+                    ))
+                  }
+                </Select>
+              </Box>
+            </HStack>
+          </VStack>
         </ModalBody>
         <ModalFooter>
           <HStack>
