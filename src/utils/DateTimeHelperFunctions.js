@@ -1,3 +1,5 @@
+import { Timestamp } from "firebase/firestore"
+
 /**
  *  Converts milliseconds to seconds for converting to epoch
  * @param {Number} ms
@@ -40,4 +42,8 @@ export const msToEpoch = ms => {
     return null
   }
   return msToSeconds(ms).toString()
+}
+
+export const dateToFirebaseTimestamp = date => {
+  return Timestamp.fromDate(date)
 }
