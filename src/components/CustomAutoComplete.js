@@ -2,12 +2,12 @@ import React from "react"
 import { CUIAutoComplete } from "chakra-ui-autocomplete"
 import {
   Input,
-  InputGroup,
-  InputRightElement,
   Tooltip,
   Flex,
   Avatar,
   Text,
+  Box,
+  Spacer,
 } from "@chakra-ui/react"
 import { AiOutlineClose } from "react-icons/ai"
 
@@ -20,6 +20,10 @@ export const CustomAutoComplete = ({
   value,
   onChange,
   valueInputAttribute,
+  showImage,
+  size,
+  variant,
+  focusBorderColor,
 }) => {
   return (
     <CUIAutoComplete
@@ -37,27 +41,25 @@ export const CustomAutoComplete = ({
       tagStyleProps={{ display: "none" }}
       renderCustomInput={inputProps =>
         value ? (
-          <InputGroup>
-            <Input
-              value={value[valueInputAttribute]}
-              size="sm"
-              variant="flushed"
-              focusBorderColor="ripple.200"
-              readOnly
+          <Flex flexDir="row" alignItems="center" w="100%">
+            <AutoCompleteListItem
+              name={value[valueInputAttribute]}
+              profilePicture={value.profilePicture}
+              showImage={showImage}
             />
+            <Spacer />
             <Tooltip label="Clear">
-              <InputRightElement
-                children={<AiOutlineClose />}
-                onClick={() => onChange(undefined)}
-              />
+              <Box>
+                <AiOutlineClose onClick={() => onChange(undefined)} />
+              </Box>
             </Tooltip>
-          </InputGroup>
+          </Flex>
         ) : (
           <Input
             {...inputProps}
-            size="sm"
-            variant="flushed"
-            focusBorderColor="ripple.200"
+            size={size}
+            variant={variant}
+            focusBorderColor={focusBorderColor}
           />
         )
       }

@@ -1,20 +1,24 @@
-import * as React from "react"
+import React, { forwardRef, createRef, useState, useEffect } from "react"
+import { navigate } from "gatsby-link"
 
 import Layout from "../components/layout"
 import Seo from "../components/seo"
 
 import {
-  Button,
   Box,
   Text,
-  IconButton,
   Input,
-  Tooltip,
   useDisclosure,
   useToast,
+  Avatar,
 } from "@chakra-ui/react"
 
 import ContactPopUp from "../components/contacts/contactPopup"
+import UploadImageButton from "../components/uploadImageButton"
+import {
+  CustomAutoComplete,
+  AutoCompleteListItem,
+} from "../components/CustomAutoComplete"
 
 import {
   createNewContact,
@@ -22,10 +26,9 @@ import {
   deleteContact,
 } from "../models/Contact"
 
-import { createMuiTheme, MuiThemeProvider } from "@material-ui/core"
-import Pic from "../images/RippleDEX.png"
+import { getCompany, getCompanyByOrg } from "../models/Company"
 
-import { forwardRef } from "react"
+import { createMuiTheme, MuiThemeProvider } from "@material-ui/core"
 
 import MaterialTable from "material-table"
 
@@ -45,7 +48,7 @@ import SaveAlt from "@material-ui/icons/SaveAlt"
 import Search from "@material-ui/icons/Search"
 import ViewColumn from "@material-ui/icons/ViewColumn"
 
-import { AiFillEdit } from "react-icons/ai"
+import { AiFillEdit, AiOutlineFileAdd } from "react-icons/ai"
 
 /**
  * Renders the page content
@@ -90,6 +93,24 @@ const ContactsPage = ({ user, setUser, org, setOrg }) => {
         main: "#168aa8",
       },
     },
+    overrides: {
+      MuiTableRow: {
+        root: {
+          "&[mode=add]": {
+            "& td": {
+              verticalAlign: "top",
+              paddingTop: "2em !important",
+              "& .chakra-form__label": {
+                display: "none",
+              },
+              "& .chakra-stack": {
+                marginTop: 0,
+              },
+            },
+          },
+        },
+      },
+    },
   })
 
   const toast = useToast()
@@ -97,16 +118,30 @@ const ContactsPage = ({ user, setUser, org, setOrg }) => {
   // Modal or Popup triggers
   const { isOpen, onOpen, onClose } = useDisclosure()
 
-  const tableRef = React.createRef()
-  const [contactList, setContactList] = React.useState([])
-  const [value, setValue] = React.useState("")
+  const tableRef = createRef()
+  const [contactList, setContactList] = useState([])
+  const [companies, setCompanies] = useState([])
+  const [value, setValue] = useState("")
 
-  React.useEffect(() => {
-    var promise = Promise.resolve(getContactsByOrg(org.id))
-    promise.then(function (val) {
-      setContactList(val)
-    })
-  }, [])
+  useEffect(() => {
+    const fetchContacts = async orgID => {
+      const contacts = await getContactsByOrg(orgID)
+      for await (const contact of contacts) {
+        if (contact.company) {
+          const company = await getCompany(contact.company)
+          contact.company = company
+        }
+      }
+      setContactList(contacts)
+    }
+    const fetchCompanies = async orgID => {
+      const companyList = await getCompanyByOrg(orgID)
+      for (const company of companyList) company.label = company.name
+      setCompanies(companyList)
+    }
+    fetchContacts(org.id)
+    fetchCompanies(org.id)
+  }, [org])
 
   const handlePopUp = value => {
     setValue(value)
@@ -147,37 +182,145 @@ const ContactsPage = ({ user, setUser, org, setOrg }) => {
           icons={tableIcons}
           columns={[
             {
+              filtering: false,
+              width: "5%",
+              field: "profilePicture",
+              editComponent: props => {
+                return (
+                  <UploadImageButton
+                    fontFamily="Raleway-Bold"
+                    borderRadius="full"
+                    size="sm"
+                    _hover={{ transform: "scale(1.08)" }}
+                    buttonMessage={<AiOutlineFileAdd size="1rem" />}
+                    changeUrl={url => props.onChange(url)}
+                  />
+                )
+              },
               render: rowData => (
-                <img src={Pic} style={{ width: 50, borderRadius: "50%" }} />
+                <Avatar
+                  src={rowData.profilePicture}
+                  size="sm"
+                  name={rowData.name}
+                />
               ),
-              width: "10%",
             },
             {
               title: "Contact Name",
               field: "name",
-              type: "string",
-              width: "18%",
+              editComponent: props => {
+                return (
+                  <Input
+                    value={props.value}
+                    placeholder="Enter contact name"
+                    onChange={e => props.onChange(e.target.value)}
+                    size="sm"
+                    variant="flushed"
+                    focusBorderColor="ripple.200"
+                  />
+                )
+              },
             },
             {
               title: "Company",
               field: "company",
-              type: "string",
-              width: "18%",
+              customFilterAndSearch: (term, rowData) =>
+                rowData.company?.name
+                  .toLowerCase()
+                  .includes(term.toLowerCase()),
+              editComponent: props => {
+                const companyItem = company => {
+                  return (
+                    <AutoCompleteListItem
+                      name={company.name}
+                      profilePicture={company.profilePicture}
+                    />
+                  )
+                }
+                return (
+                  <CustomAutoComplete
+                    placeholder="Select company"
+                    items={companies}
+                    itemRenderer={companyItem}
+                    disableCreateItem={false}
+                    onCreateItem={() => navigate("/companies")}
+                    value={props.value}
+                    onChange={props.onChange}
+                    valueInputAttribute="name"
+                    size="sm"
+                    variant="flushed"
+                    focusBorderColor="ripple.200"
+                  />
+                )
+              },
+              render: rowData => {
+                if (rowData.company) {
+                  return (
+                    <AutoCompleteListItem
+                      name={rowData.company.name}
+                      profilePicture={rowData.company.profilePicture}
+                    />
+                  )
+                } else {
+                  return <Text>Unassigned</Text>
+                }
+              },
             },
             {
               title: "Position",
               field: "position",
-              type: "string",
-              width: "18%",
+              editComponent: props => {
+                return (
+                  <Input
+                    value={props.value}
+                    placeholder="Enter contact position"
+                    onChange={e => props.onChange(e.target.value)}
+                    size="sm"
+                    variant="flushed"
+                    focusBorderColor="ripple.200"
+                  />
+                )
+              },
             },
             { title: "ID", field: "id", type: "string", hidden: true },
-            { title: "Email", field: "email", type: "string", width: "18%" },
+            {
+              title: "Email",
+              field: "email",
+              editComponent: props => {
+                return (
+                  <Input
+                    value={props.value}
+                    placeholder="Enter contact email"
+                    onChange={e => props.onChange(e.target.value)}
+                    size="sm"
+                    variant="flushed"
+                    focusBorderColor="ripple.200"
+                  />
+                )
+              },
+            },
             {
               title: "Phone Number",
               field: "phoneNumber",
-              type: "string",
-              width: "18%",
-              align: "left",
+              editComponent: props => {
+                return (
+                  <Input
+                    value={props.value}
+                    placeholder="Enter contact number"
+                    onChange={e => {
+                      if (
+                        e.target.value.match(
+                          /^[+]*[(]{0,1}[0-9]{1,4}[)]{0,1}[-\s./0-9]*$/g
+                        )
+                      )
+                        props.onChange(e.target.value)
+                    }}
+                    size="sm"
+                    variant="flushed"
+                    focusBorderColor="ripple.200"
+                  />
+                )
+              },
             },
             {
               title: "Notes",
@@ -185,41 +328,38 @@ const ContactsPage = ({ user, setUser, org, setOrg }) => {
               type: "string",
               hidden: true,
             },
+          ]}
+          actions={[
             {
-              render: rowData => (
-                <Tooltip hasArrow label="Edit Contact">
-                  <IconButton
-                    pt="11px"
-                    pb="10px"
-                    color="black"
-                    variant="link"
-                    size="lg"
-                    icon={<AiFillEdit />}
-                    onClick={() => handlePopUp(rowData)}
-                  />
-                </Tooltip>
-              ),
-              width: "0%",
+              icon: () => <AiFillEdit />,
+              tooltip: "Edit Contact",
+              onClick: (event, rowData) => handlePopUp(rowData),
+              position: "row",
             },
           ]}
           editable={{
             onRowAdd: newData => {
               const promise = new Promise((resolve, reject) => {
                 setTimeout(() => {
-                  const contactID = createNewContact(
+                  createNewContact(
                     org.id,
-                    newData.name,
-                    newData.company,
-                    newData.email,
-                    newData.phoneNumber,
-                    newData.position
-                  )
-                  if (contactID) {
-                    setContactList([...contactList, newData])
-                    resolve()
-                  } else {
-                    reject()
-                  }
+                    newData.name || null,
+                    newData.company?.id || null,
+                    newData.email || null,
+                    newData.phoneNumber || null,
+                    newData.position || null,
+                    newData.profilePicture || null
+                  ).then(contactID => {
+                    if (contactID) {
+                      setContactList([
+                        ...contactList,
+                        { ...newData, id: contactID },
+                      ])
+                      resolve()
+                    } else {
+                      reject()
+                    }
+                  })
                 }, 1000)
               })
               promise.then(

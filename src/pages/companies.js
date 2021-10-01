@@ -1,33 +1,38 @@
-import * as React from "react"
+import React, { forwardRef, createRef, useState, useEffect } from "react"
+import { navigate } from "gatsby-link"
 
 import Layout from "../components/layout"
 import Seo from "../components/seo"
 
 import {
-  Button,
+  Avatar,
   Box,
   Text,
-  IconButton,
   Input,
-  Tooltip,
+  NumberInput,
+  NumberInputField,
+  Link,
   useDisclosure,
   useToast,
 } from "@chakra-ui/react"
 
 import CompanyPopUp from "../components/companies/companyPopup"
+import UploadImageButton from "../components/uploadImageButton"
 
 import {
   createNewCompany,
   getCompanyByOrg,
   deleteCompany,
 } from "../models/Company"
+import { getContact } from "../models/Contact"
 
 import { createMuiTheme, MuiThemeProvider } from "@material-ui/core"
-import Pic from "../images/RippleDEX.png"
-
-import { forwardRef } from "react"
 
 import MaterialTable from "material-table"
+import {
+  CustomAutoComplete,
+  AutoCompleteListItem,
+} from "../components/CustomAutoComplete"
 
 import AddBox from "@material-ui/icons/AddBox"
 import ArrowDownward from "@material-ui/icons/ArrowDownward"
@@ -45,7 +50,8 @@ import SaveAlt from "@material-ui/icons/SaveAlt"
 import Search from "@material-ui/icons/Search"
 import ViewColumn from "@material-ui/icons/ViewColumn"
 
-import { AiFillEdit } from "react-icons/ai"
+import { AiFillEdit, AiOutlineFileAdd } from "react-icons/ai"
+import { ExternalLinkIcon } from "@chakra-ui/icons"
 
 const CompaniesPage = ({ user, setUser, org, setOrg }) => {
   // Initialize table icons used
@@ -94,16 +100,23 @@ const CompaniesPage = ({ user, setUser, org, setOrg }) => {
   // Modal or Popup triggers
   const { isOpen, onOpen, onClose } = useDisclosure()
 
-  const tableRef = React.createRef()
-  const [companyList, setCompanyList] = React.useState([])
-  const [value, setValue] = React.useState("")
+  const tableRef = createRef()
+  const [companyList, setCompanyList] = useState([])
+  const [value, setValue] = useState("")
 
-  React.useEffect(() => {
-    var promise = Promise.resolve(getCompanyByOrg(org.id))
-    promise.then(function (val) {
-      setCompanyList(val)
-    })
-  }, [])
+  useEffect(() => {
+    const fetchCompanies = async orgID => {
+      const companies = await getCompanyByOrg(orgID)
+      for await (const company of companies) {
+        if (company.primaryContact) {
+          const contact = await getContact(company.primaryContact)
+          company.primaryContact = contact
+        }
+      }
+      setCompanyList(companies)
+    }
+    fetchCompanies(org.id)
+  }, [org])
 
   const handlePopUp = value => {
     setValue(value)
@@ -144,78 +157,205 @@ const CompaniesPage = ({ user, setUser, org, setOrg }) => {
           icons={tableIcons}
           columns={[
             {
+              filtering: false,
+              width: "5%",
+              field: "profilePicture",
+              editComponent: props => {
+                return (
+                  <UploadImageButton
+                    fontFamily="Raleway-Bold"
+                    borderRadius="full"
+                    size="sm"
+                    _hover={{ transform: "scale(1.08)" }}
+                    buttonMessage={<AiOutlineFileAdd size="1rem" />}
+                    changeUrl={url => props.onChange(url)}
+                  />
+                )
+              },
               render: rowData => (
-                <img src={Pic} style={{ width: 50, borderRadius: "50%" }} />
+                <Avatar
+                  src={rowData.profilePicture}
+                  size="sm"
+                  name={rowData.name}
+                />
               ),
-              width: "10%",
             },
             {
               title: "Company Name",
               field: "name",
               type: "string",
-              width: "18%",
+              editComponent: props => {
+                return (
+                  <Input
+                    value={props.value}
+                    placeholder="Enter company name"
+                    onChange={e => props.onChange(e.target.value)}
+                    size="sm"
+                    variant="flushed"
+                    focusBorderColor="ripple.200"
+                  />
+                )
+              },
             },
             {
               title: "Primary Contact",
               field: "primaryContact",
-              type: "string",
-              width: "18%",
+              customFilterAndSearch: (term, rowData) =>
+                rowData.primaryContact?.name
+                  .toLowerCase()
+                  .includes(term.toLowerCase()),
+              editComponent: props => {
+                const contactItem = contact => {
+                  return (
+                    <AutoCompleteListItem
+                      name={contact.name}
+                      profilePicture={contact.profilePicture}
+                    />
+                  )
+                }
+                return (
+                  <CustomAutoComplete
+                    pplaceholder="Select contact"
+                    items={[]}
+                    itemRenderer={contactItem}
+                    disableCreateItem={false}
+                    onCreateItem={() => navigate("/contacts")}
+                    value={props.value}
+                    onChange={props.onChange}
+                    valueInputAttribute="name"
+                    size="sm"
+                    variant="flushed"
+                    focusBorderColor="ripple.200"
+                  />
+                )
+              },
+              render: rowData => {
+                if (rowData.primaryContact) {
+                  return (
+                    <AutoCompleteListItem
+                      name={rowData.primaryContact.name}
+                      profilePicture={rowData.primaryContact.profilePicture}
+                    />
+                  )
+                } else {
+                  return <Text>Unassigned</Text>
+                }
+              },
             },
             {
               title: "Annual Revenue",
               field: "annualRevenue",
-              type: "string",
-              width: "18%",
+              editComponent: props => {
+                const format = val =>
+                  `$` + val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")
+                const parse = val => val.replace(/^\$/, "")
+                return (
+                  <NumberInput
+                    precision={2}
+                    min={0}
+                    value={props.value ? format(props.value) : format("")}
+                    onChange={e => props.onChange(parse(e))}
+                    size="sm"
+                    variant="flushed"
+                    focusBorderColor="ripple.200"
+                  >
+                    <NumberInputField />
+                  </NumberInput>
+                )
+              },
+              render: rowData => {
+                return (
+                  <Text>
+                    $
+                    {parseFloat(rowData.annualRevenue)
+                      .toFixed(2)
+                      .toString()
+                      .replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
+                  </Text>
+                )
+              },
             },
             {
               title: "Industry",
               field: "industry",
               type: "string",
-              width: "18%",
-              align: "left",
+              editComponent: props => {
+                return (
+                  <Input
+                    value={props.value}
+                    placeholder="Enter company industry"
+                    onChange={e => props.onChange(e.target.value)}
+                    size="sm"
+                    variant="flushed"
+                    focusBorderColor="ripple.200"
+                  />
+                )
+              },
             },
             { title: "ID", field: "id", type: "string", hidden: true },
             {
               title: "Company Website",
               field: "website",
               type: "string",
-              width: "18%",
-            },
-            {
-              render: rowData => (
-                <Tooltip hasArrow label="Edit Contact">
-                  <IconButton
-                    pt="11px"
-                    pb="10px"
-                    color="black"
-                    variant="link"
-                    size="lg"
-                    icon={<AiFillEdit />}
-                    onClick={() => handlePopUp(rowData)}
+              editComponent: props => {
+                return (
+                  <Input
+                    value={props.value}
+                    placeholder="Enter company website"
+                    onChange={e => props.onChange(e.target.value)}
+                    size="sm"
+                    variant="flushed"
+                    focusBorderColor="ripple.200"
                   />
-                </Tooltip>
-              ),
-              width: "0%",
+                )
+              },
+              render: rowData => {
+                var prefix = "https://"
+                const url =
+                  rowData.website.substr(0, prefix.length) !== prefix
+                    ? prefix + rowData.website
+                    : rowData.website
+                return (
+                  <Link href={url} isExternal>
+                    <Text>
+                      {rowData.website} <ExternalLinkIcon mx="2px" />
+                    </Text>
+                  </Link>
+                )
+              },
+            },
+          ]}
+          actions={[
+            {
+              icon: () => <AiFillEdit />,
+              tooltip: "Edit Company",
+              onClick: (event, rowData) => handlePopUp(rowData),
+              position: "row",
             },
           ]}
           editable={{
             onRowAdd: newData => {
               const promise = new Promise((resolve, reject) => {
                 setTimeout(() => {
-                  const companyID = createNewCompany(
+                  createNewCompany(
                     org.id,
-                    newData.name,
-                    newData.primaryContact,
-                    newData.annualRevenue,
-                    newData.industry,
-                    newData.website
-                  )
-                  if (companyID) {
-                    setCompanyList([...companyList, newData])
-                    resolve()
-                  } else {
-                    reject()
-                  }
+                    newData.name || null,
+                    newData.primaryContact?.id || null,
+                    parseFloat(newData.annualRevenue),
+                    newData.industry || null,
+                    newData.website || null,
+                    newData.profilePicture || null
+                  ).then(companyID => {
+                    if (companyID) {
+                      setCompanyList([
+                        ...companyList,
+                        { ...newData, id: companyID },
+                      ])
+                      resolve()
+                    } else {
+                      reject()
+                    }
+                  })
                 }, 1000)
               })
               promise.then(
