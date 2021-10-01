@@ -30,7 +30,7 @@ import {
   updateTask,
 } from "../models/Task"
 import { getDeal } from "../models/Deal"
-import { updateOrganization } from "../models/Organisation"
+import { updateOrganization, DEFAULT_STATUS } from "../models/Organisation"
 import TaskPopUp from "../components/tasks/taskPopup"
 
 /**
@@ -38,19 +38,20 @@ import TaskPopUp from "../components/tasks/taskPopup"
  */
 const TasksPage = ({ user, setUser, org, setOrg }) => {
   const [eventBus, setEventBus] = React.useState(undefined)
-  const [lanes, setLane] = React.useState([])
+  const [lanes, setLanes] = React.useState([])
   const toast = useToast()
   const { isOpen, onOpen, onClose } = useDisclosure()
   const [editDoc, setEditDoc] = React.useState({})
 
   React.useEffect(() => {
     loadData()
+    setLanes(org.kanbanLanes)
   }, [eventBus, isOpen])
 
   // Initialize lanes
   const initLanes = () => {
     let lanesArr = []
-    org.kanbanLanes.forEach(lane => {
+    lanes.forEach(lane => {
       lanesArr.push({
         title: lane,
         id: lane.toLowerCase(),
@@ -60,27 +61,23 @@ const TasksPage = ({ user, setUser, org, setOrg }) => {
     return { lanes: lanesArr }
   }
 
+  // Load the kanban cards from firestore
   const loadData = async () => {
     if (eventBus) {
-      // await createNewTask(
-      //   "Deal ID 2",
-      //   "This is another task",
-      //   "Sample task 2",
-      //   org.id
-      // )
       try {
         const docs = await getTasksByOrg(org.id)
-        console.log(docs)
         docs.forEach(async doc => {
           const deal = await getDeal(doc.deal)
           console.log(doc)
+
+          // Add cards to kanban board
           eventBus.publish({
             type: "ADD_CARD",
             laneId: org.kanbanLanes
               .map(lane => lane.toLowerCase())
               .includes(doc.status.toLowerCase())
               ? doc.status
-              : "backlog",
+              : DEFAULT_STATUS,
             card: {
               id: doc.id,
               title: doc.name,
@@ -96,11 +93,28 @@ const TasksPage = ({ user, setUser, org, setOrg }) => {
     }
   }
 
+  // Update the associated card document when it is moved in the database
   const updateCardMoveAcrossLanes = async (id, origin, destination) => {
     try {
       await updateTask(id, { status: destination })
     } catch (err) {
       console.error("Error in updating card into firestore")
+    }
+  }
+
+  const updateLaneWhenDragged = async (fromIndex, toIndex, payload) => {
+    let tempLanes = lanes
+    const moved = tempLanes[fromIndex]
+    tempLanes.splice(fromIndex, 1)
+    tempLanes.splice(toIndex, 0, moved)
+    setLanes(tempLanes)
+
+    try {
+      await updateOrganization(org.id, {
+        kanbanLanes: tempLanes,
+      })
+    } catch (error) {
+      console.error("Fail to update lane swap in firestore")
     }
   }
 
@@ -354,9 +368,7 @@ const TasksPage = ({ user, setUser, org, setOrg }) => {
         draggable
         data={initLanes()}
         handleDragEnd={updateCardMoveAcrossLanes}
-        onCardClick={() => {
-          console.log("I am clicked")
-        }}
+        handleLaneDragEnd={updateLaneWhenDragged}
       />
       <TaskPopUp
         isOpen={isOpen}
