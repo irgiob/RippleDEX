@@ -1,11 +1,11 @@
 import React, { forwardRef, createRef, useState, useEffect } from "react"
-import { navigate } from "gatsby-link"
 
 import Layout from "../components/layout"
 import Seo from "../components/seo"
 
 import { Box, Text, Input, useToast, Avatar } from "@chakra-ui/react"
 
+import CompanyPopUp from "../components/companies/companyPopup"
 import ContactPopUp from "../components/contacts/contactPopup"
 import UploadImageButton from "../components/uploadImageButton"
 import {
@@ -19,7 +19,12 @@ import {
   deleteContact,
 } from "../models/Contact"
 
-import { getCompany, getCompanyByOrg } from "../models/Company"
+import {
+  createNewCompany,
+  updateCompany,
+  getCompany,
+  getCompanyByOrg,
+} from "../models/Company"
 
 import { createMuiTheme, MuiThemeProvider } from "@material-ui/core"
 
@@ -86,6 +91,15 @@ const ContactsPage = ({ user, setUser, org, setOrg }) => {
         main: "#168aa8",
       },
     },
+    overrides: {
+      MuiPaper: {
+        root: {
+          "& > div[class^='Component']": {
+            overflowX: "visible !important",
+          },
+        },
+      },
+    },
   })
 
   const toast = useToast()
@@ -94,6 +108,7 @@ const ContactsPage = ({ user, setUser, org, setOrg }) => {
   const [contactList, setContactList] = useState([])
   const [companies, setCompanies] = useState([])
   const [selected, setSelected] = useState()
+  const [newCompany, setNewCompany] = useState()
 
   useEffect(() => {
     const fetchContacts = async orgID => {
@@ -218,13 +233,37 @@ const ContactsPage = ({ user, setUser, org, setOrg }) => {
                       items={companies}
                       itemRenderer={companyItem}
                       disableCreateItem={false}
-                      onCreateItem={() => navigate("/companies")}
+                      onCreateItem={newCompanyName =>
+                        setNewCompany({
+                          id: null,
+                          address: null,
+                          annualRevenue: null,
+                          description: null,
+                          industry: null,
+                          name: newCompanyName.value,
+                          personnel: null,
+                          primaryContact: { name: "Your New Contact" },
+                          profilePicture: null,
+                          registeredBy: org.id,
+                          relationship: null,
+                          website: null,
+                        })
+                      }
                       value={props.value}
                       onChange={props.onChange}
                       valueInputAttribute="name"
                       size="sm"
                       variant="flushed"
                       focusBorderColor="ripple.200"
+                    />
+                    <CompanyPopUp
+                      selected={newCompany}
+                      setSelected={setNewCompany}
+                      companies={companies}
+                      onUpdate={newUpdatedCompany =>
+                        props.onChange(newUpdatedCompany)
+                      }
+                      orgID={org.id}
                     />
                   </Box>
                 )
@@ -316,8 +355,20 @@ const ContactsPage = ({ user, setUser, org, setOrg }) => {
           editable={{
             onRowAdd: newData => {
               const promise = new Promise((resolve, reject) => {
-                setTimeout(() => {
-                  createNewContact(
+                setTimeout(async () => {
+                  if (newData.company && newData.company.id === null) {
+                    const companyID = await createNewCompany(
+                      org.id,
+                      newData.company.name,
+                      null,
+                      newData.company.annualRevenue,
+                      newData.company.industry,
+                      newData.company.website,
+                      newData.company.profilePicture
+                    )
+                    if (companyID) newData.company.id = companyID
+                  }
+                  const contactID = await createNewContact(
                     org.id,
                     newData.name || null,
                     newData.company?.id || null,
@@ -325,17 +376,19 @@ const ContactsPage = ({ user, setUser, org, setOrg }) => {
                     newData.phoneNumber || null,
                     newData.position || null,
                     newData.profilePicture || null
-                  ).then(contactID => {
-                    if (contactID) {
-                      setContactList([
-                        ...contactList,
-                        { ...newData, id: contactID },
-                      ])
-                      resolve()
-                    } else {
-                      reject()
-                    }
-                  })
+                  )
+                  if (contactID) {
+                    updateCompany(newData.company.id, {
+                      primaryContact: contactID,
+                    })
+                    setContactList([
+                      ...contactList,
+                      { ...newData, id: contactID },
+                    ])
+                    resolve()
+                  } else {
+                    reject()
+                  }
                 }, 1000)
               })
               promise.then(

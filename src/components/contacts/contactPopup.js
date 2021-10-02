@@ -67,23 +67,27 @@ const ContactPopUp = ({ selected, setSelected, companies, onUpdate }) => {
       position: contactPosition || null,
       profilePicture: contactImage || null,
     }
-    await updateContact(selected?.id, options)
-    onUpdate({ ...selected, ...options })
-    toast({
-      title: "Success",
-      description: "Your The Contact Detail Have Been Updated",
-      status: "success",
-      duration: 5000,
-      isClosable: true,
-    })
+    onUpdate({ ...selected, ...options, company: contactCompany })
+    if (selected?.id) {
+      await updateContact(selected?.id, options)
+      toast({
+        title: "Success",
+        description: "Your The Contact Detail Have Been Updated",
+        status: "success",
+        duration: 5000,
+        isClosable: true,
+      })
+    } else {
+      setSelected(null)
+    }
   }
 
   return (
     <Modal isCentered isOpen={selected} onClose={() => setSelected(null)}>
       <ModalOverlay />
       <ModalContent
-        h="90vh"
-        maxW="90vw"
+        h="80vh"
+        maxW="70vw"
         borderRadius="15px"
         overflowY="scroll"
         value="inside"
@@ -229,14 +233,33 @@ const ContactPopUp = ({ selected, setSelected, companies, onUpdate }) => {
                       }}
                       onClick={handleClick}
                     >
-                      Save Changes
+                      {selected?.id ? "Save Changes" : "Create Contact"}
                     </Button>
                   </Box>
                 </VStack>
               </GridItem>
-              <GridItem rowSpan={4} colSpan={1} pt="20px">
-                <VStack>
-                  <Link w="100%" href={"mailto:" + contactEmail} isExternal>
+              {selected?.id && (
+                <GridItem rowSpan={4} colSpan={1} pt="20px">
+                  <VStack>
+                    {contactEmail && (
+                      <Link w="100%" href={"mailto:" + contactEmail} isExternal>
+                        <Button
+                          bgColor="ripple.200"
+                          color="white"
+                          fontFamily="Raleway-Bold"
+                          borderRadius="30px"
+                          variant="solid"
+                          w="100%"
+                          leftIcon={<RiMailAddFill size={20} />}
+                          _hover={{
+                            transform: "scale(1.05)",
+                          }}
+                        >
+                          Email
+                        </Button>
+                      </Link>
+                    )}
+                    <Spacer />
                     <Button
                       bgColor="ripple.200"
                       color="white"
@@ -244,42 +267,32 @@ const ContactPopUp = ({ selected, setSelected, companies, onUpdate }) => {
                       borderRadius="30px"
                       variant="solid"
                       w="100%"
-                      leftIcon={<RiMailAddFill size={20} />}
+                      leftIcon={<RiCalendarEventFill size={20} />}
                       _hover={{
                         transform: "scale(1.05)",
                       }}
                     >
-                      Email
+                      Schedule Meeting
                     </Button>
-                  </Link>
-                  <Spacer />
-                  <Button
-                    bgColor="ripple.200"
-                    color="white"
-                    fontFamily="Raleway-Bold"
-                    borderRadius="30px"
-                    variant="solid"
-                    w="100%"
-                    leftIcon={<RiCalendarEventFill size={20} />}
-                    _hover={{
-                      transform: "scale(1.05)",
-                    }}
-                  >
-                    Schedule Meeting
-                  </Button>
-                </VStack>
-              </GridItem>
-
+                  </VStack>
+                </GridItem>
+              )}
               <GridItem rowSpan={2} colSpan={1} />
             </Grid>
           </Box>
-          <VStack w="100%" align="left">
-            <Text fontSize="25px" color="ripple.200" fontFamily="Raleway-Bold">
-              Interactions
-            </Text>
-            <hr />
-            <Box>Interactions Table Here</Box>
-          </VStack>
+          {selected?.id && (
+            <VStack w="100%" align="left">
+              <Text
+                fontSize="25px"
+                color="ripple.200"
+                fontFamily="Raleway-Bold"
+              >
+                Interactions
+              </Text>
+              <hr />
+              <Box>Interactions Table Here</Box>
+            </VStack>
+          )}
         </ModalBody>
       </ModalContent>
     </Modal>
