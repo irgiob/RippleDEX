@@ -10,7 +10,6 @@ const DashboardPage = ({ user, setUser, org, setOrg }) => {
   return (
     <>
       <Heading>Dashboard for {org != null ? org.name : ""}</Heading>
-      <DoughnutChart org={org} />
     </>
   )
 }
