@@ -4,14 +4,7 @@ import { navigate } from "gatsby-link"
 import Layout from "../components/layout"
 import Seo from "../components/seo"
 
-import {
-  Box,
-  Text,
-  Input,
-  useDisclosure,
-  useToast,
-  Avatar,
-} from "@chakra-ui/react"
+import { Box, Text, Input, useToast, Avatar } from "@chakra-ui/react"
 
 import ContactPopUp from "../components/contacts/contactPopup"
 import UploadImageButton from "../components/uploadImageButton"
@@ -48,7 +41,7 @@ import SaveAlt from "@material-ui/icons/SaveAlt"
 import Search from "@material-ui/icons/Search"
 import ViewColumn from "@material-ui/icons/ViewColumn"
 
-import { AiFillEdit, AiOutlineFileAdd } from "react-icons/ai"
+import { AiFillEdit, AiOutlineFileAdd, AiOutlineCheck } from "react-icons/ai"
 
 /**
  * Renders the page content
@@ -93,35 +86,14 @@ const ContactsPage = ({ user, setUser, org, setOrg }) => {
         main: "#168aa8",
       },
     },
-    overrides: {
-      MuiTableRow: {
-        root: {
-          "&[mode=add]": {
-            "& td": {
-              verticalAlign: "top",
-              paddingTop: "2em !important",
-              "& .chakra-form__label": {
-                display: "none",
-              },
-              "& .chakra-stack": {
-                marginTop: 0,
-              },
-            },
-          },
-        },
-      },
-    },
   })
 
   const toast = useToast()
 
-  // Modal or Popup triggers
-  const { isOpen, onOpen, onClose } = useDisclosure()
-
   const tableRef = createRef()
   const [contactList, setContactList] = useState([])
   const [companies, setCompanies] = useState([])
-  const [value, setValue] = useState("")
+  const [selected, setSelected] = useState()
 
   useEffect(() => {
     const fetchContacts = async orgID => {
@@ -142,11 +114,6 @@ const ContactsPage = ({ user, setUser, org, setOrg }) => {
     fetchContacts(org.id)
     fetchCompanies(org.id)
   }, [org])
-
-  const handlePopUp = value => {
-    setValue(value)
-    onOpen()
-  }
 
   const currTime = new Date().toLocaleString()
 
@@ -192,7 +159,14 @@ const ContactsPage = ({ user, setUser, org, setOrg }) => {
                     borderRadius="full"
                     size="sm"
                     _hover={{ transform: "scale(1.08)" }}
-                    buttonMessage={<AiOutlineFileAdd size="1rem" />}
+                    buttonMessage={
+                      props.value ? (
+                        <AiOutlineCheck size="1rem" />
+                      ) : (
+                        <AiOutlineFileAdd size="1rem" />
+                      )
+                    }
+                    color={props.value ? "green" : "black"}
                     changeUrl={url => props.onChange(url)}
                   />
                 )
@@ -238,19 +212,21 @@ const ContactsPage = ({ user, setUser, org, setOrg }) => {
                   )
                 }
                 return (
-                  <CustomAutoComplete
-                    placeholder="Select company"
-                    items={companies}
-                    itemRenderer={companyItem}
-                    disableCreateItem={false}
-                    onCreateItem={() => navigate("/companies")}
-                    value={props.value}
-                    onChange={props.onChange}
-                    valueInputAttribute="name"
-                    size="sm"
-                    variant="flushed"
-                    focusBorderColor="ripple.200"
-                  />
+                  <Box mt="-1.5em !important">
+                    <CustomAutoComplete
+                      placeholder="Select company"
+                      items={companies}
+                      itemRenderer={companyItem}
+                      disableCreateItem={false}
+                      onCreateItem={() => navigate("/companies")}
+                      value={props.value}
+                      onChange={props.onChange}
+                      valueInputAttribute="name"
+                      size="sm"
+                      variant="flushed"
+                      focusBorderColor="ripple.200"
+                    />
+                  </Box>
                 )
               },
               render: rowData => {
@@ -333,7 +309,7 @@ const ContactsPage = ({ user, setUser, org, setOrg }) => {
             {
               icon: () => <AiFillEdit />,
               tooltip: "Edit Contact",
-              onClick: (event, rowData) => handlePopUp(rowData),
+              onClick: (event, rowData) => setSelected(rowData),
               position: "row",
             },
           ]}
@@ -397,10 +373,15 @@ const ContactsPage = ({ user, setUser, org, setOrg }) => {
         />
       </MuiThemeProvider>
       <ContactPopUp
-        value={value}
-        onOpen={onOpen}
-        isOpen={isOpen}
-        onClose={onClose}
+        selected={selected}
+        setSelected={setSelected}
+        companies={companies}
+        onUpdate={updatedContact => {
+          setContactList([
+            ...contactList.filter(contact => contact.id !== updatedContact.id),
+            updatedContact,
+          ])
+        }}
       />
     </Box>
   )

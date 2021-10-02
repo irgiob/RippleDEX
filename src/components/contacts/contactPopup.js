@@ -7,20 +7,18 @@ import {
   ModalContent,
   ModalBody,
   ModalCloseButton,
-  useMediaQuery,
   Box,
   Text,
   Input,
   Textarea,
-  InputGroup,
-  InputRightElement,
   Button,
   Grid,
   GridItem,
-  Image,
+  Avatar,
+  AvatarBadge,
   Spacer,
   VStack,
-  HStack,
+  Link,
   useToast,
 } from "@chakra-ui/react"
 
@@ -28,59 +26,49 @@ import {
   RiArrowLeftSLine,
   RiMailAddFill,
   RiCalendarEventFill,
+  RiImageAddLine,
 } from "react-icons/ri"
+
+import { CustomAutoComplete, AutoCompleteListItem } from "../CustomAutoComplete"
+import UploadImageButton from "../uploadImageButton"
+
+import MaterialTable from "material-table"
 
 import LogoLight from "../../images/RippleDEXWhite.svg"
 
-// {value.id}
-// {value.name}
-// {value.company}
-// {value.email}{" "}
-// {value.phoneNumber}
-// {value.position}
-
-const ContactPopUp = ({ isOpen, onClose, value }) => {
-  const [isLargeSize] = useMediaQuery("(min-width: 42em)")
-
-  const [contactName, setContactName] = useState("")
-  const [contactEmail, setContactEmail] = useState("")
-  const [contactPhoneNumber, setContactPhoneNumber] = useState("")
-  const [contactCompany, setContactCompany] = useState("")
-  const [contactPosition, setContactPosition] = useState("")
-  const [contactMemo, setContactMemo] = useState("")
-
-  useEffect(() => {
-    setContactName(value.name)
-    setContactEmail(value.email)
-    setContactPhoneNumber(value.phoneNumber)
-    setContactCompany(value.company)
-    setContactPosition(value.position)
-    setContactMemo(value.notes)
-  }, [value])
+const ContactPopUp = ({ selected, setSelected, companies, onUpdate }) => {
+  const [contactName, setContactName] = useState()
+  const [contactEmail, setContactEmail] = useState()
+  const [contactNumber, setContactNumber] = useState()
+  const [contactCompany, setContactCompany] = useState()
+  const [contactPosition, setContactPosition] = useState()
+  const [contactImage, setContactImage] = useState()
+  const [contactMemo, setContactMemo] = useState()
 
   const toast = useToast()
 
-  // couldnt get the whole show memo from the database working
-  // useEffect(() => {
-  //   const getMemo = async contactID => {
-  //     const currentMemo = await getContact(contactID)
-  //     if (currentMemo) {
-  //         setContactMemo(currentMemo?.notes)
-  //       }
-  //     }
-  //   getMemo(value.id)
-  // }, [value.id])
+  useEffect(() => {
+    setContactName(selected?.name)
+    setContactEmail(selected?.email)
+    setContactNumber(selected?.phoneNumber)
+    setContactCompany(selected?.company)
+    setContactPosition(selected?.position)
+    setContactImage(selected?.profilePicture)
+    setContactMemo(selected?.notes)
+  }, [selected])
 
   const handleClick = async () => {
     const options = {
-      company: contactCompany,
-      email: contactEmail,
-      name: contactName,
-      notes: contactMemo,
-      phoneNumber: contactPhoneNumber,
-      position: contactPosition,
+      company: contactCompany?.id || null,
+      email: contactEmail || null,
+      name: contactName || null,
+      notes: contactMemo || null,
+      phoneNumber: contactNumber || null,
+      position: contactPosition || null,
+      profilePicture: contactImage || null,
     }
-    await updateContact(value.id, options)
+    await updateContact(selected?.id, options)
+    onUpdate({ ...selected, ...options })
     toast({
       title: "Success",
       description: "Your The Contact Detail Have Been Updated",
@@ -91,7 +79,7 @@ const ContactPopUp = ({ isOpen, onClose, value }) => {
   }
 
   return (
-    <Modal isCentered isOpen={isOpen} onClose={onClose}>
+    <Modal isCentered isOpen={selected} onClose={() => setSelected(null)}>
       <ModalOverlay />
       <ModalContent
         h="90vh"
@@ -112,9 +100,9 @@ const ContactPopUp = ({ isOpen, onClose, value }) => {
               _hover={{
                 transform: "scale(1.05)",
               }}
-              onClick={onClose}
+              onClick={() => setSelected(null)}
             >
-              {value.name}
+              {contactName}
             </Button>
 
             <Grid
@@ -126,15 +114,27 @@ const ContactPopUp = ({ isOpen, onClose, value }) => {
               gap={8}
             >
               <GridItem rowSpan={4} colSpan={1} align="center">
-                <Image
+                <Avatar
                   mt="30px"
-                  boxSize="90%"
+                  w="8em"
+                  h="8em"
                   bg="grey"
-                  borderRadius="30px"
-                  objectFit="contain"
-                  src={LogoLight}
-                  alt="Workspace Image"
-                />
+                  src={contactImage || LogoLight}
+                  alt="Contact Image"
+                >
+                  <AvatarBadge boxSize="2em" bg="white">
+                    <UploadImageButton
+                      fontFamily="Raleway-Bold"
+                      borderRadius="full"
+                      size="sm"
+                      _hover={{ transform: "scale(1.08)" }}
+                      buttonMessage={
+                        <RiImageAddLine color="black" size="1rem" />
+                      }
+                      changeUrl={setContactImage}
+                    />
+                  </AvatarBadge>
+                </Avatar>
               </GridItem>
               <GridItem rowSpan={6} colSpan={2}>
                 <VStack align="left">
@@ -161,25 +161,40 @@ const ContactPopUp = ({ isOpen, onClose, value }) => {
                     Phone Number
                   </Text>
                   <Input
-                    variant="outline"
+                    value={contactNumber}
                     placeholder="Contact Phone Number"
-                    type="text"
-                    value={contactPhoneNumber}
-                    onChange={e => setContactPhoneNumber(e.target.value)}
+                    onChange={e => {
+                      if (
+                        e.target.value.match(
+                          /^[+]*[(]{0,1}[0-9]{1,4}[)]{0,1}[-\s./0-9]*$/g
+                        )
+                      )
+                        setContactNumber(e.target.value)
+                    }}
+                    variant="outline"
                   />
                 </VStack>
               </GridItem>
               <GridItem rowSpan={8} colSpan={2}>
                 <VStack align="left">
                   <Text fontSize="20px">Company</Text>
-                  <Input
-                    variant="outline"
+                  <CustomAutoComplete
                     placeholder="Contact's Company"
-                    type="text"
-                    value={contactCompany}
-                    onChange={e => setContactCompany(e.target.value)}
+                    items={companies}
+                    itemRenderer={company => (
+                      <AutoCompleteListItem
+                        name={company.name}
+                        profilePicture={company.profilePicture}
+                      />
+                    )}
+                    disableCreateItem={true}
+                    onCreateItem={() => null}
+                    value={contactCompany ? contactCompany : undefined}
+                    onChange={setContactCompany}
+                    valueInputAttribute="name"
+                    size="md"
+                    variant="outline"
                   />
-
                   <Text pt="20px" mt="25px" fontSize="20px">
                     Position at Company
                   </Text>
@@ -221,20 +236,22 @@ const ContactPopUp = ({ isOpen, onClose, value }) => {
               </GridItem>
               <GridItem rowSpan={4} colSpan={1} pt="20px">
                 <VStack>
-                  <Button
-                    bgColor="ripple.200"
-                    color="white"
-                    fontFamily="Raleway-Bold"
-                    borderRadius="30px"
-                    variant="solid"
-                    w="100%"
-                    leftIcon={<RiMailAddFill size={20} />}
-                    _hover={{
-                      transform: "scale(1.05)",
-                    }}
-                  >
-                    Email
-                  </Button>
+                  <Link w="100%" href={"mailto:" + contactEmail} isExternal>
+                    <Button
+                      bgColor="ripple.200"
+                      color="white"
+                      fontFamily="Raleway-Bold"
+                      borderRadius="30px"
+                      variant="solid"
+                      w="100%"
+                      leftIcon={<RiMailAddFill size={20} />}
+                      _hover={{
+                        transform: "scale(1.05)",
+                      }}
+                    >
+                      Email
+                    </Button>
+                  </Link>
                   <Spacer />
                   <Button
                     bgColor="ripple.200"
@@ -248,23 +265,15 @@ const ContactPopUp = ({ isOpen, onClose, value }) => {
                       transform: "scale(1.05)",
                     }}
                   >
-                    Add Reminder
+                    Schedule Meeting
                   </Button>
                 </VStack>
               </GridItem>
 
-              <GridItem rowSpan={4} colSpan={2}>
-                Last Contacted By
-              </GridItem>
               <GridItem rowSpan={2} colSpan={1} />
             </Grid>
           </Box>
           <VStack w="100%" align="left">
-            <Text fontSize="25px" color="ripple.200" fontFamily="Raleway-Bold">
-              Deals
-            </Text>
-            <hr />
-            <Box>Deals Table Here</Box>
             <Text fontSize="25px" color="ripple.200" fontFamily="Raleway-Bold">
               Interactions
             </Text>
