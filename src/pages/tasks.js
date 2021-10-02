@@ -355,19 +355,8 @@ const TasksPage = ({ user, setUser, org, setOrg }) => {
     )
   }
 
-  const CustomLaneHeader = ({
-    updateTitle,
-    canAddLanes,
-    onDelete,
-    onDoubleClick,
-    editLaneTitle,
-    label,
-    title,
-    titleStyle,
-    labelStyle,
-    t,
-    laneDraggable,
-  }) => {
+  // Custom lane header for the kanban board
+  const CustomLaneHeader = ({ updateTitle, onDelete, title }) => {
     const message = "Are you sure you want to delete the lane?"
     const warningMessage = "DELETING THIS WILL DELETE ALL TASK CARDS"
     const ref = React.useRef()
@@ -413,12 +402,13 @@ const TasksPage = ({ user, setUser, org, setOrg }) => {
         }
         setLanes(editLane)
 
+        // Update state for lanes
         let editLaneCardsObj = laneCards
         editLaneCardsObj[editTitle] = editLaneCardsObj[title]
         delete editLaneCardsObj[title]
         setLaneCards(editLaneCardsObj)
-        updateTitle(editTitle)
 
+        updateTitle(editTitle)
         setEditing(false)
 
         // Update lane names for organization in firestore
@@ -450,6 +440,7 @@ const TasksPage = ({ user, setUser, org, setOrg }) => {
               <>
                 {editing ? (
                   <>
+                    {/* Shows the text box for editing */}
                     <HStack>
                       <Input
                         placeholder="Event title"
@@ -488,6 +479,7 @@ const TasksPage = ({ user, setUser, org, setOrg }) => {
                 <Box>
                   {!editing && title !== DEFAULT_STATUS ? (
                     <>
+                      {/* Remove edit and delete buttons when editing or the lane is from a default table  */}
                       <HStack>
                         <Icon
                           height="24px"
@@ -521,11 +513,7 @@ const TasksPage = ({ user, setUser, org, setOrg }) => {
                   <PopoverCloseButton onClick={onClose} />
                   <PopoverBody>
                     <Text>{message}</Text>
-                    {warningMessage ? (
-                      <Text color="red">WARNING : {warningMessage}</Text>
-                    ) : (
-                      <></>
-                    )}
+                    <Text color="red">WARNING : {warningMessage}</Text>
                   </PopoverBody>
                   <PopoverFooter>
                     <Box align="center">
