@@ -88,6 +88,7 @@ const StageStepper = ({ setStage, value }) => {
       </Stepper>
       <HStack spacing="20px">
         <Button
+          fontFamily="Raleway-Bold"
           bgColor="ripple.200"
           color="white"
           size="sm"
@@ -100,6 +101,7 @@ const StageStepper = ({ setStage, value }) => {
           Reset
         </Button>
         <Button
+          fontFamily="Raleway-Bold"
           bgColor="ripple.200"
           color="white"
           size="sm"
