@@ -95,7 +95,7 @@ const ContactPopUp = ({ isOpen, onClose, value }) => {
       <ModalOverlay />
       <ModalContent
         h="90vh"
-        maxW="90vw"
+        maxW="70vw"
         borderRadius="15px"
         overflowY="scroll"
         value="inside"
