@@ -33,11 +33,17 @@ const SalesFunnel = ({ maxWidth = "100vw", maxHeight = "100vh", org }) => {
       negotiation: 0,
       closed: 0,
     }
-    const docs = await getDealsByOrg(org.id)
-    // console.log(docs)
-    docs.forEach(doc => {
-      stageCount[doc.stage.toLowerCase().replace(" ", "")] += 1
-    })
+    try {
+      const docs = await getDealsByOrg(org.id)
+      docs.forEach(doc => {
+        stageCount[doc.stage.toLowerCase().replace(" ", "")] += parseInt(
+          doc.dealSize
+        )
+        console.log(doc.dealSize)
+      })
+    } catch (err) {
+      console.error("Fail to retrieve data for ", err)
+    }
 
     console.log(stageCount)
 
