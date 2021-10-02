@@ -104,10 +104,7 @@ const DealsPage = ({ user, setUser, org, setOrg }) => {
           "&[mode=add]": {
             "& td": {
               verticalAlign: "top",
-              paddingTop: "2em",
-              "& button": {
-                marginTop: "1.5em",
-              },
+              paddingTop: "2em !important",
               "& .chakra-form__label": {
                 display: "none",
               },
@@ -140,12 +137,13 @@ const DealsPage = ({ user, setUser, org, setOrg }) => {
       for await (const deal of deals) {
         if (deal.recordedBy) {
           const recordedBy = await getUser(deal.recordedBy)
-          recordedBy.label = recordedBy.firstName + " " + recordedBy.lastName
+          if (recordedBy)
+            recordedBy.label = recordedBy.firstName + " " + recordedBy.lastName
           deal.recordedBy = recordedBy
         }
         if (deal.company) {
           const company = await getCompany(deal.company)
-          company.label = company.name
+          if (company) company.label = company.name
           deal.company = company
         }
       }
@@ -228,6 +226,10 @@ const DealsPage = ({ user, setUser, org, setOrg }) => {
             {
               title: "Company",
               field: "company",
+              customFilterAndSearch: (term, rowData) =>
+                rowData.company?.name
+                  .toLowerCase()
+                  .includes(term.toLowerCase()),
               editComponent: props => {
                 const companyItem = company => {
                   return (
@@ -247,6 +249,9 @@ const DealsPage = ({ user, setUser, org, setOrg }) => {
                     value={props.value}
                     onChange={props.onChange}
                     valueInputAttribute="name"
+                    size="sm"
+                    variant="flushed"
+                    focusBorderColor="ripple.200"
                   />
                 )
               },
@@ -371,13 +376,16 @@ const DealsPage = ({ user, setUser, org, setOrg }) => {
             {
               title: "Recorded By",
               field: "recordedBy",
+              customFilterAndSearch: (term, rowData) =>
+                rowData.recordedBy?.label
+                  .toLowerCase()
+                  .includes(term.toLowerCase()),
               editComponent: props => {
                 const memberItem = member => {
                   return (
                     <AutoCompleteListItem
                       name={member.firstName + " " + member.lastName}
                       profilePicture={member.profilePicture}
-                      showImage={true}
                     />
                   )
                 }
@@ -391,6 +399,9 @@ const DealsPage = ({ user, setUser, org, setOrg }) => {
                     value={props.value}
                     onChange={props.onChange}
                     valueInputAttribute="label"
+                    size="sm"
+                    variant="flushed"
+                    focusBorderColor="ripple.200"
                   />
                 )
               },
@@ -432,7 +443,7 @@ const DealsPage = ({ user, setUser, org, setOrg }) => {
                     : null
                   createNewDeal(
                     org.id,
-                    newData.name,
+                    newData.name || null,
                     parseFloat(newData.dealSize),
                     newData.stage,
                     newData.recordedBy?.id || null,
