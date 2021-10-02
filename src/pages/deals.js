@@ -190,6 +190,9 @@ const DealsPage = ({ user, setUser, org, setOrg }) => {
       <MuiThemeProvider theme={theme}>
         <MaterialTable
           options={{
+            headerStyle: {
+              zIndex: 1,
+            },
             showTitle: false,
             selection: true,
             searchFieldAlignment: "right",
@@ -324,6 +327,9 @@ const DealsPage = ({ user, setUser, org, setOrg }) => {
                 return (
                   <Badge
                     variant="outline"
+                    py="3px"
+                    px="6px"
+                    borderRadius="6px"
                     colorScheme={stageOptions[rowData.stage]}
                   >
                     {rowData.stage}
@@ -422,6 +428,12 @@ const DealsPage = ({ user, setUser, org, setOrg }) => {
                 }
               },
             },
+            {
+              title: "notes",
+              field: "notes",
+              type: "string",
+              hidden: true,
+            },
           ]}
           actions={[
             {
@@ -494,6 +506,8 @@ const DealsPage = ({ user, setUser, org, setOrg }) => {
         />
       </MuiThemeProvider>
       <DealPopUp
+        companies={companies}
+        members={members}
         value={value}
         onOpen={onOpen}
         isOpen={isOpen}

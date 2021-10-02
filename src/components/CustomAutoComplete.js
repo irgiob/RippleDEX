@@ -8,6 +8,7 @@ import {
   Text,
   Box,
   Spacer,
+  HStack,
 } from "@chakra-ui/react"
 import { AiOutlineClose } from "react-icons/ai"
 
@@ -61,24 +62,30 @@ export const CustomAutoComplete = ({
         renderCustomInput={inputProps =>
           // show list item with clear button if item is selected, else show input
           value ? (
-            <Flex flexDir="row" alignItems="center" w="100%" mb="0.5em">
-              <AutoCompleteListItem
-                name={value[valueInputAttribute]}
-                profilePicture={value.profilePicture}
-                showImage={showImage}
-              />
-              <Spacer />
-              <Tooltip label="Clear">
+            <Box align="start" w="220px">
+              <HStack>
                 <Box>
-                  <AiOutlineClose onClick={() => onChange(undefined)} />
+                  <AutoCompleteListItem
+                    name={value[valueInputAttribute]}
+                    profilePicture={value.profilePicture}
+                    showImage={showImage}
+                  />
                 </Box>
-              </Tooltip>
-            </Flex>
+                <Spacer />
+                <Box>
+                  <Tooltip label="Clear">
+                    <Box>
+                      <AiOutlineClose onClick={() => onChange(undefined)} />
+                    </Box>
+                  </Tooltip>
+                </Box>
+              </HStack>
+            </Box>
           ) : (
             <Input
               {...inputProps}
-              size={size}
-              variant={variant}
+              size={size ? size : "sm"}
+              variant={variant ? variant : "flushed"}
               focusBorderColor={focusBorderColor}
             />
           )

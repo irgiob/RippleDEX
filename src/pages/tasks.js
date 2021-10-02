@@ -10,10 +10,11 @@ import {
   Button,
   Text,
   Image,
+  Icon,
   HStack,
   VStack,
   Spacer,
-  Icon,
+  IconButton,
   Input,
   Tooltip,
   useDisclosure,
@@ -436,35 +437,21 @@ const TasksPage = ({ user, setUser, org, setOrg }) => {
       <>
         <Box paddingLeft="10px" paddingRight="10px">
           <HStack>
-            <Box p="12px">
+            <Box>
               <>
                 {editing ? (
                   <>
                     {/* Shows the text box for editing */}
-                    <HStack>
+                    <Box>
                       <Input
                         placeholder="Event title"
                         value={editTitle}
                         onChange={event => {
                           setEditTitle(event?.target.value)
                         }}
-                        width="10vw"
-                        height="2.5vh"
+                        size="sm"
                       />
-
-                      <Icon
-                        as={HiCheck}
-                        _hover={{ transform: "scale(1.08)" }}
-                        onClick={confirmEdit}
-                      />
-                      <Icon
-                        as={HiOutlineX}
-                        _hover={{ transform: "scale(1.08)" }}
-                        onClick={() => {
-                          setEditing(false)
-                        }}
-                      />
-                    </HStack>
+                    </Box>
                   </>
                 ) : (
                   <Text width="10vw" height="2.5vh">
@@ -487,11 +474,8 @@ const TasksPage = ({ user, setUser, org, setOrg }) => {
                           onClick={() => {
                             setEditing(true)
                           }}
-                          border="10px"
                         />
-                        <Spacer />
                         <Icon
-                          border="10px"
                           height="24px"
                           color="red"
                           as={HiOutlineTrash}
@@ -500,7 +484,22 @@ const TasksPage = ({ user, setUser, org, setOrg }) => {
                       </HStack>
                     </>
                   ) : (
-                    <></>
+                    <HStack>
+                      <Icon
+                        size="24px"
+                        as={HiCheck}
+                        _hover={{ transform: "scale(1.08)" }}
+                        onClick={confirmEdit}
+                      />
+                      <Icon
+                        size="24px"
+                        as={HiOutlineX}
+                        _hover={{ transform: "scale(1.08)" }}
+                        onClick={() => {
+                          setEditing(false)
+                        }}
+                      />
+                    </HStack>
                   )}
                 </Box>
               </PopoverTrigger>

@@ -35,12 +35,12 @@ const ProSideNav = ({ location }) => {
   const pathname = location.pathname
 
   return (
-    <Box position="fixed">
+    <Box zIndex={997} position="fixed">
       <ProSidebar
         collapsedWidth="80px"
         width="190px"
         collapsed={collapsed}
-        style={{ zIndex: "997", position: "absolute", height: "100vh" }}
+        style={{ position: "absolute", height: "100vh" }}
       >
         <Menu style={{ paddingTop: "85px" }} iconShape="round">
           <Tooltip isDisabled={!collapsed} label="Expand" placement="right">
