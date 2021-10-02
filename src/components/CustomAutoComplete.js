@@ -56,6 +56,7 @@ export const CustomAutoComplete = ({
       }}
       onCreateItem={onCreateItem}
       tagStyleProps={{ display: "none" }}
+      listStyleProps={{ position: "absolute", zIndex: "10" }}
       renderCustomInput={inputProps =>
         // show list item with clear button if item is selected, else show input
         value ? (
