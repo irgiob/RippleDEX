@@ -6,6 +6,8 @@ import StageStepper from "./stageStepper"
 import DatePicker from "react-datepicker"
 import { CustomAutoComplete, AutoCompleteListItem } from "../CustomAutoComplete"
 
+import { updateDeal } from "../../models/Deal"
+
 import {
   Box,
   Modal,
@@ -39,6 +41,16 @@ const DealPopUp = ({ isOpen, onClose, value, companies, members }) => {
     Closed: 7,
   }
 
+  const reverseStageOptions = {
+    1: "Prospect",
+    2: "Lead",
+    3: "Pitch",
+    4: "Qualified",
+    5: "Proposal Sent",
+    6: "Negotiation",
+    7: "Closed",
+  }
+
   const handleStage = stageText => {}
 
   const [isLargeSize] = useMediaQuery("(min-width: 42em)")
@@ -52,6 +64,26 @@ const DealPopUp = ({ isOpen, onClose, value, companies, members }) => {
   const [notes, setNotes] = React.useState("")
   const toast = useToast()
 
+  const handleClick = async () => {
+    const options = {
+      company: company.id,
+      dealSize: dealSize,
+      name: dealName,
+      notes: notes,
+      recordedBy: recordedBy.id,
+      stage: reverseStageOptions[stage],
+      closeDate: closeDate,
+    }
+    await updateDeal(value.id, options)
+    toast({
+      title: "Success",
+      description: "Deal details have been updated",
+      status: "success",
+      duration: 5000,
+      isClosable: true,
+    })
+  }
+
   React.useEffect(() => {
     if (value) {
       setDealName(value.name)
@@ -64,7 +96,7 @@ const DealPopUp = ({ isOpen, onClose, value, companies, members }) => {
       }
       setCompany(value.company)
       setRecordedBy(value.recordedBy)
-      console.log(value)
+      setNotes(value.notes)
     }
   }, [value])
 
@@ -73,14 +105,13 @@ const DealPopUp = ({ isOpen, onClose, value, companies, members }) => {
   const parse = val => val.replace(/^\$/, "")
 
   const DateCustomInput = React.forwardRef(({ value, onClick }, ref) => (
-    <Input
-      className="datepicker-custom-input"
-      ref={ref}
-      onClick={onClick}
-      value={value || "Not Closed"}
-      focusBorderColor="ripple.200"
-      isReadOnly
-    />
+    <Box ref={ref} onClick={onClick}>
+      <Input
+        value={value || "Not Closed"}
+        focusBorderColor="ripple.200"
+        isReadOnly
+      />
+    </Box>
   ))
 
   const companyItem = company => {
@@ -105,10 +136,10 @@ const DealPopUp = ({ isOpen, onClose, value, companies, members }) => {
   return (
     <Modal isCentered isOpen={isOpen} onClose={onClose}>
       <ModalOverlay />
-      <ModalContent maxW="1200px">
+      <ModalContent maxW="850px">
         <ModalBody>
           <HStack spacing="20px">
-            <VStack w="70%" align="start" mx="10px" my="20px">
+            <VStack align="start" mx="10px" my="20px">
               <Button
                 pl="0px"
                 mb="10px"
@@ -170,7 +201,7 @@ const DealPopUp = ({ isOpen, onClose, value, companies, members }) => {
                   <Text fontSize="15px" color="ripple.200" pt="20px">
                     Current Stage
                   </Text>
-                  <StageStepper value={stage} />
+                  <StageStepper setStage={setStage} value={stage} />
                 </Box>
                 <Spacer />
                 <VStack spacing="15px">
@@ -215,7 +246,7 @@ const DealPopUp = ({ isOpen, onClose, value, companies, members }) => {
                   </Box>
                 </VStack>
               </HStack>
-              <HStack align="end" spacing="30px" w="100%">
+              <HStack align="end" spacing="30px" w="785px">
                 <Box w="100%">
                   <Text fontSize="15px" color="ripple.200" pt="10px" pb="10px">
                     Notes
@@ -231,6 +262,7 @@ const DealPopUp = ({ isOpen, onClose, value, companies, members }) => {
                 </Box>
                 <Box>
                   <Button
+                    onClick={handleClick}
                     bgColor="ripple.200"
                     color="white"
                     fontFamily="Raleway-Bold"
@@ -245,9 +277,6 @@ const DealPopUp = ({ isOpen, onClose, value, companies, members }) => {
                   </Button>
                 </Box>
               </HStack>
-            </VStack>
-            <VStack>
-              <Box>Interactions</Box>
             </VStack>
           </HStack>
         </ModalBody>

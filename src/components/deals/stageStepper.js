@@ -11,8 +11,9 @@ import {
   StepLabel,
   Typography,
 } from "@material-ui/core"
+import { RiAppleFill } from "react-icons/ri"
 
-const StageStepper = ({ value }) => {
+const StageStepper = ({ setStage, value }) => {
   const steps = [
     "Prospect",
     "Lead",
@@ -24,15 +25,28 @@ const StageStepper = ({ value }) => {
   ]
 
   const [activeStep, setActiveStep] = React.useState(0)
+  const [currStage, setCurrStage] = React.useState(0)
   const [completed, setCompleted] = React.useState({})
 
   React.useEffect(() => {
     if (value) {
-      handleComplete(value - 2)
       setActiveStep(value - 1)
+      const newCompleted = {}
+
+      let i = 0
+
       if (value == 7) {
-        setCompleted([true, true, true, true, true, true, true])
+        for (i; i < value; ++i) {
+          newCompleted[i] = true
+        }
+      } else {
+        for (i; i < value - 1; ++i) {
+          newCompleted[i] = true
+        }
       }
+
+      setCompleted(newCompleted)
+      setStage(value)
     }
   }, [value])
 
@@ -41,31 +55,26 @@ const StageStepper = ({ value }) => {
   }
 
   const handleComplete = currStep => {
+    setActiveStep(currStep + 1)
     const newCompleted = {}
-    for (let i = 0; i < currStep + 1; ++i) {
-      newCompleted[i] = true
+
+    if (currStep == 5) {
+      for (let i = 0; i < currStep + 2; ++i) {
+        newCompleted[i] = true
+      }
+    } else {
+      for (let i = 0; i < currStep + 1; ++i) {
+        newCompleted[i] = true
+      }
     }
     setCompleted(newCompleted)
-    handleNext()
+    setStage(currStep + 2)
   }
 
   const handleReset = () => {
     setActiveStep(0)
     setCompleted({})
-  }
-
-  const handleNext = () => {
-    const newActiveStep =
-      activeStep === steps.length - 1 &&
-      !(Object.keys(completed).length === steps.length)
-        ? // It's the last step, but not all steps have been completed,
-          // find the first step that has been completed
-          steps.findIndex((step, i) => !(i in completed))
-        : activeStep + 1
-    setActiveStep(newActiveStep)
-    if (newActiveStep == 6) {
-      setCompleted([true, true, true, true, true, true, true])
-    }
+    setStage(1)
   }
 
   return (
@@ -78,10 +87,28 @@ const StageStepper = ({ value }) => {
         ))}
       </Stepper>
       <HStack spacing="20px">
-        <Button size="sm" onClick={handleReset}>
+        <Button
+          bgColor="ripple.200"
+          color="white"
+          size="sm"
+          borderRadius="20px"
+          onClick={handleReset}
+          _hover={{
+            transform: "scale(1.05)",
+          }}
+        >
           Reset
         </Button>
-        <Button size="sm" onClick={() => handleComplete(activeStep)}>
+        <Button
+          bgColor="ripple.200"
+          color="white"
+          size="sm"
+          borderRadius="20px"
+          onClick={() => handleComplete(activeStep)}
+          _hover={{
+            transform: "scale(1.05)",
+          }}
+        >
           Complete Stage
         </Button>
       </HStack>

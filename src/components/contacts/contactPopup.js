@@ -83,7 +83,7 @@ const ContactPopUp = ({ isOpen, onClose, value }) => {
     await updateContact(value.id, options)
     toast({
       title: "Success",
-      description: "Your The Contact Detail Have Been Updated",
+      description: "Contact details have been updated",
       status: "success",
       duration: 5000,
       isClosable: true,

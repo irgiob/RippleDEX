@@ -42,7 +42,6 @@ export const createNewDeal = async (
   const docRef = await addDoc(collection(db, "deals"), {
     forOrganizaiton: orgID,
     name: dealName,
-    description: null,
     dealSize: dealSize,
     closeDate: closeDate,
     recordedBy: userID,
