@@ -18,19 +18,30 @@ import {
   Tooltip,
   useDisclosure,
   useToast,
+  Popover,
+  PopoverTrigger,
+  Portal,
+  PopoverContent,
+  PopoverArrow,
+  PopoverHeader,
+  PopoverCloseButton,
+  PopoverBody,
+  PopoverFooter,
 } from "@chakra-ui/react"
 
-import { HiOfficeBuilding, HiOutlineTrash } from "react-icons/hi"
+import { HiOutlineTrash, HiCheck, HiOutlineX, HiEdit } from "react-icons/hi"
+import { MdEdit } from "react-icons/md"
 import { AiOutlineMore } from "react-icons/ai"
 
 import {
   createNewTask,
+  deleteTask,
   getTask,
   getTasksByOrg,
   updateTask,
 } from "../models/Task"
 import { getDeal } from "../models/Deal"
-import { updateOrganization } from "../models/Organisation"
+import { updateOrganization, DEFAULT_STATUS } from "../models/Organisation"
 import TaskPopUp from "../components/tasks/taskPopup"
 
 /**
@@ -38,19 +49,22 @@ import TaskPopUp from "../components/tasks/taskPopup"
  */
 const TasksPage = ({ user, setUser, org, setOrg }) => {
   const [eventBus, setEventBus] = React.useState(undefined)
-  const [lanes, setLane] = React.useState([])
+  const [lanes, setLanes] = React.useState([])
+  const [laneCards, setLaneCards] = React.useState({})
   const toast = useToast()
   const { isOpen, onOpen, onClose } = useDisclosure()
   const [editDoc, setEditDoc] = React.useState({})
 
   React.useEffect(() => {
+    initLanes()
     loadData()
+    setLanes(org.kanbanLanes)
   }, [eventBus, isOpen])
 
   // Initialize lanes
   const initLanes = () => {
     let lanesArr = []
-    org.kanbanLanes.forEach(lane => {
+    lanes.forEach(lane => {
       lanesArr.push({
         title: lane,
         id: lane.toLowerCase(),
@@ -60,27 +74,27 @@ const TasksPage = ({ user, setUser, org, setOrg }) => {
     return { lanes: lanesArr }
   }
 
+  // Load the kanban cards from firestore
   const loadData = async () => {
     if (eventBus) {
-      // await createNewTask(
-      //   "Deal ID 2",
-      //   "This is another task",
-      //   "Sample task 2",
-      //   org.id
-      // )
+      // Create an object that has lane as key and cards id as element in array
+      let laneCardsObj = {}
+      lanes.forEach(lane => (laneCardsObj[lane.toLowerCase()] = []))
+      // Retrieve data from database
       try {
         const docs = await getTasksByOrg(org.id)
-        console.log(docs)
         docs.forEach(async doc => {
           const deal = await getDeal(doc.deal)
-          console.log(doc)
+
+          const laneId = org.kanbanLanes
+            .map(lane => lane.toLowerCase())
+            .includes(doc.status.toLowerCase())
+            ? doc.status.toLowerCase()
+            : DEFAULT_STATUS.toLowerCase()
+          // Add cards to kanban board
           eventBus.publish({
             type: "ADD_CARD",
-            laneId: org.kanbanLanes
-              .map(lane => lane.toLowerCase())
-              .includes(doc.status.toLowerCase())
-              ? doc.status
-              : "backlog",
+            laneId: laneId,
             card: {
               id: doc.id,
               title: doc.name,
@@ -89,18 +103,42 @@ const TasksPage = ({ user, setUser, org, setOrg }) => {
               description: doc.description,
             },
           })
+
+          // Update lane card
+          laneCardsObj[laneId].push(doc.id)
         })
+        setLaneCards(laneCardsObj)
       } catch (err) {
         console.log(err)
       }
     }
   }
 
+  // Update the associated card document when it is moved to the database
   const updateCardMoveAcrossLanes = async (id, origin, destination) => {
     try {
       await updateTask(id, { status: destination })
     } catch (err) {
       console.error("Error in updating card into firestore")
+    }
+  }
+
+  // Update the associated lane when it is moved to the database
+  const updateLaneWhenDragged = async (fromIndex, toIndex, payload) => {
+    // Editing array based on movement
+    let tempLanes = lanes
+    const moved = tempLanes[fromIndex]
+    tempLanes.splice(fromIndex, 1)
+    tempLanes.splice(toIndex, 0, moved)
+    setLanes(tempLanes)
+
+    // Update to firestore
+    try {
+      await updateOrganization(org.id, {
+        kanbanLanes: tempLanes,
+      })
+    } catch (error) {
+      console.error("Fail to update lane swap in firestore")
     }
   }
 
@@ -121,6 +159,7 @@ const TasksPage = ({ user, setUser, org, setOrg }) => {
   )
 
   const NewLaneForm = props => {
+    console.log(props)
     const { onCancel, t } = props
     const [LaneName, setLaneName] = React.useState("")
 
@@ -316,6 +355,203 @@ const TasksPage = ({ user, setUser, org, setOrg }) => {
     )
   }
 
+  // Custom lane header for the kanban board
+  const CustomLaneHeader = ({ updateTitle, onDelete, title }) => {
+    const message = "Are you sure you want to delete the lane?"
+    const warningMessage = "DELETING THIS WILL DELETE ALL TASK CARDS"
+    const ref = React.useRef()
+    const { isOpen, onClose, onOpen } = useDisclosure()
+    const [editing, setEditing] = React.useState(false)
+    const [editTitle, setEditTitle] = React.useState(title)
+
+    const cancelClick = () => {
+      onClose()
+      console.log(laneCards[title.toLowerCase()])
+    }
+    const confirmClick = async () => {
+      onClose()
+
+      // Update to firestore on lanes
+      let tempLanes = lanes
+      const removeIndex = tempLanes.indexOf(title)
+      tempLanes.splice(removeIndex, 1)
+      setLanes(tempLanes)
+      try {
+        await updateOrganization(org.id, {
+          kanbanLanes: tempLanes,
+        })
+      } catch (error) {
+        console.error("Fail to update lane swap in firestore")
+      }
+
+      // Deleted associated cards in firestore
+      laneCards[title.toLowerCase()].forEach(async id => {
+        await deleteTask(id)
+      })
+
+      onDelete()
+    }
+
+    const confirmEdit = async () => {
+      try {
+        // Update array and laneCards, replacing title with the appropriate one
+        let editLane = lanes
+        const index = editLane.indexOf(title)
+        if (index !== -1) {
+          editLane[index] = editTitle
+        }
+        setLanes(editLane)
+
+        // Update state for lanes
+        let editLaneCardsObj = laneCards
+        editLaneCardsObj[editTitle] = editLaneCardsObj[title]
+        delete editLaneCardsObj[title]
+        setLaneCards(editLaneCardsObj)
+
+        updateTitle(editTitle)
+        setEditing(false)
+
+        // Update lane names for organization in firestore
+        await updateOrganization(org.id, { kanbanLanes: lanes })
+
+        // Update lane names for tasks in firestore
+        laneCards[title].forEach(async id => {
+          await updateTask(id, { status: editTitle })
+        })
+
+        toast({
+          title: "Success",
+          description: "Lane successfuly renamed",
+          status: "success",
+          duration: 5000,
+          isClosable: true,
+        })
+      } catch (err) {
+        console.log(err)
+        console.error("Fail to update lane name")
+      }
+    }
+
+    return (
+      <>
+        <Box paddingLeft="10px" paddingRight="10px">
+          <HStack>
+            <Box p="12px">
+              <>
+                {editing ? (
+                  <>
+                    {/* Shows the text box for editing */}
+                    <HStack>
+                      <Input
+                        placeholder="Event title"
+                        value={editTitle}
+                        onChange={event => {
+                          setEditTitle(event?.target.value)
+                        }}
+                        width="10vw"
+                        height="2.5vh"
+                      />
+
+                      <Icon
+                        as={HiCheck}
+                        _hover={{ transform: "scale(1.08)" }}
+                        onClick={confirmEdit}
+                      />
+                      <Icon
+                        as={HiOutlineX}
+                        _hover={{ transform: "scale(1.08)" }}
+                        onClick={() => {
+                          setEditing(false)
+                        }}
+                      />
+                    </HStack>
+                  </>
+                ) : (
+                  <Text width="10vw" height="2.5vh">
+                    {title}
+                  </Text>
+                )}
+              </>
+            </Box>
+            <Spacer />
+            <Popover initialFocusRef={ref} isOpen={isOpen} closeOnBlur={true}>
+              <PopoverTrigger>
+                <Box>
+                  {!editing && title !== DEFAULT_STATUS ? (
+                    <>
+                      {/* Remove edit and delete buttons when editing or the lane is from a default table  */}
+                      <HStack>
+                        <Icon
+                          height="24px"
+                          as={MdEdit}
+                          onClick={() => {
+                            setEditing(true)
+                          }}
+                          border="10px"
+                        />
+                        <Spacer />
+                        <Icon
+                          border="10px"
+                          height="24px"
+                          color="red"
+                          as={HiOutlineTrash}
+                          onClick={onOpen}
+                        />
+                      </HStack>
+                    </>
+                  ) : (
+                    <></>
+                  )}
+                </Box>
+              </PopoverTrigger>
+              <Portal>
+                <PopoverContent>
+                  <PopoverArrow />
+                  <PopoverHeader>
+                    <Text fontSize="24px">Confirmation</Text>
+                  </PopoverHeader>
+                  <PopoverCloseButton onClick={onClose} />
+                  <PopoverBody>
+                    <Text>{message}</Text>
+                    <Text color="red">WARNING : {warningMessage}</Text>
+                  </PopoverBody>
+                  <PopoverFooter>
+                    <Box align="center">
+                      <HStack>
+                        <Icon
+                          w={8}
+                          h={8}
+                          borderRadius="5px"
+                          border="10px"
+                          color="white"
+                          backgroundColor="red"
+                          as={HiOutlineX}
+                          _hover={{ transform: "scale(1.08)" }}
+                          onClick={cancelClick}
+                        />
+                        <Spacer />
+                        <Icon
+                          w={8}
+                          h={8}
+                          borderRadius="5px"
+                          color="white"
+                          border="10px"
+                          backgroundColor="green"
+                          as={HiCheck}
+                          _hover={{ transform: "scale(1.08)" }}
+                          onClick={confirmClick}
+                        />
+                      </HStack>
+                    </Box>
+                  </PopoverFooter>
+                </PopoverContent>
+              </Portal>
+            </Popover>
+          </HStack>
+        </Box>
+      </>
+    )
+  }
   return (
     <>
       <Box pt="25px" pl="25px">
@@ -348,14 +584,16 @@ const TasksPage = ({ user, setUser, org, setOrg }) => {
           Card: CustomCard,
           NewLaneSection: NewLaneSection,
           NewLaneForm: NewLaneForm,
+          LaneHeader: CustomLaneHeader,
         }}
         eventBusHandle={setEventBus}
         editable
         draggable
         data={initLanes()}
         handleDragEnd={updateCardMoveAcrossLanes}
-        onCardClick={() => {
-          console.log("I am clicked")
+        handleLaneDragEnd={updateLaneWhenDragged}
+        onLaneDelete={() => {
+          console.log("HELLo")
         }}
       />
       <TaskPopUp

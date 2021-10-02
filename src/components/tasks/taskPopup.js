@@ -22,8 +22,7 @@ import {
   Spacer,
 } from "@chakra-ui/react"
 
-import { updateInteraction } from "../../models/Interaction"
-import { deleteTask } from "../../models/Task"
+import { deleteTask, updateTask } from "../../models/Task"
 
 import { HiOutlineTrash } from "react-icons/hi"
 
@@ -72,7 +71,7 @@ const TaskPopUp = ({ isOpen, onClose, value, setValue, afterUpdate, org }) => {
       assignedUsers: assignedUsers,
     }
 
-    await updateInteraction(value.id, options)
+    await updateTask(value.id, options)
 
     toast({
       title: "Success",
