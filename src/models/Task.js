@@ -91,9 +91,11 @@ export const getTask = async taskID => {
   const docRef = doc(db, "tasks", taskID)
   return getDoc(docRef)
     .then(task => {
-      const data = task.data()
-      data.id = taskID
-      return data
+      if (task.exists()) {
+        const data = task.data()
+        data.id = taskID
+        return data
+      }
     })
     .catch(error => {
       console.error("Error getting task: ", error)

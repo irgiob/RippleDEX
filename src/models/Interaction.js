@@ -55,7 +55,7 @@ export const createNewInteraction = async (
     meetingEnd: end,
     meetingType: type,
     notes: interNote, // Or create structure so people can add comments?
-    name : name,
+    name: name,
     remindMe: remindMe,
   })
   return docRef.id
@@ -132,9 +132,11 @@ export const getInteraction = async interID => {
   const docRef = doc(db, "interactions", interID)
   return getDoc(docRef)
     .then(interaction => {
-      const data = interaction.data()
-      data.id = interID
-      return data
+      if (interaction.exists()) {
+        const data = interaction.data()
+        data.id = interID
+        return data
+      }
     })
     .catch(error => {
       console.error("Error getting interaction: ", error)
