@@ -100,9 +100,11 @@ export const getCompany = async companyID => {
   const docRef = doc(db, "companies", companyID)
   return getDoc(docRef)
     .then(company => {
-      const data = company.data()
-      data.id = companyID
-      return data
+      if (company.exists()) {
+        const data = company.data()
+        data.id = companyID
+        return data
+      }
     })
     .catch(error => {
       console.error("Error getting company: ", error)

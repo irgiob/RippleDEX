@@ -207,9 +207,11 @@ export const getOrganization = orgID => {
   const docRef = doc(db, "organizations", orgID)
   return getDoc(docRef)
     .then(org => {
-      const data = org.data()
-      data.id = orgID
-      return data
+      if (org.exists()) {
+        const data = org.data()
+        data.id = orgID
+        return data
+      }
     })
     .catch(error => {
       console.error("Error getting organization: ", error)
