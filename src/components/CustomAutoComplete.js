@@ -42,47 +42,49 @@ export const CustomAutoComplete = ({
   focusBorderColor,
 }) => {
   return (
-    <CUIAutoComplete
-      placeholder={placeholder}
-      items={items}
-      itemRenderer={itemRenderer}
-      disableCreateItem={disableCreateItem}
-      hideToggleButton={true}
-      selectedItems={value !== undefined ? [value] : []}
-      onSelectedItemsChange={c => {
-        // selects the new selected item and then unfocus out of the input
-        onChange(c.selectedItems[0])
-        document.activeElement.blur()
-      }}
-      onCreateItem={onCreateItem}
-      tagStyleProps={{ display: "none" }}
-      listStyleProps={{ position: "absolute", zIndex: "10" }}
-      renderCustomInput={inputProps =>
-        // show list item with clear button if item is selected, else show input
-        value ? (
-          <Flex flexDir="row" alignItems="center" w="100%">
-            <AutoCompleteListItem
-              name={value[valueInputAttribute]}
-              profilePicture={value.profilePicture}
-              showImage={showImage}
+    <Box mt="-1em !important" mb="-1.5em !important">
+      <CUIAutoComplete
+        placeholder={placeholder}
+        items={items}
+        itemRenderer={itemRenderer}
+        disableCreateItem={disableCreateItem}
+        hideToggleButton={true}
+        selectedItems={value !== undefined ? [value] : []}
+        onSelectedItemsChange={c => {
+          // selects the new selected item and then unfocus out of the input
+          onChange(c.selectedItems[0])
+          document.activeElement.blur()
+        }}
+        onCreateItem={onCreateItem}
+        tagStyleProps={{ display: "none" }}
+        listStyleProps={{ position: "absolute", zIndex: "10" }}
+        renderCustomInput={inputProps =>
+          // show list item with clear button if item is selected, else show input
+          value ? (
+            <Flex flexDir="row" alignItems="center" w="100%" mb="0.5em">
+              <AutoCompleteListItem
+                name={value[valueInputAttribute]}
+                profilePicture={value.profilePicture}
+                showImage={showImage}
+              />
+              <Spacer />
+              <Tooltip label="Clear">
+                <Box>
+                  <AiOutlineClose onClick={() => onChange(undefined)} />
+                </Box>
+              </Tooltip>
+            </Flex>
+          ) : (
+            <Input
+              {...inputProps}
+              size={size}
+              variant={variant}
+              focusBorderColor={focusBorderColor}
             />
-            <Spacer />
-            <Tooltip label="Clear">
-              <Box>
-                <AiOutlineClose onClick={() => onChange(undefined)} />
-              </Box>
-            </Tooltip>
-          </Flex>
-        ) : (
-          <Input
-            {...inputProps}
-            size={size}
-            variant={variant}
-            focusBorderColor={focusBorderColor}
-          />
-        )
-      }
-    />
+          )
+        }
+      />
+    </Box>
   )
 }
 
