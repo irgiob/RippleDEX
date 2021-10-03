@@ -41,7 +41,7 @@ export const createNewInteraction = async (
   type,
   interNote,
   taskID,
-  remindMe = false,
+  remindMe = true,
   name = "",
   end = null,
   interPart = []
@@ -98,6 +98,10 @@ export const getInteractionsByDeal = async dealID => {
 
 export const getInteractionsByTask = async taskID => {
   return await getInteractionsByField("forTask", taskID)
+}
+
+export const getInteractionsByAddedBy = async addedID => {
+  return await getInteractionsByField("addedBy", addedID)
 }
 
 /**

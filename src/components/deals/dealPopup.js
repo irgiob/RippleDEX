@@ -1,5 +1,4 @@
-import * as React from "react"
-
+import React, { useState, useEffect, forwardRef } from "react"
 import { navigate } from "gatsby-link"
 
 import StageStepper from "./stageStepper"
@@ -7,18 +6,17 @@ import DatePicker from "react-datepicker"
 import { CustomAutoComplete, AutoCompleteListItem } from "../CustomAutoComplete"
 
 import { updateDeal } from "../../models/Deal"
+import { dateToFirebaseTimestamp } from "../../utils/DateTimeHelperFunctions"
 
 import {
   Box,
   Modal,
   ModalOverlay,
   ModalContent,
-  ModalHeader,
   ModalBody,
-  ModalCloseButton,
-  useMediaQuery,
   Text,
-  Image,
+  NumberInput,
+  NumberInputField,
   Input,
   VStack,
   HStack,
@@ -30,51 +28,44 @@ import {
 
 import { RiArrowLeftSLine } from "react-icons/ri"
 
-const DealPopUp = ({ isOpen, onClose, value, companies, members }) => {
-  const stageOptions = {
-    Prospect: 1,
-    Lead: 2,
-    Pitch: 3,
-    Qualified: 4,
-    "Proposal Sent": 5,
-    Negotiation: 6,
-    Closed: 7,
-  }
+const stageOptions = [
+  "Prospect",
+  "Lead",
+  "Pitch",
+  "Qualified",
+  "Proposal Sent",
+  "Negotiation",
+  "Closed",
+]
 
-  const reverseStageOptions = {
-    1: "Prospect",
-    2: "Lead",
-    3: "Pitch",
-    4: "Qualified",
-    5: "Proposal Sent",
-    6: "Negotiation",
-    7: "Closed",
-  }
-
-  const handleStage = stageText => {}
-
-  const [isLargeSize] = useMediaQuery("(min-width: 42em)")
-
-  const [dealName, setDealName] = React.useState("")
-  const [dealSize, setDealSize] = React.useState("")
-  const [company, setCompany] = React.useState(null)
-  const [stage, setStage] = React.useState("")
-  const [closeDate, setCloseDate] = React.useState(new Date())
-  const [recordedBy, setRecordedBy] = React.useState(null)
-  const [notes, setNotes] = React.useState("")
+const DealPopUp = ({ selected, setSelected, companies, members, onUpdate }) => {
+  const [dealName, setDealName] = useState("")
+  const [dealSize, setDealSize] = useState("")
+  const [company, setCompany] = useState(null)
+  const [stage, setStage] = useState("")
+  const [closeDate, setCloseDate] = useState(new Date())
+  const [recordedBy, setRecordedBy] = useState(null)
+  const [notes, setNotes] = useState("")
   const toast = useToast()
 
   const handleClick = async () => {
+    const newCloseDate = closeDate ? dateToFirebaseTimestamp(closeDate) : null
     const options = {
-      company: company.id,
-      dealSize: dealSize,
-      name: dealName,
-      notes: notes,
-      recordedBy: recordedBy.id,
-      stage: reverseStageOptions[stage],
-      closeDate: closeDate,
+      company: company?.id || null,
+      dealSize: dealSize || null,
+      name: dealName || null,
+      notes: notes || null,
+      recordedBy: recordedBy?.id || null,
+      stage: stageOptions[stage - 1],
+      closeDate: newCloseDate,
     }
-    await updateDeal(value.id, options)
+    await updateDeal(selected.id, options)
+    onUpdate({
+      ...selected,
+      ...options,
+      company: company,
+      recordedBy: recordedBy,
+    })
     toast({
       title: "Success",
       description: "Deal details have been updated",
@@ -84,27 +75,27 @@ const DealPopUp = ({ isOpen, onClose, value, companies, members }) => {
     })
   }
 
-  React.useEffect(() => {
-    if (value) {
-      setDealName(value.name)
-      setDealSize(value.dealSize)
-      setStage(stageOptions[value.stage])
-      if (value.closeDate != null) {
-        setCloseDate(value.closeDate.toDate())
-      } else if (value.closeDate == null) {
+  useEffect(() => {
+    if (selected) {
+      setDealName(selected.name)
+      setDealSize(selected.dealSize)
+      setStage(stageOptions.indexOf(selected.stage) + 1)
+      if (selected.closeDate != null) {
+        setCloseDate(selected.closeDate.toDate())
+      } else if (selected.closeDate == null) {
         setCloseDate(null)
       }
-      setCompany(value.company)
-      setRecordedBy(value.recordedBy)
-      setNotes(value.notes)
+      setCompany(selected.company)
+      setRecordedBy(selected.recordedBy)
+      setNotes(selected.notes)
     }
-  }, [value])
+  }, [selected])
 
   const format = val =>
     `$` + val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")
   const parse = val => val.replace(/^\$/, "")
 
-  const DateCustomInput = React.forwardRef(({ value, onClick }, ref) => (
+  const DateCustomInput = forwardRef(({ value, onClick }, ref) => (
     <Box ref={ref} onClick={onClick}>
       <Input
         value={value || "Not Closed"}
@@ -134,7 +125,7 @@ const DealPopUp = ({ isOpen, onClose, value, companies, members }) => {
   }
 
   return (
-    <Modal isCentered isOpen={isOpen} onClose={onClose}>
+    <Modal isCentered isOpen={selected} onClose={() => setSelected(null)}>
       <ModalOverlay />
       <ModalContent maxW="850px">
         <ModalBody>
@@ -151,7 +142,7 @@ const DealPopUp = ({ isOpen, onClose, value, companies, members }) => {
                 _hover={{
                   transform: "scale(1.05)",
                 }}
-                onClick={onClose}
+                onClick={() => setSelected(null)}
               >
                 {dealName}
               </Button>
@@ -173,14 +164,16 @@ const DealPopUp = ({ isOpen, onClose, value, companies, members }) => {
                   <Text fontSize="15px" color="ripple.200" pb="10px">
                     Deal Size
                   </Text>
-                  <Input
-                    focusBorderColor="ripple.200"
+                  <NumberInput
+                    precision={2}
+                    min={0}
                     placeholder="Deal Size"
-                    value={format(dealSize)}
-                    onChange={e => {
-                      setDealSize(e?.target.value)
-                    }}
-                  />
+                    value={dealSize ? format(dealSize) : format("")}
+                    onChange={e => setDealSize(parse(e))}
+                    focusBorderColor="ripple.200"
+                  >
+                    <NumberInputField />
+                  </NumberInput>
                 </Box>
                 <Spacer />
                 <Box>
@@ -188,11 +181,12 @@ const DealPopUp = ({ isOpen, onClose, value, companies, members }) => {
                     Closing Date
                   </Text>
                   <DatePicker
+                    popperClassName="newDatePicker"
                     dateFormat="dd/MM/yyyy"
                     selected={closeDate}
                     onChange={date => setCloseDate(date)}
                     customInput={<DateCustomInput />}
-                    portalId="root-portal"
+                    portalId="popup-portal"
                   />
                 </Box>
               </HStack>
@@ -218,7 +212,7 @@ const DealPopUp = ({ isOpen, onClose, value, companies, members }) => {
                         itemRenderer={companyItem}
                         disableCreateItem={false}
                         onCreateItem={() => navigate("/companies")}
-                        value={company}
+                        value={company || undefined}
                         valueInputAttribute="name"
                         onChange={setCompany}
                       />
@@ -238,7 +232,7 @@ const DealPopUp = ({ isOpen, onClose, value, companies, members }) => {
                         itemRenderer={memberItem}
                         disableCreateItem={true}
                         onCreateItem={() => null}
-                        value={recordedBy}
+                        value={recordedBy || undefined}
                         onChange={setRecordedBy}
                         valueInputAttribute="label"
                       />
@@ -254,7 +248,7 @@ const DealPopUp = ({ isOpen, onClose, value, companies, members }) => {
                   <Textarea
                     focusBorderColor="ripple.200"
                     placeholder="Notes"
-                    value={notes}
+                    value={notes || ""}
                     onChange={event => {
                       setNotes(event?.target.value)
                     }}

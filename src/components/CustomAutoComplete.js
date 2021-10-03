@@ -62,7 +62,7 @@ export const CustomAutoComplete = ({
         renderCustomInput={inputProps =>
           // show list item with clear button if item is selected, else show input
           value ? (
-            <Box align="start" w="220px">
+            <Box align="start" w="220px" ref={inputProps.ref}>
               <HStack>
                 <Box>
                   <AutoCompleteListItem

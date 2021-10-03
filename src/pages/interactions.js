@@ -35,6 +35,8 @@ import { getDeal } from "../models/Deal"
 
 import { getTask, getTasksByOrg } from "../models/Task"
 
+import { getCompany } from "../models/Company"
+
 import DatePicker from "react-datepicker"
 
 import { createMuiTheme, MuiThemeProvider } from "@material-ui/core"
@@ -141,6 +143,7 @@ const InteractionsPage = ({ user, setUser, org, setOrg }) => {
   const [contacts, setContacts] = React.useState([])
   const [deals, setDeals] = React.useState([])
   const [tasks, setTasks] = React.useState([])
+  const [companies, setCompanies] = React.useState([])
 
   React.useEffect(() => {
     // Fetch interactions for the table
@@ -502,6 +505,9 @@ const InteractionsPage = ({ user, setUser, org, setOrg }) => {
         onOpen={onOpen}
         isOpen={isOpen}
         onClose={onClose}
+        contacts={contacts}
+        deals={deals}
+        tasks={tasks}
       />
     </Box>
   )
