@@ -153,7 +153,7 @@ const DealPopUp = ({ isOpen, onClose, value, companies, members }) => {
                 }}
                 onClick={onClose}
               >
-                {value.name}
+                {dealName}
               </Button>
               <HStack spacing="20px" w="100%">
                 <Box>

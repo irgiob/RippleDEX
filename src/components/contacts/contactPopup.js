@@ -94,21 +94,22 @@ const ContactPopUp = ({ selected, setSelected, companies, onUpdate }) => {
     <Modal isCentered isOpen={selected} onClose={() => setSelected(null)}>
       <ModalOverlay />
       <ModalContent
-        h="80vh"
-        maxW="70vw"
+        maxW="1000px"
         borderRadius="15px"
-        overflowY="scroll"
+        //overflowY="scroll"
         value="inside"
       >
         <ModalCloseButton m="20px" />
         <ModalBody m="20px">
-          <Box maxW="100%" value="inside">
+          <Box value="inside">
             <Button
-              leftIcon={<RiArrowLeftSLine size={40} />}
+              pl="0px"
+              mb="10px"
+              bg="none"
+              leftIcon={<RiArrowLeftSLine size="40px" />}
               fontSize="25px"
               color="ripple.200"
               fontFamily="Raleway-Bold"
-              bg="none"
               _hover={{
                 transform: "scale(1.05)",
               }}
@@ -150,7 +151,9 @@ const ContactPopUp = ({ selected, setSelected, companies, onUpdate }) => {
               </GridItem>
               <GridItem rowSpan={6} colSpan={2}>
                 <VStack align="left">
-                  <Text fontSize="20px">Name</Text>
+                  <Text fontSize="15px" color="ripple.200">
+                    Contact Name
+                  </Text>
                   <Input
                     variant="outline"
                     placeholder="Contact Name"
@@ -159,7 +162,7 @@ const ContactPopUp = ({ selected, setSelected, companies, onUpdate }) => {
                     onChange={e => setContactName(e.target.value)}
                   />
 
-                  <Text pt="20px" mt="25px" fontSize="20px">
+                  <Text pt="13px" fontSize="15px" color="ripple.200">
                     Email
                   </Text>
                   <Input
@@ -169,7 +172,7 @@ const ContactPopUp = ({ selected, setSelected, companies, onUpdate }) => {
                     value={contactEmail}
                     onChange={e => setContactEmail(e.target.value)}
                   />
-                  <Text pt="20px" mt="25px" fontSize="20px">
+                  <Text pt="19px" fontSize="15px" color="ripple.200">
                     Phone Number
                   </Text>
                   <Input
@@ -189,7 +192,9 @@ const ContactPopUp = ({ selected, setSelected, companies, onUpdate }) => {
               </GridItem>
               <GridItem rowSpan={8} colSpan={2}>
                 <VStack align="left">
-                  <Text fontSize="20px">Company</Text>
+                  <Text fontSize="15px" color="ripple.200">
+                    Company
+                  </Text>
                   <CustomAutoComplete
                     placeholder="Contact's Company"
                     items={companies}
@@ -207,7 +212,7 @@ const ContactPopUp = ({ selected, setSelected, companies, onUpdate }) => {
                     size="md"
                     variant="outline"
                   />
-                  <Text pt="20px" mt="25px" fontSize="20px">
+                  <Text pt="20px" fontSize="15px" color="ripple.200">
                     Position at Company
                   </Text>
                   <Input
@@ -217,7 +222,7 @@ const ContactPopUp = ({ selected, setSelected, companies, onUpdate }) => {
                     value={contactPosition}
                     onChange={e => setContactPosition(e.target.value)}
                   />
-                  <Text pt="20px" mt="25px" fontSize="20px">
+                  <Text pt="20px" fontSize="15px" color="ripple.200">
                     Details
                   </Text>
                   <Textarea
@@ -227,15 +232,14 @@ const ContactPopUp = ({ selected, setSelected, companies, onUpdate }) => {
                     value={contactMemo}
                     onChange={e => setContactMemo(e.target.value)}
                   />
-                  <Box align="right">
+                  <Box pt="30px" align="end">
                     <Button
-                      mb="60px"
                       bgColor="ripple.200"
                       color="white"
                       fontFamily="Raleway-Bold"
-                      borderRadius="30px"
+                      borderRadius="50px"
                       variant="solid"
-                      w="50%"
+                      size="lg"
                       _hover={{
                         transform: "scale(1.05)",
                       }}
@@ -285,10 +289,9 @@ const ContactPopUp = ({ selected, setSelected, companies, onUpdate }) => {
                   </VStack>
                 </GridItem>
               )}
-              <GridItem rowSpan={2} colSpan={1} />
             </Grid>
           </Box>
-          {selected?.id && (
+          {/* selected?.id && (
             <VStack w="100%" align="left">
               <Text
                 fontSize="25px"
@@ -300,7 +303,7 @@ const ContactPopUp = ({ selected, setSelected, companies, onUpdate }) => {
               <hr />
               <Box>Interactions Table Here</Box>
             </VStack>
-          )}
+          )*/}
         </ModalBody>
       </ModalContent>
     </Modal>
