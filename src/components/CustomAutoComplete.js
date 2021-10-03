@@ -8,6 +8,7 @@ import {
   Text,
   Box,
   Spacer,
+  HStack,
 } from "@chakra-ui/react"
 import { AiOutlineClose } from "react-icons/ai"
 
@@ -42,46 +43,55 @@ export const CustomAutoComplete = ({
   focusBorderColor,
 }) => {
   return (
-    <CUIAutoComplete
-      placeholder={placeholder}
-      items={items}
-      itemRenderer={itemRenderer}
-      disableCreateItem={disableCreateItem}
-      hideToggleButton={true}
-      selectedItems={value !== undefined ? [value] : []}
-      onSelectedItemsChange={c => {
-        // selects the new selected item and then unfocus out of the input
-        onChange(c.selectedItems[0])
-        document.activeElement.blur()
-      }}
-      onCreateItem={onCreateItem}
-      tagStyleProps={{ display: "none" }}
-      renderCustomInput={inputProps =>
-        // show list item with clear button if item is selected, else show input
-        value ? (
-          <Flex flexDir="row" alignItems="center" w="100%">
-            <AutoCompleteListItem
-              name={value[valueInputAttribute]}
-              profilePicture={value.profilePicture}
-              showImage={showImage}
+    <Box mt="-1em !important" mb="-1.5em !important">
+      <CUIAutoComplete
+        placeholder={placeholder}
+        items={items}
+        itemRenderer={itemRenderer}
+        disableCreateItem={disableCreateItem}
+        hideToggleButton={true}
+        selectedItems={value !== undefined ? [value] : []}
+        onSelectedItemsChange={c => {
+          // selects the new selected item and then unfocus out of the input
+          onChange(c.selectedItems[0])
+          document.activeElement.blur()
+        }}
+        onCreateItem={onCreateItem}
+        tagStyleProps={{ display: "none" }}
+        listStyleProps={{ position: "absolute", zIndex: "10" }}
+        renderCustomInput={inputProps =>
+          // show list item with clear button if item is selected, else show input
+          value ? (
+            <Box align="start" w="220px">
+              <HStack>
+                <Box>
+                  <AutoCompleteListItem
+                    name={value[valueInputAttribute]}
+                    profilePicture={value.profilePicture}
+                    showImage={showImage}
+                  />
+                </Box>
+                <Spacer />
+                <Box>
+                  <Tooltip label="Clear">
+                    <Box>
+                      <AiOutlineClose onClick={() => onChange(undefined)} />
+                    </Box>
+                  </Tooltip>
+                </Box>
+              </HStack>
+            </Box>
+          ) : (
+            <Input
+              {...inputProps}
+              size={size ? size : "sm"}
+              variant={variant ? variant : "flushed"}
+              focusBorderColor={focusBorderColor}
             />
-            <Spacer />
-            <Tooltip label="Clear">
-              <Box>
-                <AiOutlineClose onClick={() => onChange(undefined)} />
-              </Box>
-            </Tooltip>
-          </Flex>
-        ) : (
-          <Input
-            {...inputProps}
-            size={size}
-            variant={variant}
-            focusBorderColor={focusBorderColor}
-          />
-        )
-      }
-    />
+          )
+        }
+      />
+    </Box>
   )
 }
 

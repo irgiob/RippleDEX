@@ -10,12 +10,16 @@ import { RiAddFill } from "react-icons/ri"
 const CreateEventButton = ({ onOpen }) => {
   return (
     <Button
-      leftIcon={<RiAddFill size={20} />}
-      backgroundColor="ripple.100"
-      border="10px"
-      margin="10px"
-      float="right"
       size="lg"
+      leftIcon={<RiAddFill size={20} />}
+      bgColor="ripple.200"
+      color="white"
+      fontFamily="Raleway-Bold"
+      borderRadius="30px"
+      variant="solid"
+      _hover={{
+        transform: "scale(1.05)",
+      }}
       onClick={onOpen}
     >
       Add Interaction

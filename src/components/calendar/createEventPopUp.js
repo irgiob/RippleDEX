@@ -14,6 +14,7 @@ import {
   Switch,
   HStack,
   Box,
+  VStack,
 } from "@chakra-ui/react"
 
 import DatePicker from "react-datepicker"
@@ -73,66 +74,77 @@ const CreateEventPopUp = ({
       <Modal isCentered isOpen={isOpen} onClose={closeModal}>
         <ModalOverlay />
         <ModalContent>
-          <ModalHeader>Create New Event</ModalHeader>
           <ModalCloseButton />
-          <ModalBody>
-            {/* Create form for creating new event*/}
-            <Input
-              placeholder="Event title"
-              value={title}
-              onChange={event => {
-                setTitle(event.target.value)
-              }}
-            />
-            <HStack margin="10px">
-              <Text width="100px">Event Date:</Text>
-              <Box>
-                <DatePicker
-                  selected={date}
-                  onChange={date => {
-                    setDate(date)
-                  }}
-                  customInput={<DatePickerInput />}
+          <ModalBody p="25px" pr="30px" pl="30px">
+            <VStack spacing="20px" align="inherit">
+              <Text
+                fontFamily="Raleway-Bold"
+                color="ripple.200"
+                fontSize="23px"
+              >
+                Create New Event
+              </Text>
+              {/* Create form for creating new event*/}
+              <Input
+                placeholder="Event title"
+                value={title}
+                onChange={event => {
+                  setTitle(event.target.value)
+                }}
+              />
+              <HStack>
+                <Text width="100px">Event Date:</Text>
+                <Box>
+                  <DatePicker
+                    selected={date}
+                    onChange={date => {
+                      setDate(date)
+                    }}
+                    customInput={<DatePickerInput />}
+                  />
+                </Box>
+              </HStack>
+              <HStack>
+                <Text width="100px">Start Time:</Text>
+                <TimePicker
+                  onChange={setStartTime}
+                  value={startTime}
+                  disableClock={true}
                 />
+              </HStack>
+              <HStack>
+                <Text width="100px">End Time:</Text>
+                <TimePicker
+                  onChange={setEndTime}
+                  value={endTime}
+                  disabled={isAllDay}
+                  disableClock={true}
+                />
+              </HStack>
+              <HStack>
+                <Text width="100px">All day</Text>
+                <Switch onChange={switchChangeHandler} />
+              </HStack>
+              <Box align="end">
+                <Button
+                  bgColor="ripple.200"
+                  color="white"
+                  fontFamily="Raleway-Bold"
+                  borderRadius="30px"
+                  variant="solid"
+                  _hover={{
+                    transform: "scale(1.05)",
+                  }}
+                  onClick={() => {
+                    closeModal()
+                    createEvent()
+                  }}
+                >
+                  Create Event
+                </Button>
               </Box>
-            </HStack>
-            <HStack margin="10px">
-              <Text width="100px">Start Time:</Text>
-              <TimePicker
-                onChange={setStartTime}
-                value={startTime}
-                disableClock={true}
-              />
-            </HStack>
-            <HStack margin="10px">
-              <Text width="100px">End Time:</Text>
-              <TimePicker
-                onChange={setEndTime}
-                value={endTime}
-                disabled={isAllDay}
-                disableClock={true}
-              />
-            </HStack>
-            <HStack margin="10px">
-              <Text width="100px">All day</Text>
-              <Switch onChange={switchChangeHandler} />
-            </HStack>
+            </VStack>
           </ModalBody>
-          <ModalFooter>
-            <Button
-              backgroundColor="ripple.100"
-              border="10px"
-              margin="10px"
-              float="right"
-              size="lg"
-              onClick={() => {
-                closeModal()
-                createEvent()
-              }}
-            >
-              Create
-            </Button>
-          </ModalFooter>
         </ModalContent>
       </Modal>
     </>

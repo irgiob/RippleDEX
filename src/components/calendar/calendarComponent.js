@@ -202,7 +202,9 @@ const CalendarComponent = ({ user, org }) => {
         date={date}
         setDate={setDate}
       />
-      <CreateEventButton onOpen={onOpen} />
+      <Box pt="20px" pb="20px" align="end">
+        <CreateEventButton onOpen={onOpen} />
+      </Box>
       <InteractionPopUp
         isOpen={isOpenEdit}
         onClose={onCloseEdit}

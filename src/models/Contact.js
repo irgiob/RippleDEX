@@ -112,9 +112,11 @@ export const getContact = async contactID => {
   const docRef = doc(db, "contacts", contactID)
   return getDoc(docRef)
     .then(contact => {
-      const data = contact.data()
-      data.id = contactID
-      return data
+      if (contact.exists()) {
+        const data = contact.data()
+        data.id = contactID
+        return data
+      }
     })
     .catch(error => {
       console.error("Error getting contact: ", error)

@@ -99,22 +99,6 @@ const DealsPage = ({ user, setUser, org, setOrg }) => {
       },
     },
     overrides: {
-      MuiTableRow: {
-        root: {
-          "&[mode=add]": {
-            "& td": {
-              verticalAlign: "top",
-              paddingTop: "2em !important",
-              "& .chakra-form__label": {
-                display: "none",
-              },
-              "& .chakra-stack": {
-                marginTop: 0,
-              },
-            },
-          },
-        },
-      },
       ".react-datepicker-popper": {
         zIndex: 11,
       },
@@ -190,10 +174,12 @@ const DealsPage = ({ user, setUser, org, setOrg }) => {
       <MuiThemeProvider theme={theme}>
         <MaterialTable
           options={{
+            headerStyle: {
+              zIndex: 1,
+            },
             showTitle: false,
             selection: true,
             searchFieldAlignment: "right",
-            maxBodyHeight: "80vh",
             padding: "dense",
             filtering: true,
             exportButton: true,
@@ -240,19 +226,21 @@ const DealsPage = ({ user, setUser, org, setOrg }) => {
                   )
                 }
                 return (
-                  <CustomAutoComplete
-                    placeholder="Select company"
-                    items={companies}
-                    itemRenderer={companyItem}
-                    disableCreateItem={false}
-                    onCreateItem={() => navigate("/companies")}
-                    value={props.value}
-                    onChange={props.onChange}
-                    valueInputAttribute="name"
-                    size="sm"
-                    variant="flushed"
-                    focusBorderColor="ripple.200"
-                  />
+                  <Box mt="-1.5em !important">
+                    <CustomAutoComplete
+                      placeholder="Select company"
+                      items={companies}
+                      itemRenderer={companyItem}
+                      disableCreateItem={false}
+                      onCreateItem={() => navigate("/companies")}
+                      value={props.value}
+                      onChange={props.onChange}
+                      valueInputAttribute="name"
+                      size="sm"
+                      variant="flushed"
+                      focusBorderColor="ripple.200"
+                    />
+                  </Box>
                 )
               },
               render: rowData => {
@@ -324,6 +312,9 @@ const DealsPage = ({ user, setUser, org, setOrg }) => {
                 return (
                   <Badge
                     variant="outline"
+                    py="3px"
+                    px="6px"
+                    borderRadius="6px"
                     colorScheme={stageOptions[rowData.stage]}
                   >
                     {rowData.stage}
@@ -390,19 +381,21 @@ const DealsPage = ({ user, setUser, org, setOrg }) => {
                   )
                 }
                 return (
-                  <CustomAutoComplete
-                    placeholder="Select member"
-                    items={members}
-                    itemRenderer={memberItem}
-                    disableCreateItem={true}
-                    onCreateItem={() => null}
-                    value={props.value}
-                    onChange={props.onChange}
-                    valueInputAttribute="label"
-                    size="sm"
-                    variant="flushed"
-                    focusBorderColor="ripple.200"
-                  />
+                  <Box mt="-1.5em !important">
+                    <CustomAutoComplete
+                      placeholder="Select member"
+                      items={members}
+                      itemRenderer={memberItem}
+                      disableCreateItem={true}
+                      onCreateItem={() => null}
+                      value={props.value}
+                      onChange={props.onChange}
+                      valueInputAttribute="label"
+                      size="sm"
+                      variant="flushed"
+                      focusBorderColor="ripple.200"
+                    />
+                  </Box>
                 )
               },
               render: rowData => {
@@ -421,6 +414,12 @@ const DealsPage = ({ user, setUser, org, setOrg }) => {
                   return <Text>Unassigned</Text>
                 }
               },
+            },
+            {
+              title: "notes",
+              field: "notes",
+              type: "string",
+              hidden: true,
             },
           ]}
           actions={[
@@ -494,6 +493,8 @@ const DealsPage = ({ user, setUser, org, setOrg }) => {
         />
       </MuiThemeProvider>
       <DealPopUp
+        companies={companies}
+        members={members}
         value={value}
         onOpen={onOpen}
         isOpen={isOpen}

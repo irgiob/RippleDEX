@@ -34,14 +34,17 @@ import {
 } from "@chakra-ui/react"
 import { navigate } from "gatsby-link"
 
-const IndexPage = (props) => {
+const IndexPage = props => {
   const [isLargeSize] = useMediaQuery("(min-width: 42em)")
   const { isOpen, onOpen, onClose } = useDisclosure()
   const homeInfo = useRef()
-  const scrollToDiv = (ref) => window.scrollTo(0, ref.current.offsetTop - 10);
+  const scrollToDiv = ref => window.scrollTo(0, ref.current.offsetTop - 10)
 
-  useEffect( () => {
-    onAuthLoad((user) => navigate("/dashboard"), () => {})
+  useEffect(() => {
+    onAuthLoad(
+      user => navigate("/dashboard"),
+      () => {}
+    )
   }, [])
 
   return (
@@ -154,39 +157,41 @@ const IndexPage = (props) => {
         </Center>
         <div id="scroll">
           <svg
-            className="waves"
+            style={{ marginBottom: "-2px" }}
+            position="relative"
+            width="100%"
+            height="20vh"
             xmlns="http://www.w3.org/2000/svg"
-            xmlnsXlink="http://www.w3.org/1999/xlink"
-            viewBox="0 24 150 28"
+            viewBox="0 20 130 30"
             preserveAspectRatio="none"
             shapeRendering="auto"
           >
             <defs>
               <path
-                id="gentle-wave"
-                d="M-160 44c30 0 58-18 88-18s 58 18 88 18 58-18 88-18 58 18 88 18 v44h-352z"
+                id="wave"
+                d="M-160 44c30 0 58-18 88-18s58 18 88 18 58-18 88-18 58 18 88 18v44h-352z"
               />
             </defs>
-            <g className="parallax">
+            <g className="waves">
               <use
-                xlinkHref="#gentle-wave"
+                xlinkHref="#wave"
                 x="48"
                 y="0"
-                fill="rgba(255,255,255,0.7"
+                fill="rgba(255,255,255,0.6)"
               />
               <use
-                xlinkHref="#gentle-wave"
+                xlinkHref="#wave"
                 x="48"
-                y="3"
-                fill="rgba(255,255,255,0.5)"
+                y="2"
+                fill="rgba(255,255,255,0.4)"
               />
               <use
-                xlinkHref="#gentle-wave"
+                xlinkHref="#wave"
                 x="48"
-                y="5"
-                fill="rgba(255,255,255,0.3)"
+                y="4"
+                fill="rgba(255,255,255,0.2)"
               />
-              <use xlinkHref="#gentle-wave" x="48" y="7" fill="#fff" />
+              <use xlinkHref="#wave" x="48" y="6" fill="white" />
             </g>
           </svg>
         </div>

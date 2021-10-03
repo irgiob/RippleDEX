@@ -42,7 +42,6 @@ export const createNewDeal = async (
   const docRef = await addDoc(collection(db, "deals"), {
     forOrganizaiton: orgID,
     name: dealName,
-    description: null,
     dealSize: dealSize,
     closeDate: closeDate,
     recordedBy: userID,
@@ -112,9 +111,11 @@ export const getDeal = async dealID => {
   const docRef = doc(db, "deals", dealID)
   return getDoc(docRef)
     .then(deal => {
-      const data = deal.data()
-      data.id = dealID
-      return data
+      if (deal.exists()) {
+        const data = deal.data()
+        data.id = dealID
+        return data
+      }
     })
     .catch(error => {
       console.error("Error getting deal: ", error)

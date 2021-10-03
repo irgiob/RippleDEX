@@ -103,7 +103,7 @@ const TaskPopUp = ({ isOpen, onClose, value, setValue, afterUpdate, org }) => {
         <ModalBody m="20px">
           <Text
             pb="20px"
-            fontSize="30px"
+            fontSize="25px"
             fontFamily="Raleway-Bold"
             color="ripple.200"
           >
