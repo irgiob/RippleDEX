@@ -275,6 +275,19 @@ const CompaniesPage = ({ user, setUser, org, setOrg }) => {
             {
               title: "Annual Revenue",
               field: "annualRevenue",
+              customFilterAndSearch: (term, rowData) => {
+                var match = ""
+                var re = true
+                if ((match = term.match(/(^|,)=(\d*)($|,)/)))
+                  re = re && rowData.dealSize.toString().startsWith(match[2])
+                if ((match = term.match(/(^|,)!=(\d*)($|,)/)))
+                  re = re && !rowData.dealSize.toString().startsWith(match[2])
+                if ((match = term.match(/(^|,)>(\d+)($|,)/)))
+                  re = re && rowData.dealSize > parseInt(match[2])
+                if ((match = term.match(/(^|,)<(\d+)($|,)/)))
+                  re = re && rowData.dealSize < parseInt(match[2])
+                return re
+              },
               editComponent: props => {
                 const format = val =>
                   `$` + val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")
