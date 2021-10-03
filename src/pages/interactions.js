@@ -3,10 +3,7 @@ import * as React from "react"
 import Layout from "../components/layout"
 import Seo from "../components/seo"
 
-import { Heading } from "@chakra-ui/react"
-
 import {
-  Button,
   Box,
   Text,
   IconButton,
@@ -35,12 +32,9 @@ import { getDeal } from "../models/Deal"
 
 import { getTask, getTasksByOrg } from "../models/Task"
 
-import { getCompany } from "../models/Company"
-
 import DatePicker from "react-datepicker"
 
 import { createMuiTheme, MuiThemeProvider } from "@material-ui/core"
-import Pic from "../images/RippleDEX.png"
 
 import { forwardRef } from "react"
 
@@ -107,27 +101,6 @@ const InteractionsPage = ({ user, setUser, org, setOrg }) => {
       },
       secondary: {
         main: "#168aa8",
-      },
-    },
-    overrides: {
-      MuiTableRow: {
-        root: {
-          "&[mode=add]": {
-            "& td": {
-              verticalAlign: "top",
-              paddingTop: "2em !important",
-              "& .chakra-form__label": {
-                display: "none",
-              },
-              "& .chakra-stack": {
-                marginTop: 0,
-              },
-            },
-          },
-        },
-      },
-      ".react-datepicker-popper": {
-        zIndex: 11,
       },
     },
   })

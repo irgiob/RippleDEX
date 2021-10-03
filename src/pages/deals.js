@@ -249,6 +249,19 @@ const DealsPage = ({ user, setUser, org, setOrg }) => {
             {
               title: "Deal Size",
               field: "dealSize",
+              customFilterAndSearch: (term, rowData) => {
+                var match = ""
+                var re = true
+                if ((match = term.match(/(^|,)=(\d*)($|,)/)))
+                  re = re && rowData.dealSize.toString().startsWith(match[2])
+                if ((match = term.match(/(^|,)!=(\d*)($|,)/)))
+                  re = re && !rowData.dealSize.toString().startsWith(match[2])
+                if ((match = term.match(/(^|,)>(\d+)($|,)/)))
+                  re = re && rowData.dealSize > parseInt(match[2])
+                if ((match = term.match(/(^|,)<(\d+)($|,)/)))
+                  re = re && rowData.dealSize < parseInt(match[2])
+                return re
+              },
               editComponent: props => {
                 const format = val =>
                   `$` + val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")
@@ -282,6 +295,12 @@ const DealsPage = ({ user, setUser, org, setOrg }) => {
             {
               title: "Stage",
               field: "stage",
+              lookup: Object.fromEntries(
+                Object.keys(stageOptions).map((_, i) => [
+                  Object.keys(stageOptions)[i],
+                  Object.keys(stageOptions)[i],
+                ])
+              ),
               editComponent: props => {
                 return (
                   <Select
@@ -317,6 +336,31 @@ const DealsPage = ({ user, setUser, org, setOrg }) => {
             {
               title: "Close Date",
               field: "closeDate",
+              customFilterAndSearch: (term, rowData) => {
+                const ops = {
+                  "=": (x, y) => x === y,
+                  "!=": (x, y) => x !== y,
+                  ">": (x, y) => x > y,
+                  "<": (x, y) => x < y,
+                }
+                if (rowData.closeDate) {
+                  var match = ""
+                  var re = true
+                  const date = rowData.closeDate.toDate()
+                  if ((match = term.matchAll(/(^|,?)(D|d)(=|>|<)(\d*)($|,?)/g)))
+                    for (const m of match)
+                      re = re && ops[m[3]](date.getDate(), parseInt(m[4]))
+                  if ((match = term.matchAll(/(^|,?)(M|m)(=|>|<)(\d*)($|,?)/g)))
+                    for (const m of match)
+                      re = re && ops[m[3]](date.getMonth() + 1, parseInt(m[4]))
+                  if ((match = term.matchAll(/(^|,?)(Y|y)(=|>|<)(\d*)($|,?)/g)))
+                    for (const m of match)
+                      re = re && ops[m[3]](date.getFullYear(), parseInt(m[4]))
+                  return re
+                } else {
+                  return false
+                }
+              },
               editComponent: props => {
                 const DateCustomInput = forwardRef(
                   ({ value, onClick }, ref) => (
