@@ -99,22 +99,6 @@ const DealsPage = ({ user, setUser, org, setOrg }) => {
       },
     },
     overrides: {
-      MuiTableRow: {
-        root: {
-          "&[mode=add]": {
-            "& td": {
-              verticalAlign: "top",
-              paddingTop: "2em !important",
-              "& .chakra-form__label": {
-                display: "none",
-              },
-              "& .chakra-stack": {
-                marginTop: 0,
-              },
-            },
-          },
-        },
-      },
       ".react-datepicker-popper": {
         zIndex: 11,
       },
@@ -196,7 +180,6 @@ const DealsPage = ({ user, setUser, org, setOrg }) => {
             showTitle: false,
             selection: true,
             searchFieldAlignment: "right",
-            maxBodyHeight: "80vh",
             padding: "dense",
             filtering: true,
             exportButton: true,
@@ -243,19 +226,21 @@ const DealsPage = ({ user, setUser, org, setOrg }) => {
                   )
                 }
                 return (
-                  <CustomAutoComplete
-                    placeholder="Select company"
-                    items={companies}
-                    itemRenderer={companyItem}
-                    disableCreateItem={false}
-                    onCreateItem={() => navigate("/companies")}
-                    value={props.value}
-                    onChange={props.onChange}
-                    valueInputAttribute="name"
-                    size="sm"
-                    variant="flushed"
-                    focusBorderColor="ripple.200"
-                  />
+                  <Box mt="-1.5em !important">
+                    <CustomAutoComplete
+                      placeholder="Select company"
+                      items={companies}
+                      itemRenderer={companyItem}
+                      disableCreateItem={false}
+                      onCreateItem={() => navigate("/companies")}
+                      value={props.value}
+                      onChange={props.onChange}
+                      valueInputAttribute="name"
+                      size="sm"
+                      variant="flushed"
+                      focusBorderColor="ripple.200"
+                    />
+                  </Box>
                 )
               },
               render: rowData => {
@@ -396,19 +381,21 @@ const DealsPage = ({ user, setUser, org, setOrg }) => {
                   )
                 }
                 return (
-                  <CustomAutoComplete
-                    placeholder="Select member"
-                    items={members}
-                    itemRenderer={memberItem}
-                    disableCreateItem={true}
-                    onCreateItem={() => null}
-                    value={props.value}
-                    onChange={props.onChange}
-                    valueInputAttribute="label"
-                    size="sm"
-                    variant="flushed"
-                    focusBorderColor="ripple.200"
-                  />
+                  <Box mt="-1.5em !important">
+                    <CustomAutoComplete
+                      placeholder="Select member"
+                      items={members}
+                      itemRenderer={memberItem}
+                      disableCreateItem={true}
+                      onCreateItem={() => null}
+                      value={props.value}
+                      onChange={props.onChange}
+                      valueInputAttribute="label"
+                      size="sm"
+                      variant="flushed"
+                      focusBorderColor="ripple.200"
+                    />
+                  </Box>
                 )
               },
               render: rowData => {

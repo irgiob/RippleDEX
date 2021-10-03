@@ -1,18 +1,11 @@
 import React, { forwardRef, createRef, useState, useEffect } from "react"
-import { navigate } from "gatsby-link"
 
 import Layout from "../components/layout"
 import Seo from "../components/seo"
 
-import {
-  Box,
-  Text,
-  Input,
-  useDisclosure,
-  useToast,
-  Avatar,
-} from "@chakra-ui/react"
+import { Box, Text, Input, useToast, Avatar } from "@chakra-ui/react"
 
+import CompanyPopUp from "../components/companies/companyPopup"
 import ContactPopUp from "../components/contacts/contactPopup"
 import UploadImageButton from "../components/uploadImageButton"
 import {
@@ -26,7 +19,12 @@ import {
   deleteContact,
 } from "../models/Contact"
 
-import { getCompany, getCompanyByOrg } from "../models/Company"
+import {
+  createNewCompany,
+  updateCompany,
+  getCompany,
+  getCompanyByOrg,
+} from "../models/Company"
 
 import { createMuiTheme, MuiThemeProvider } from "@material-ui/core"
 
@@ -48,7 +46,7 @@ import SaveAlt from "@material-ui/icons/SaveAlt"
 import Search from "@material-ui/icons/Search"
 import ViewColumn from "@material-ui/icons/ViewColumn"
 
-import { AiFillEdit, AiOutlineFileAdd } from "react-icons/ai"
+import { AiFillEdit, AiOutlineFileAdd, AiOutlineCheck } from "react-icons/ai"
 
 /**
  * Renders the page content
@@ -94,19 +92,10 @@ const ContactsPage = ({ user, setUser, org, setOrg }) => {
       },
     },
     overrides: {
-      MuiTableRow: {
+      MuiPaper: {
         root: {
-          "&[mode=add]": {
-            "& td": {
-              verticalAlign: "top",
-              paddingTop: "2em !important",
-              "& .chakra-form__label": {
-                display: "none",
-              },
-              "& .chakra-stack": {
-                marginTop: 0,
-              },
-            },
+          "& > div[class^='Component']": {
+            overflowX: "visible !important",
           },
         },
       },
@@ -115,13 +104,11 @@ const ContactsPage = ({ user, setUser, org, setOrg }) => {
 
   const toast = useToast()
 
-  // Modal or Popup triggers
-  const { isOpen, onOpen, onClose } = useDisclosure()
-
   const tableRef = createRef()
   const [contactList, setContactList] = useState([])
   const [companies, setCompanies] = useState([])
-  const [value, setValue] = useState("")
+  const [selected, setSelected] = useState()
+  const [newCompany, setNewCompany] = useState()
 
   useEffect(() => {
     const fetchContacts = async orgID => {
@@ -142,11 +129,6 @@ const ContactsPage = ({ user, setUser, org, setOrg }) => {
     fetchContacts(org.id)
     fetchCompanies(org.id)
   }, [org])
-
-  const handlePopUp = value => {
-    setValue(value)
-    onOpen()
-  }
 
   const currTime = new Date().toLocaleString()
 
@@ -192,7 +174,14 @@ const ContactsPage = ({ user, setUser, org, setOrg }) => {
                     borderRadius="full"
                     size="sm"
                     _hover={{ transform: "scale(1.08)" }}
-                    buttonMessage={<AiOutlineFileAdd size="1rem" />}
+                    buttonMessage={
+                      props.value ? (
+                        <AiOutlineCheck size="1rem" />
+                      ) : (
+                        <AiOutlineFileAdd size="1rem" />
+                      )
+                    }
+                    color={props.value ? "green" : "black"}
                     changeUrl={url => props.onChange(url)}
                   />
                 )
@@ -238,19 +227,45 @@ const ContactsPage = ({ user, setUser, org, setOrg }) => {
                   )
                 }
                 return (
-                  <CustomAutoComplete
-                    placeholder="Select company"
-                    items={companies}
-                    itemRenderer={companyItem}
-                    disableCreateItem={false}
-                    onCreateItem={() => navigate("/companies")}
-                    value={props.value}
-                    onChange={props.onChange}
-                    valueInputAttribute="name"
-                    size="sm"
-                    variant="flushed"
-                    focusBorderColor="ripple.200"
-                  />
+                  <Box mt="-1.5em !important">
+                    <CustomAutoComplete
+                      placeholder="Select company"
+                      items={companies}
+                      itemRenderer={companyItem}
+                      disableCreateItem={false}
+                      onCreateItem={newCompanyName =>
+                        setNewCompany({
+                          id: null,
+                          address: null,
+                          annualRevenue: null,
+                          description: null,
+                          industry: null,
+                          name: newCompanyName.value,
+                          personnel: null,
+                          primaryContact: { name: "Your New Contact" },
+                          profilePicture: null,
+                          registeredBy: org.id,
+                          relationship: null,
+                          website: null,
+                        })
+                      }
+                      value={props.value}
+                      onChange={props.onChange}
+                      valueInputAttribute="name"
+                      size="sm"
+                      variant="flushed"
+                      focusBorderColor="ripple.200"
+                    />
+                    <CompanyPopUp
+                      selected={newCompany}
+                      setSelected={setNewCompany}
+                      companies={companies}
+                      onUpdate={newUpdatedCompany =>
+                        props.onChange(newUpdatedCompany)
+                      }
+                      orgID={org.id}
+                    />
+                  </Box>
                 )
               },
               render: rowData => {
@@ -333,15 +348,27 @@ const ContactsPage = ({ user, setUser, org, setOrg }) => {
             {
               icon: () => <AiFillEdit />,
               tooltip: "Edit Contact",
-              onClick: (event, rowData) => handlePopUp(rowData),
+              onClick: (event, rowData) => setSelected(rowData),
               position: "row",
             },
           ]}
           editable={{
             onRowAdd: newData => {
               const promise = new Promise((resolve, reject) => {
-                setTimeout(() => {
-                  createNewContact(
+                setTimeout(async () => {
+                  if (newData.company && newData.company.id === null) {
+                    const companyID = await createNewCompany(
+                      org.id,
+                      newData.company.name,
+                      null,
+                      newData.company.annualRevenue,
+                      newData.company.industry,
+                      newData.company.website,
+                      newData.company.profilePicture
+                    )
+                    if (companyID) newData.company.id = companyID
+                  }
+                  const contactID = await createNewContact(
                     org.id,
                     newData.name || null,
                     newData.company?.id || null,
@@ -349,17 +376,19 @@ const ContactsPage = ({ user, setUser, org, setOrg }) => {
                     newData.phoneNumber || null,
                     newData.position || null,
                     newData.profilePicture || null
-                  ).then(contactID => {
-                    if (contactID) {
-                      setContactList([
-                        ...contactList,
-                        { ...newData, id: contactID },
-                      ])
-                      resolve()
-                    } else {
-                      reject()
-                    }
-                  })
+                  )
+                  if (contactID) {
+                    updateCompany(newData.company.id, {
+                      primaryContact: contactID,
+                    })
+                    setContactList([
+                      ...contactList,
+                      { ...newData, id: contactID },
+                    ])
+                    resolve()
+                  } else {
+                    reject()
+                  }
                 }, 1000)
               })
               promise.then(
@@ -397,10 +426,15 @@ const ContactsPage = ({ user, setUser, org, setOrg }) => {
         />
       </MuiThemeProvider>
       <ContactPopUp
-        value={value}
-        onOpen={onOpen}
-        isOpen={isOpen}
-        onClose={onClose}
+        selected={selected}
+        setSelected={setSelected}
+        companies={companies}
+        onUpdate={updatedContact => {
+          setContactList([
+            ...contactList.filter(contact => contact.id !== updatedContact.id),
+            updatedContact,
+          ])
+        }}
       />
     </Box>
   )
