@@ -14,7 +14,6 @@ import {
   NumberInput,
   NumberInputField,
   Select,
-  useDisclosure,
   useToast,
   Badge,
 } from "@chakra-ui/react"
@@ -107,13 +106,11 @@ const DealsPage = ({ user, setUser, org, setOrg }) => {
 
   const toast = useToast()
 
-  // Modal or Popup triggers
-  const { isOpen, onOpen, onClose } = useDisclosure()
   const tableRef = createRef()
   const [dealList, setDealList] = useState([])
   const [members, setMembers] = useState([])
   const [companies, setCompanies] = useState([])
-  const [value, setValue] = useState("")
+  const [selected, setSelected] = useState("")
 
   useEffect(() => {
     const fetchDeals = async orgID => {
@@ -154,11 +151,6 @@ const DealsPage = ({ user, setUser, org, setOrg }) => {
     fetchMembers(org.members)
     fetchCompanies(org.id)
   }, [org])
-
-  const handlePopUp = value => {
-    setValue(value)
-    onOpen()
-  }
 
   return (
     <Box p="25px">
@@ -426,7 +418,7 @@ const DealsPage = ({ user, setUser, org, setOrg }) => {
             {
               icon: () => <AiFillEdit />,
               tooltip: "Edit Contact",
-              onClick: (event, rowData) => handlePopUp(rowData),
+              onClick: (event, rowData) => setSelected(rowData),
               position: "row",
             },
           ]}
@@ -495,10 +487,14 @@ const DealsPage = ({ user, setUser, org, setOrg }) => {
       <DealPopUp
         companies={companies}
         members={members}
-        value={value}
-        onOpen={onOpen}
-        isOpen={isOpen}
-        onClose={onClose}
+        selected={selected}
+        setSelected={setSelected}
+        onUpdate={updatedDeal => {
+          setDealList([
+            ...dealList.filter(deal => deal.id !== updatedDeal.id),
+            updatedDeal,
+          ])
+        }}
       />
     </Box>
   )
