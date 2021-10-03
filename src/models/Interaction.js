@@ -98,6 +98,10 @@ export const getInteractionsByTask = async taskID => {
   return await getInteractionsByField("forTask", taskID)
 }
 
+export const getInteractionsByAddedBy = async addedID => {
+  return await getInteractionsByField("addedBy", addedID)
+}
+
 /**
  * gets all interactions where value in field is equal to foreignKey
  *
