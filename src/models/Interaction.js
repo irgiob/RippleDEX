@@ -41,7 +41,7 @@ export const createNewInteraction = async (
   type,
   interNote,
   taskID,
-  remindMe = false,
+  remindMe = true,
   name = "",
   end = null,
   interPart = []
