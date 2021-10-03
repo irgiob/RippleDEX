@@ -38,6 +38,7 @@ const ReminderComponent = ({ user, org }) => {
     const interactions = await getInteractionsByAddedBy(user.id).then(
       interactions =>
         setAllEvents(
+          // Sort Event List by time referenced from https://www.codegrepper.com/code-examples/javascript/how+to+sort+array+of+objects+according+to+epoch+time
           interactions.sort(function (a, b) {
             var dateA = a.meetingStart,
               dateB = b.meetingStart
@@ -165,7 +166,7 @@ const ReminderComponent = ({ user, org }) => {
 
   return (
     <Box>
-      <VStack align="left" pl="1em" h="80vh" overflowY="scroll">
+      <VStack align="left" pl="1em" pr="2em" h="85vh" overflowY="auto">
         <Button
           w="200px"
           p="20px"
