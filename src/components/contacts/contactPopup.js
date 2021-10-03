@@ -72,7 +72,7 @@ const ContactPopUp = ({ selected, setSelected, companies, onUpdate }) => {
       await updateContact(selected?.id, options)
       toast({
         title: "Success",
-        description: "Your The Contact Detail Have Been Updated",
+        description: "Contact details have been updated",
         status: "success",
         duration: 5000,
         isClosable: true,
@@ -80,14 +80,6 @@ const ContactPopUp = ({ selected, setSelected, companies, onUpdate }) => {
     } else {
       setSelected(null)
     }
-    await updateContact(selected.id, options)
-    toast({
-      title: "Success",
-      description: "Contact details have been updated",
-      status: "success",
-      duration: 5000,
-      isClosable: true,
-    })
   }
 
   return (

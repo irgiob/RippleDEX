@@ -18,7 +18,9 @@ import {
   Tooltip,
 } from "@chakra-ui/react"
 
-import { AiOutlineClose, AiOutlineEdit } from "react-icons/ai"
+import { AiOutlineEdit } from "react-icons/ai"
+
+import { HiOutlineX } from "react-icons/hi"
 
 import { RiNotificationOffLine } from "react-icons/ri"
 
@@ -86,7 +88,7 @@ const EventDetails = ({ eventInfo, deleteEvent, editEvent }) => {
                     <IconButton
                       aria-label="Close"
                       backgroundColor="white"
-                      icon={<AiOutlineClose size={24} />}
+                      icon={<HiOutlineX size={24} />}
                       onClick={onClose}
                     />
                   </Tooltip>
