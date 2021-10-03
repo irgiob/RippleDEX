@@ -21,6 +21,7 @@ import {
   useMediaQuery,
   useToast,
   Textarea,
+  navigate,
 } from "@chakra-ui/react"
 
 import {
@@ -35,6 +36,10 @@ import "react-datepicker/dist/react-datepicker.css"
 
 import { getTimeFromDate } from "../../utils/DateTimeHelperFunctions"
 import { updateInteraction } from "../../models/Interaction"
+import { getCompany } from "../../models/Company"
+
+import { CustomAutoComplete, AutoCompleteListItem } from "../CustomAutoComplete"
+import { getContact } from "../../models/Contact"
 
 /**
  *
@@ -50,6 +55,9 @@ const InteractionPopUp = ({
   value,
   setValue,
   afterUpdate,
+  contacts,
+  tasks,
+  deals,
 }) => {
   const [isLargeSize] = useMediaQuery("(min-width: 42em)")
 
@@ -65,9 +73,10 @@ const InteractionPopUp = ({
   const [notes, setNotes] = useState("")
   const [remindMe, setRemindMe] = useState(false)
   const [type, setType] = useState("")
+  const [company, setCompany] = useState("")
   const toast = useToast()
 
-  useEffect(() => {
+  useEffect(async () => {
     if (value) {
       setTitle(value.name)
       setDate(value.meetingStart.toDate())
@@ -82,6 +91,12 @@ const InteractionPopUp = ({
       setForTask(value.forTask)
       setNotes(value.notes)
       setType(value.meetingType)
+
+      console.log(value.contact.company)
+      if (value.contact) {
+        const company = await getCompany(value.contact.company)
+        setCompany(company.name)
+      }
     }
   }, [value])
 
@@ -138,6 +153,32 @@ const InteractionPopUp = ({
 
     afterUpdate()
     onClose()
+  }
+
+  const dealItem = deal => {
+    return <AutoCompleteListItem name={deal.name} showImage={false} />
+  }
+
+  const contactItem = contact => {
+    return (
+      <AutoCompleteListItem
+        name={contact.name}
+        profilePicture={contact.profilePicture}
+      />
+    )
+  }
+
+  const taskItem = task => {
+    return <AutoCompleteListItem name={task.name} showImage={false} />
+  }
+
+  const handleContactSet = async contact => {
+    if (contact) {
+      const contact = await getContact(contact)
+      const company = await getCompany(contact.company)
+      setCompany(company.name)
+      setContactID(contact)
+    }
   }
 
   return (
@@ -218,7 +259,7 @@ const InteractionPopUp = ({
                   />
                 </HStack>
                 <Box>
-                  <HStack  pt="3vh">
+                  <HStack pt="3vh">
                     <Text>Start Time:</Text>
                     <TimePicker
                       onChange={setStartTime}
@@ -229,7 +270,7 @@ const InteractionPopUp = ({
                   <Text pl="2vw">|</Text>
                   <HStack>
                     <Text>End Time: </Text>
-                    <Box/>
+                    <Box />
                     <TimePicker
                       onChange={setEndTime}
                       value={endTime}
@@ -281,37 +322,44 @@ const InteractionPopUp = ({
                   <Text m="10px" w="6vw" color="ripple.200">
                     Contact
                   </Text>
-                  <Input
-                    placeholder="Contact"
+                  <CustomAutoComplete
+                    variant="outline"
+                    size="md"
+                    placeholder="Select task"
+                    items={contacts}
+                    itemRenderer={contactItem}
+                    disableCreateItem={false}
+                    onCreateItem={() => navigate("/contacts")}
                     value={contactID}
-                    onChange={event => {
-                      setContactID(event.target.value)
-                    }}
+                    valueInputAttribute="name"
+                    onChange={handleContactSet}
                   />
                 </Box>
                 <Box>
                   <Text m="10px" w="6vw" color="ripple.200">
                     Company
                   </Text>
-                  <Input
-                    placeholder="Company"
-                    value={forOrganization}
-                    onChange={event => {
-                      setForOrganization(event.target.value)
-                    }}
-                  />
+                  <Text>{company}</Text>
                 </Box>
                 <Box>
                   <Text m="10px" w="6vw" color="ripple.200">
                     Deal
                   </Text>
-                  <Input
-                    placeholder="Deal"
-                    value={forDeal}
-                    onChange={event => {
-                      setForDeal(event?.target.value)
-                    }}
-                  />
+                  <Box>
+                    <CustomAutoComplete
+                      variant="outline"
+                      size="md"
+                      placeholder="Select deal"
+                      items={deals}
+                      itemRenderer={dealItem}
+                      disableCreateItem={false}
+                      onCreateItem={() => navigate("/deals")}
+                      value={forDeal}
+                      valueInputAttribute="name"
+                      onChange={setForDeal}
+                      showImage={false}
+                    />
+                  </Box>
                 </Box>
               </HStack>
             </GridItem>
@@ -319,13 +367,21 @@ const InteractionPopUp = ({
               <Text m="10px" w="12vw" color="ripple.200">
                 Activity
               </Text>
-              <Input
-                placeholder="Activity"
-                value={forTask}
-                onChange={event => {
-                  setForTask(event.target.value)
-                }}
-              />
+              <Box>
+                <CustomAutoComplete
+                  variant="outline"
+                  size="md"
+                  placeholder="Select task"
+                  items={tasks}
+                  itemRenderer={taskItem}
+                  disableCreateItem={false}
+                  onCreateItem={() => navigate("/tasks")}
+                  value={forTask}
+                  valueInputAttribute="name"
+                  onChange={setForTask}
+                  showImage={false}
+                />
+              </Box>
             </GridItem>
 
             <GridItem rowSpan={4} colSpan={4}>

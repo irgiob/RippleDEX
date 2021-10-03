@@ -17,6 +17,12 @@ import {
   getInteraction,
 } from "../../models/Interaction"
 
+import { getContact, getContactsByOrg } from "../../models/Contact"
+
+import { getTasksByOrg } from "../../models/Task"
+
+import { getDealsByOrg } from "../../models/Deal"
+
 import InteractionPopUp from "../interactions/interactionPopup"
 
 /**
@@ -37,17 +43,45 @@ const CalendarComponent = ({ user, org }) => {
   const [date, setDate] = useState(new Date())
   const [editDoc, setEditDoc] = useState(null)
 
+  const [contacts, setContacts] = useState([])
+  const [deals, setDeals] = useState([])
+  const [tasks, setTasks] = useState([])
+
   useEffect(() => {
+    // Fetch contacts for autocomplete
+    const fetchContacts = async orgID => {
+      const contactList = await getContactsByOrg(orgID)
+      for (const contact of contactList) contact.label = contact.name
+      setContacts(contactList)
+    }
+    // Fetch deals to autocomplete
+    const fetchDeals = async orgID => {
+      const dealList = await getDealsByOrg(orgID)
+      for (const deal of dealList) deal.label = deal.name
+      setDeals(dealList)
+    }
+
+    // Fetch tasks to autocomplete
+    const fetchTasks = async orgID => {
+      const taskList = await getTasksByOrg(orgID)
+      for (const task of taskList) task.label = task.name
+      setTasks(taskList)
+    }
+
+    fetchContacts(org.id)
+    fetchDeals(org.id)
+    fetchTasks(org.id)
     clearEvents()
     loadEvents()
   }, [])
 
   // Add event from firestore document
-  const addEvent = doc => {
+  const addEvent = async doc => {
     let calendarApi = calendarRef.current.getApi()
+    const contact = await getContact(doc.contact)
     calendarApi.addEvent({
       id: doc.id,
-      title: doc.name,
+      title: doc?.name ? doc.name : "Meeting with " + contact.name,
       start: doc.meetingStart.toDate(),
       end: doc.meetingEnd == null ? null : doc.meetingEnd.toDate(),
       allDay: doc.meetingEnd == null ? true : false,
@@ -58,10 +92,10 @@ const CalendarComponent = ({ user, org }) => {
   const loadEvents = async () => {
     // Fetch all data from firestore
     const interactions = await getInteractionsByOrg(org.id)
-
+    console.log(interactions)
     const events = interactions.filter(doc => {
-      // Remove non assigned  and non remindMe interactions
-      return doc.participants.includes(user.id) && doc.remindMe
+      // non remindMe interactions
+      return doc.remindMe
     })
 
     // Add every interactions meeting into calendar
@@ -91,7 +125,9 @@ const CalendarComponent = ({ user, org }) => {
     isAllDay,
     contactID = "",
     dealID = "",
-    type = ""
+    taskID = "",
+    type = "",
+    notes = ""
   ) => {
     // Parse time into date
     let start = new Date(startDate)
@@ -114,7 +150,8 @@ const CalendarComponent = ({ user, org }) => {
       dealID,
       start,
       type,
-      "",
+      notes,
+      taskID,
       true,
       title,
       end,
@@ -185,8 +222,6 @@ const CalendarComponent = ({ user, org }) => {
             right: "dayGridMonth,timeGridWeek",
           }}
           dateClick={handleDateSelected}
-          // selectable={true}
-          // select={handleDateSelected}
           editable={true}
           aspectRatio={2.5}
           eventContent={renderEventContent}
@@ -201,6 +236,9 @@ const CalendarComponent = ({ user, org }) => {
         onClose={onClose}
         date={date}
         setDate={setDate}
+        contacts={contacts}
+        deals={deals}
+        tasks={tasks}
       />
       <Box pt="20px" pb="20px" align="end">
         <CreateEventButton onOpen={onOpen} />
@@ -216,6 +254,7 @@ const CalendarComponent = ({ user, org }) => {
           console.log(doc)
           addEvent(doc)
         }}
+        t
       />
     </>
   )
