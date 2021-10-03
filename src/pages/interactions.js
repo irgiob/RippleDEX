@@ -14,15 +14,28 @@ import {
   Tooltip,
   useDisclosure,
   useToast,
+  navigate,
 } from "@chakra-ui/react"
 
 import InteractionPopUp from "../components/interactions/interactionPopup"
+
+import { dateToFirebaseTimestamp } from "../utils/DateTimeHelperFunctions"
+
+import { getUser } from "../models/User"
 
 import {
   createNewInteraction,
   getInteractionsByOrg,
   deleteInteraction,
 } from "../models/Interaction"
+
+import { getContact, getContactsByOrg } from "../models/Contact"
+
+import { getDeal } from "../models/Deal"
+
+import { getTask, getTasksByOrg } from "../models/Task"
+
+import DatePicker from "react-datepicker"
 
 import { createMuiTheme, MuiThemeProvider } from "@material-ui/core"
 import Pic from "../images/RippleDEX.png"
@@ -48,6 +61,12 @@ import Search from "@material-ui/icons/Search"
 import ViewColumn from "@material-ui/icons/ViewColumn"
 
 import { AiFillEdit } from "react-icons/ai"
+
+import {
+  AutoCompleteListItem,
+  CustomAutoComplete,
+} from "../components/CustomAutoComplete"
+import { getDealsByOrg } from "../models/Deal"
 
 const InteractionsPage = ({ user, setUser, org, setOrg }) => {
   const tableIcons = {
@@ -88,6 +107,27 @@ const InteractionsPage = ({ user, setUser, org, setOrg }) => {
         main: "#168aa8",
       },
     },
+    overrides: {
+      MuiTableRow: {
+        root: {
+          "&[mode=add]": {
+            "& td": {
+              verticalAlign: "top",
+              paddingTop: "2em !important",
+              "& .chakra-form__label": {
+                display: "none",
+              },
+              "& .chakra-stack": {
+                marginTop: 0,
+              },
+            },
+          },
+        },
+      },
+      ".react-datepicker-popper": {
+        zIndex: 11,
+      },
+    },
   })
 
   const toast = useToast()
@@ -98,20 +138,82 @@ const InteractionsPage = ({ user, setUser, org, setOrg }) => {
   const tableRef = React.createRef()
   const [interactionList, setInteractionList] = React.useState([])
   const [value, setValue] = React.useState("")
+  const [contacts, setContacts] = React.useState([])
+  const [deals, setDeals] = React.useState([])
+  const [tasks, setTasks] = React.useState([])
 
   React.useEffect(() => {
-    var promise = Promise.resolve(getInteractionsByOrg(org.id))
-    promise.then(function (val) {
-      setInteractionList(val)
-    })
-  }, [])
+    // Fetch interactions for the table
+    const fetchInteractions = async orgID => {
+      const interactions = await getInteractionsByOrg(orgID)
+      for await (const interaction of interactions) {
+        // Fetch data on fields with associated documents
+        if (interaction.contact) {
+          const contact = await getContact(interaction.contact)
+          if (contact) {
+            contact.label = contact.name
+          }
+          interaction.contact = contact
+        }
+
+        if (interaction.addedBy) {
+          const addedBy = await getUser(interaction.addedBy)
+          if (addedBy) {
+            addedBy.label = addedBy.firstName + " " + addedBy.lastName
+          }
+          interaction.addedBy = addedBy
+        }
+
+        if (interaction.forDeal) {
+          const deal = await getDeal(interaction.forDeal)
+          if (deal) {
+            deal.label = deal.name
+          }
+          interaction.forDeal = deal
+        }
+
+        if (interaction.forTask) {
+          const task = await getTask(interaction.forTask)
+          if (task) {
+            task.label = task.name
+          }
+          interaction.forTask = task
+        }
+      }
+      setInteractionList(interactions)
+    }
+
+    // Fetch contacts for autocomplete
+    const fetchContacts = async orgID => {
+      const contactList = await getContactsByOrg(orgID)
+      for (const contact of contactList) contact.label = contact.name
+      setContacts(contactList)
+    }
+    // Fetch deals to autocomplete
+    const fetchDeals = async orgID => {
+      const dealList = await getDealsByOrg(orgID)
+      for (const deal of dealList) deal.label = deal.name
+      setDeals(dealList)
+    }
+
+    // Fetch tasks to autocomplete
+    const fetchTasks = async orgID => {
+      const taskList = await getTasksByOrg(orgID)
+      for (const task of taskList) task.label = task.name
+      setTasks(taskList)
+    }
+
+    fetchInteractions(org.id)
+    fetchContacts(org.id)
+    fetchDeals(org.id)
+    fetchTasks(org.id)
+  }, [org])
 
   const handlePopUp = value => {
     setValue(value)
     onOpen()
   }
 
-  const currTime = new Date().toLocaleString()
   return (
     <Box p="25px">
       <Text
@@ -125,7 +227,6 @@ const InteractionsPage = ({ user, setUser, org, setOrg }) => {
 
       <MuiThemeProvider theme={theme}>
         <MaterialTable
-          title={`Interactions for ${org.name} (${currTime})`}
           options={{
             showTitle: false,
             selection: true,
@@ -144,35 +245,166 @@ const InteractionsPage = ({ user, setUser, org, setOrg }) => {
           icons={tableIcons}
           columns={[
             {
-              render: rowData => (
-                <img src={Pic} style={{ width: 50, borderRadius: "50%" }} />
-              ),
-              width: "10%",
-            },
-            {
-              title: "Contact Name",
+              title: "Contact",
               field: "contact",
-              type: "string",
-              width: "18%",
+              customFilterAndSearch: (term, rowData) =>
+                rowData.contact?.label
+                  .toLowerCase()
+                  .includes(term.toLowerCase()),
+              editComponent: props => {
+                const contactItem = contact => {
+                  return (
+                    <AutoCompleteListItem
+                      name={contact.name}
+                      profilePicture={contact.profilePicture}
+                    />
+                  )
+                }
+                return (
+                  <CustomAutoComplete
+                    placeholder="Select contact"
+                    items={contacts}
+                    itemRenderer={contactItem}
+                    disableCreateItem={false}
+                    onCreateItem={() => navigate("/contacts")}
+                    value={props.value}
+                    onChange={props.onChange}
+                    valueInputAttribute="name"
+                    size="sm"
+                    variant="flushed"
+                    focusBorderColor="ripple.200"
+                  />
+                )
+              },
+              render: rowData => {
+                return rowData.contact ? (
+                  <AutoCompleteListItem name={rowData.contact.name} />
+                ) : (
+                  <Text>Unassigned</Text>
+                )
+              },
             },
             {
-              title: "Added By",
-              field: "addedBy",
-              type: "string",
-              width: "18%",
-            },
-            {
-              title: "Deal Name",
+              title: "Deal",
               field: "forDeal",
-              type: "string",
-              width: "18%",
+              customFilterAndSearch: (term, rowData) =>
+                rowData.forDeal?.label
+                  .toLowerCase()
+                  .includes(term.toLowerCase()),
+              editComponent: props => {
+                const dealItem = deal => {
+                  return (
+                    <AutoCompleteListItem name={deal.name} showImage={false} />
+                  )
+                }
+                return (
+                  <CustomAutoComplete
+                    placeholder="Select deal"
+                    items={deals}
+                    itemRenderer={dealItem}
+                    disableCreateItem={false}
+                    onCreateItem={() => navigate("/deals")}
+                    value={props.value}
+                    onChange={props.onChange}
+                    valueInputAttribute="name"
+                    size="sm"
+                    variant="flushed"
+                    focusBorderColor="ripple.200"
+                  />
+                )
+              },
+              render: rowData => {
+                return rowData.forDeal ? (
+                  <AutoCompleteListItem
+                    name={rowData.forDeal.name}
+                    showImage={false}
+                  />
+                ) : (
+                  <Text>Unassigned</Text>
+                )
+              },
             },
             {
-              title: "Meeting Time",
+              title: "Task",
+              field: "forTask",
+              customFilterAndSearch: (term, rowData) =>
+                rowData.forTask?.label
+                  .toLowerCase()
+                  .includes(term.toLowerCase()),
+              editComponent: props => {
+                const taskItem = forTask => {
+                  return (
+                    <AutoCompleteListItem
+                      name={forTask.name}
+                      showImage={false}
+                    />
+                  )
+                }
+                return (
+                  <CustomAutoComplete
+                    placeholder="Select task"
+                    items={tasks}
+                    itemRenderer={taskItem}
+                    disableCreateItem={false}
+                    onCreateItem={() => navigate("/tasks")}
+                    value={props.value}
+                    onChange={props.onChange}
+                    valueInputAttribute="name"
+                    size="sm"
+                    variant="flushed"
+                    focusBorderColor="ripple.200"
+                  />
+                )
+              },
+              render: rowData => {
+                return rowData.forTask ? (
+                  <AutoCompleteListItem
+                    name={rowData.forTask.name}
+                    showImage={false}
+                  />
+                ) : (
+                  <Text>Unassigned</Text>
+                )
+              },
+            },
+            {
+              title: "Meeting Date",
               field: "meetingStart",
-              type: "string",
-              width: "18%",
-              align: "left",
+              editComponent: props => {
+                const DateCustomInput = forwardRef(
+                  ({ value, onClick }, ref) => (
+                    <Input
+                      className="datepicker-custom-input"
+                      ref={ref}
+                      onClick={onClick}
+                      value={value || new Date()}
+                      size="sm"
+                      variant="flushed"
+                      focusBorderColor="ripple.200"
+                      isReadOnly
+                    />
+                  )
+                )
+                return (
+                  <DatePicker
+                    dateFormat="dd/MM/yyyy hh:mm"
+                    showTimeSelect
+                    selected={Date.parse(props.value)}
+                    onChange={date => props.onChange(date)}
+                    customInput={<DateCustomInput />}
+                    portalId="root-portal"
+                  />
+                )
+              },
+              render: rowData => {
+                return rowData.meetingStart ? (
+                  <Text>
+                    {rowData.meetingStart.toDate().toLocaleDateString()}
+                  </Text>
+                ) : (
+                  <Text>{"Not set"}</Text>
+                )
+              },
             },
             {
               title: "Meeting Type",
@@ -209,22 +441,26 @@ const InteractionsPage = ({ user, setUser, org, setOrg }) => {
             onRowAdd: newData => {
               const promise = new Promise((resolve, reject) => {
                 setTimeout(() => {
-                  const interactionID = createNewInteraction(
+                  newData.meetingStart = newData.meetingStart
+                    ? dateToFirebaseTimestamp(newData.meetingStart)
+                    : null
+                  createNewInteraction(
                     org.id,
-                    newData.contact,
-                    newData.addedBy,
-                    newData.forDeal,
+                    newData.contact?.id,
+                    user.id,
+                    newData.forDeal?.id,
                     newData.meetingStart,
                     newData.meetingType,
-                    newData.notes
-                  )
-
-                  if (interactionID) {
-                    setInteractionList([...interactionList, newData])
-                    resolve()
-                  } else {
-                    reject()
-                  }
+                    newData.notes,
+                    newData.forTask?.id
+                  ).then(interactionID => {
+                    if (interactionID) {
+                      setInteractionList([...interactionList, newData])
+                      resolve()
+                    } else {
+                      reject()
+                    }
+                  })
                 }, 1000)
               })
               promise.then(

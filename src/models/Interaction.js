@@ -11,6 +11,7 @@ import {
   deleteDoc,
   addDoc,
 } from "firebase/firestore"
+import { createNull } from "typescript"
 
 const db = getFirestore(firebase)
 
@@ -39,6 +40,7 @@ export const createNewInteraction = async (
   start,
   type,
   interNote,
+  taskID,
   remindMe = false,
   name = "",
   end = null,
@@ -49,13 +51,13 @@ export const createNewInteraction = async (
     participants: interPart,
     addedBy: userID,
     forDeal: dealID,
-    forTask: null,
+    forTask: taskID,
     forOrganization: orgID,
     meetingStart: start,
     meetingEnd: end,
     meetingType: type,
     notes: interNote, // Or create structure so people can add comments?
-    name : name,
+    name: name,
     remindMe: remindMe,
   })
   return docRef.id
