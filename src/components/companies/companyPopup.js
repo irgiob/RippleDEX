@@ -125,17 +125,11 @@ const CompanyPopUp = ({
   return (
     <Modal isCentered isOpen={selected} onClose={() => setSelected(null)}>
       <ModalOverlay />
-      <ModalContent
-        h="80vh"
-        maxW="70vw"
-        borderRadius="15px"
-        overflowY="scroll"
-        value="inside"
-      >
-        <ModalCloseButton m="20px" />
-        <ModalBody m="20px">
-          <Box maxW="100%" h="40em" value="inside">
+      <ModalContent maxW="1000px" borderRadius="15px" value="inside">
+        <ModalBody p="20px">
+          <Box value="inside">
             <Button
+              pl="0px"
               leftIcon={<RiArrowLeftSLine size={40} />}
               fontSize="25px"
               color="ripple.200"
@@ -247,7 +241,9 @@ const CompanyPopUp = ({
               </GridItem>
               <GridItem rowSpan={1} colSpan={2}>
                 <VStack align="left">
-                  <Text fontSize="20px">Name</Text>
+                  <Text fontSize="15px" color="ripple.200" pt="20px">
+                    Name
+                  </Text>
                   <Input
                     variant="outline"
                     placeholder="Contact Name"
@@ -255,7 +251,7 @@ const CompanyPopUp = ({
                     value={companyName}
                     onChange={e => setCompanyName(e.target.value)}
                   />
-                  <Text pt="20px" mt="25px" fontSize="20px">
+                  <Text fontSize="15px" color="ripple.200" pt="10px">
                     Annual Revenue
                   </Text>
                   <NumberInput
@@ -277,7 +273,7 @@ const CompanyPopUp = ({
                   >
                     <NumberInputField />
                   </NumberInput>
-                  <Text pt="20px" mt="25px" fontSize="20px">
+                  <Text fontSize="15px" color="ripple.200" pt="10px">
                     Personnel
                   </Text>
                   <NumberInput
@@ -293,7 +289,7 @@ const CompanyPopUp = ({
                       <NumberDecrementStepper />
                     </NumberInputStepper>
                   </NumberInput>
-                  <Text pt="20px" mt="25px" fontSize="20px">
+                  <Text fontSize="15px" color="ripple.200" pt="10px">
                     Industry
                   </Text>
                   <Input
@@ -302,8 +298,8 @@ const CompanyPopUp = ({
                     onChange={e => setCompanyIndustry(e.target.value)}
                     variant="outline"
                   />
-                  <Text pt="20px" mt="25px" fontSize="20px">
-                    Relationship
+                  <Text fontSize="15px" color="ripple.200" pt="10px">
+                    Company Relationship
                   </Text>
                   <Input
                     variant="outline"
@@ -316,36 +312,47 @@ const CompanyPopUp = ({
               </GridItem>
               <GridItem rowSpan={1} colSpan={2}>
                 <VStack align="left">
-                  <Text fontSize="20px">Primary Contact</Text>
-                  <CustomAutoComplete
-                    placeholder="Company's Primary Contact"
-                    items={contacts}
-                    itemRenderer={contact => (
-                      <AutoCompleteListItem
-                        name={contact.name}
-                        profilePicture={contact.profilePicture}
+                  <Box>
+                    <Text
+                      pt="20px"
+                      pos="absolute"
+                      fontSize="15px"
+                      color="ripple.200"
+                    >
+                      Annual Revenue
+                    </Text>
+                    <Box pt="45px">
+                      <CustomAutoComplete
+                        placeholder="Company's Primary Contact"
+                        items={contacts}
+                        itemRenderer={contact => (
+                          <AutoCompleteListItem
+                            name={contact.name}
+                            profilePicture={contact.profilePicture}
+                          />
+                        )}
+                        disableCreateItem={false}
+                        onCreateItem={newContactName =>
+                          setNewContact({
+                            id: null,
+                            company: selected,
+                            email: null,
+                            name: newContactName.value,
+                            notes: null,
+                            phoneNumber: null,
+                            position: null,
+                            profilePicture: null,
+                            registeredBy: orgID,
+                          })
+                        }
+                        value={companyContact ? companyContact : undefined}
+                        onChange={setCompanyContact}
+                        valueInputAttribute="name"
+                        size="md"
+                        variant="outline"
                       />
-                    )}
-                    disableCreateItem={false}
-                    onCreateItem={newContactName =>
-                      setNewContact({
-                        id: null,
-                        company: selected,
-                        email: null,
-                        name: newContactName.value,
-                        notes: null,
-                        phoneNumber: null,
-                        position: null,
-                        profilePicture: null,
-                        registeredBy: orgID,
-                      })
-                    }
-                    value={companyContact ? companyContact : undefined}
-                    onChange={setCompanyContact}
-                    valueInputAttribute="name"
-                    size="md"
-                    variant="outline"
-                  />
+                    </Box>
+                  </Box>
                   <ContactPopUp
                     selected={newContact}
                     setSelected={setNewContact}
@@ -354,39 +361,53 @@ const CompanyPopUp = ({
                       setCompanyContact(newUpdatedContact)
                     }
                   />
-                  <Text pt="20px" mt="25px" fontSize="20px">
-                    Website
-                  </Text>
-                  <Input
-                    variant="outline"
-                    placeholder="Company Website"
-                    type="text"
-                    value={companyWebsite}
-                    onChange={e => setCompanyWebsite(e.target.value)}
-                  />
-                  <Text pt="20px" mt="25px" fontSize="20px">
-                    Description
-                  </Text>
-                  <Textarea
-                    resize="none"
-                    h="15vh"
-                    placeholder="Notes"
-                    value={companyDesc}
-                    onChange={e => setCompanyDesc(e.target.value)}
-                  />
-                  <Text pt="20px" mt="25px" fontSize="20px">
-                    Address
-                  </Text>
-                  <Textarea
-                    resize="none"
-                    h="15vh"
-                    placeholder="Company Address"
-                    value={companyAddress}
-                    onChange={e => setCompanyAddress(e.target.value)}
-                  />
-                  <Box align="right">
+                  <Box>
+                    <Text
+                      pt="12px"
+                      pb="10px"
+                      fontSize="15px"
+                      color="ripple.200"
+                    >
+                      Website
+                    </Text>
+                    <Input
+                      variant="outline"
+                      placeholder="Company Website"
+                      type="text"
+                      value={companyWebsite}
+                      onChange={e => setCompanyWebsite(e.target.value)}
+                    />
+                  </Box>
+                  <Box>
+                    <Text fontSize="15px" color="ripple.200" pt="10px">
+                      Notes
+                    </Text>
+                    <Box pt="10px">
+                      <Textarea
+                        resize="none"
+                        h="15vh"
+                        placeholder="Notes"
+                        value={companyDesc}
+                        onChange={e => setCompanyDesc(e.target.value)}
+                      />
+                    </Box>
+                  </Box>
+                  <Box>
+                    <Text fontSize="15px" color="ripple.200" pt="10px">
+                      Company Address
+                    </Text>
+                    <Box pt="10px">
+                      <Textarea
+                        resize="none"
+                        h="15vh"
+                        placeholder="Company Address"
+                        value={companyAddress}
+                        onChange={e => setCompanyAddress(e.target.value)}
+                      />
+                    </Box>
+                  </Box>
+                  <Box pt="10px" align="right">
                     <Button
-                      mb="60px"
                       bgColor="ripple.200"
                       color="white"
                       fontFamily="Raleway-Bold"
