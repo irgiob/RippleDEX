@@ -67,7 +67,7 @@ const InteractionPopUp = ({
   const [startTime, setStartTime] = useState("10:00")
   const [endTime, setEndTime] = useState("11:00")
   const [isAllDay, setAllDay] = useState(false)
-  const [contactID, setContactID] = useState("")
+  const [contact, setContact] = useState("")
   const [forTask, setForTask] = useState("")
   const [forOrganization, setForOrganization] = useState("")
   const [forDeal, setForDeal] = useState("")
@@ -78,7 +78,9 @@ const InteractionPopUp = ({
   const toast = useToast()
 
   useEffect(async () => {
+    console.log(value)
     if (value) {
+      console.log(contacts, tasks, deals)
       setTitle(value.name)
       setDate(value.meetingStart.toDate())
       setStartTime(getTimeFromDate(value.meetingStart.toDate()))
@@ -87,7 +89,7 @@ const InteractionPopUp = ({
       )
       setAllDay(value.meetingEnd ? false : true)
       setRemindMe(value.remindMe)
-      setContactID(value.contact)
+      setContact(value.contact)
       setForDeal(value.forDeal)
       setForTask(value.forTask)
       setNotes(value.notes)
@@ -131,7 +133,7 @@ const InteractionPopUp = ({
     }
 
     const options = {
-      contact: contactID,
+      contact: contact,
       forDeal: forDeal,
       forTask: forTask,
       meetingStart: start,
@@ -173,12 +175,12 @@ const InteractionPopUp = ({
     return <AutoCompleteListItem name={task.name} showImage={false} />
   }
 
-  const handleContactSet = async contact => {
-    if (contact) {
-      const contact = await getContact(contact)
-      const company = await getCompany(contact.company)
+  const handleContactSet = async contactID => {
+    setContact(contactID)
+    if (contactID) {
+      const contactDoc = await getContact(contactID)
+      const company = await getCompany(contactDoc.company)
       setCompany(company.name)
-      setContactID(contact)
     }
   }
 
@@ -294,12 +296,12 @@ const InteractionPopUp = ({
                       <CustomAutoComplete
                         variant="outline"
                         size="md"
-                        placeholder="Select task"
+                        placeholder="Select contact"
                         items={contacts}
                         itemRenderer={contactItem}
                         disableCreateItem={false}
                         onCreateItem={() => navigate("/contacts")}
-                        value={contactID}
+                        value={contact}
                         valueInputAttribute="name"
                         onChange={handleContactSet}
                       />

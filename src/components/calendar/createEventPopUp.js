@@ -63,7 +63,7 @@ const CreateEventPopUp = ({
   const [startTime, setStartTime] = useState("10:00")
   const [endTime, setEndTime] = useState("11:00")
 
-  const [contactID, setContactID] = useState("")
+  const [contact, setContact] = useState("")
   const [forTask, setForTask] = useState("")
   const [forOrganization, setForOrganization] = useState("")
   const [forDeal, setForDeal] = useState("")
@@ -77,12 +77,18 @@ const CreateEventPopUp = ({
       <AutoCompleteListItem
         name={deal.name}
         profilePicture={deal.profilePicture}
+        showImage={false}
       />
     )
   }
 
   const contactItem = contact => {
-    return <AutoCompleteListItem name={contact.name} />
+    return (
+      <AutoCompleteListItem
+        name={contact.name}
+        profilePicture={contact.profilePicture}
+      />
+    )
   }
 
   const taskItem = task => {
@@ -90,6 +96,7 @@ const CreateEventPopUp = ({
       <AutoCompleteListItem
         name={task.name}
         profilePicture={task.profilePicture}
+        showImage={false}
       />
     )
   }
@@ -109,12 +116,11 @@ const CreateEventPopUp = ({
     remindMe ? setRemindMe(false) : setRemindMe(true)
   }
 
-  const handleContactSet = async contact => {
-    if (contact) {
-      const contact = await getContact(contact)
-      const company = await getCompany(contact.company)
+  const handleContactSet = async contactDoc => {
+    setContact(contactDoc)
+    if (contactDoc) {
+      const company = await getCompany(contactDoc.company)
       setCompany(company.name)
-      setContactID(contact)
     }
   }
 
@@ -127,12 +133,13 @@ const CreateEventPopUp = ({
       startTime,
       end,
       isAllDay,
-      contactID,
-      forDeal,
-      forTask,
+      contact.id,
+      forDeal.id,
+      forTask.id,
       type,
       notes
     )
+    onClose()
   }
 
   const closeModal = () => {
@@ -270,7 +277,7 @@ const CreateEventPopUp = ({
                           itemRenderer={contactItem}
                           disableCreateItem={false}
                           onCreateItem={() => navigate("/contacts")}
-                          value={contactID}
+                          value={contact ? contact : undefined}
                           valueInputAttribute="name"
                           onChange={handleContactSet}
                         />
@@ -300,7 +307,7 @@ const CreateEventPopUp = ({
                           itemRenderer={dealItem}
                           disableCreateItem={false}
                           onCreateItem={() => navigate("/deals")}
-                          value={forDeal}
+                          value={forDeal ? forDeal : undefined}
                           valueInputAttribute="name"
                           onChange={setForDeal}
                           showImage={false}
@@ -325,7 +332,7 @@ const CreateEventPopUp = ({
                           itemRenderer={taskItem}
                           disableCreateItem={false}
                           onCreateItem={() => navigate("/tasks")}
-                          value={forTask}
+                          value={forTask ? forTask : undefined}
                           valueInputAttribute="name"
                           onChange={setForTask}
                           showImage={false}

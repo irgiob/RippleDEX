@@ -19,9 +19,11 @@ import {
 
 import { getContact, getContactsByOrg } from "../../models/Contact"
 
-import { getTasksByOrg } from "../../models/Task"
+import { getTask, getTasksByOrg } from "../../models/Task"
 
-import { getDealsByOrg } from "../../models/Deal"
+import { getDeal, getDealsByOrg } from "../../models/Deal"
+
+import { getUser } from "../../models/User"
 
 import InteractionPopUp from "../interactions/interactionPopup"
 
@@ -76,9 +78,9 @@ const CalendarComponent = ({ user, org }) => {
   }, [])
 
   // Add event from firestore document
-  const addEvent = async doc => {
+  const addEvent = doc => {
     let calendarApi = calendarRef.current.getApi()
-    const contact = await getContact(doc.contact)
+    const contact = doc.contact
     calendarApi.addEvent({
       id: doc.id,
       title: doc?.name ? doc.name : "Meeting with " + contact.name,
@@ -202,8 +204,40 @@ const CalendarComponent = ({ user, org }) => {
   }
 
   // Handle when edit pop up is requested
-  const handleEdit = async id => {
-    getInteraction(id).then(doc => {
+  const handleEdit = id => {
+    getInteraction(id).then(async doc => {
+      if (doc.contact) {
+        const contactDoc = await getContact(doc.contact)
+        if (contactDoc) {
+          contactDoc.label = contactDoc.name
+        }
+        doc.contact = contactDoc
+      }
+
+      if (doc.addedBy) {
+        const addedByDoc = await getUser(doc.addedBy)
+        if (addedByDoc) {
+          addedByDoc.label = addedByDoc.firstName + " " + addedByDoc.lastName
+        }
+        doc.addedBy = addedByDoc
+      }
+
+      if (doc.forDeal) {
+        const dealDoc = await getDeal(doc.forDeal)
+        if (dealDoc) {
+          dealDoc.label = dealDoc.name
+        }
+        doc.forDeal = dealDoc
+      }
+
+      if (doc.forTask) {
+        const taskDoc = await getTask(doc.forTask)
+        if (taskDoc) {
+          taskDoc.label = taskDoc.name
+        }
+        doc.forTask = taskDoc
+      }
+      console.log(doc)
       setEditDoc(doc)
       onOpenEdit()
     })
@@ -254,7 +288,9 @@ const CalendarComponent = ({ user, org }) => {
           console.log(doc)
           addEvent(doc)
         }}
-        t
+        contacts={contacts}
+        deals={deals}
+        tasks={tasks}
       />
     </>
   )

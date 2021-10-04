@@ -481,6 +481,7 @@ const InteractionsPage = ({ user, setUser, org, setOrg }) => {
         contacts={contacts}
         deals={deals}
         tasks={tasks}
+        afterUpdate={() => {}}
       />
     </Box>
   )
