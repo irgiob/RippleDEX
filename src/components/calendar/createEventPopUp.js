@@ -15,15 +15,27 @@ import {
   HStack,
   Box,
   VStack,
-  Textarea,
   navigate,
+  useMediaQuery,
+  useToast,
+  Textarea,
+  SimpleGrid,
 } from "@chakra-ui/react"
+
+import {
+  RiArrowLeftSLine,
+  RiMailAddFill,
+  RiCalendarEventFill,
+} from "react-icons/ri"
 
 import DatePicker from "react-datepicker"
 import TimePicker from "react-time-picker"
 import "react-datepicker/dist/react-datepicker.css"
 
+import { getCompany } from "../../models/Company"
+
 import { CustomAutoComplete, AutoCompleteListItem } from "../CustomAutoComplete"
+import { getContact } from "../../models/Contact"
 
 /**
  *
@@ -93,8 +105,21 @@ const CreateEventPopUp = ({
     isAllDay ? setAllDay(false) : setAllDay(true)
   }
 
+  const remindSwitchChangeHandler = () => {
+    remindMe ? setRemindMe(false) : setRemindMe(true)
+  }
+
+  const handleContactSet = async contact => {
+    if (contact) {
+      const contact = await getContact(contact)
+      const company = await getCompany(contact.company)
+      setCompany(company.name)
+      setContactID(contact)
+    }
+  }
+
   // Create the event object on database
-  const createEvent = () => {
+  const handleClick = () => {
     const end = isAllDay ? null : endTime
     createEventObject(
       title,
@@ -121,168 +146,226 @@ const CreateEventPopUp = ({
 
   return (
     <>
-      <Modal
-        isCentered
-        isOpen={isOpen}
-        onClose={closeModal}
-        h="70vh"
-        maxW="60vw"
-        borderRadius="15px"
-        overflowY="scroll"
-        value="inside"
-      >
+      <Modal isCentered isOpen={isOpen} onClose={onClose}>
         <ModalOverlay />
-        <ModalContent>
-          <ModalCloseButton />
-          <ModalBody p="25px" pr="30px" pl="30px">
-            <VStack spacing="20px" align="inherit">
-              <Text
-                fontFamily="Raleway-Bold"
-                color="ripple.200"
-                fontSize="23px"
-              >
-                Create New Event
-              </Text>
-              {/* Create form for creating new event*/}
-              <Input
-                placeholder="Event title"
-                value={title}
-                onChange={event => {
-                  setTitle(event.target.value)
-                }}
-              />
-              <HStack>
-                <Text width="100px">Event Date:</Text>
-                <Box>
-                  <DatePicker
-                    selected={date}
-                    onChange={date => {
-                      setDate(date)
-                    }}
-                    customInput={<DatePickerInput />}
-                  />
-                </Box>
-              </HStack>
-              <HStack>
-                <Text width="100px">Start Time:</Text>
-                <TimePicker
-                  onChange={setStartTime}
-                  value={startTime}
-                  disableClock={true}
-                />
-              </HStack>
-              <HStack>
-                <Text width="100px">End Time:</Text>
-                <TimePicker
-                  onChange={setEndTime}
-                  value={endTime}
-                  disabled={isAllDay}
-                  disableClock={true}
-                />
-              </HStack>
-              <HStack>
-                <Text width="100px">All day</Text>
-                <Switch onChange={switchChangeHandler} />
-              </HStack>
-              <HStack>
-                <Box>
-                  <Text m="10px" w="6vw" color="ripple.200">
-                    Contact
-                  </Text>
-                  <CustomAutoComplete
-                    variant="outline"
-                    size="md"
-                    placeholder="Select task"
-                    items={contacts}
-                    itemRenderer={contactItem}
-                    disableCreateItem={false}
-                    onCreateItem={() => navigate("/contacts")}
-                    value={contactID}
-                    valueInputAttribute="name"
-                    onChange={setContactID}
-                  />
-                </Box>
-                <Box>
-                  <Text m="10px" w="6vw" color="ripple.200">
-                    Deal
-                  </Text>
+
+        <ModalContent maxW="1000px">
+          <ModalBody p="20px" pr="25px" pl="25px">
+            <VStack align="initial">
+              <Box align="start">
+                <Button
+                  pl="0px"
+                  mb="10px"
+                  bg="none"
+                  leftIcon={<RiArrowLeftSLine size="40px" />}
+                  fontSize="25px"
+                  color="ripple.200"
+                  fontFamily="Raleway-Bold"
+                  _hover={{
+                    transform: "scale(1.05)",
+                  }}
+                  onClick={onClose}
+                >
+                  {title ? title : "Interaction"}
+                </Button>
+              </Box>
+              <HStack pl="10px" spacing="20px" align="start">
+                <SimpleGrid columns={2} spacing="20px">
                   <Box>
-                    <CustomAutoComplete
-                      variant="outline"
-                      size="md"
-                      placeholder="Select deal"
-                      items={deals}
-                      itemRenderer={dealItem}
-                      disableCreateItem={false}
-                      onCreateItem={() => navigate("/deals")}
-                      value={forDeal}
-                      valueInputAttribute="name"
-                      onChange={setForDeal}
-                      showImage={false}
+                    <Text fontSize="15px" color="ripple.200" pb="10px">
+                      Meeting Name
+                    </Text>
+                    <Input
+                      placeholder="Event title"
+                      value={title}
+                      onChange={event => {
+                        setTitle(event?.target.value)
+                      }}
                     />
                   </Box>
-                </Box>
+                  <Box>
+                    <Text fontSize="15px" color="ripple.200" pb="10px">
+                      Meeting Type
+                    </Text>
+                    <Input
+                      placeholder="Meeting type"
+                      value={type}
+                      onChange={event => {
+                        setType(event.target.value)
+                      }}
+                    />
+                  </Box>
+                  <Box>
+                    <Text fontSize="15px" color="ripple.200" pb="10px">
+                      Date of Interaction
+                    </Text>
+                    <DatePicker
+                      selected={date}
+                      onChange={date => {
+                        setDate(date)
+                      }}
+                      customInput={<DatePickerInput />}
+                    />
+                  </Box>
+                  <SimpleGrid
+                    pt="5px"
+                    textAlign="left"
+                    columns={2}
+                    spacing="5px"
+                  >
+                    <Text fontSize="15px" color="ripple.200" pb="10px">
+                      All Day
+                    </Text>
+                    <Switch
+                      onChange={switchChangeHandler}
+                      isChecked={isAllDay}
+                    />
+                    <Text fontSize="15px" color="ripple.200" pb="10px">
+                      Remind Me
+                    </Text>
+                    <Switch
+                      onChange={remindSwitchChangeHandler}
+                      isChecked={remindMe}
+                    />
+                  </SimpleGrid>
+                  <Box>
+                    <Text fontSize="15px" color="ripple.200" pb="10px">
+                      Start Time
+                    </Text>
+                    <TimePicker
+                      onChange={setStartTime}
+                      value={startTime}
+                      disableClock={true}
+                    />
+                  </Box>
+                  <Box>
+                    <Text fontSize="15px" color="ripple.200" pb="10px">
+                      End Time
+                    </Text>
+                    <TimePicker
+                      onChange={setEndTime}
+                      value={endTime}
+                      disabled={isAllDay}
+                      disableClock={true}
+                    />
+                  </Box>
+                </SimpleGrid>
+                <VStack>
+                  <SimpleGrid spacing="20px" columns={2}>
+                    <Box>
+                      <Text
+                        pos="absolute"
+                        fontSize="15px"
+                        color="ripple.200"
+                        pb="10px"
+                      >
+                        Contact
+                      </Text>
+                      <Box pt="20px">
+                        <CustomAutoComplete
+                          variant="outline"
+                          size="md"
+                          placeholder="Select task"
+                          items={contacts}
+                          itemRenderer={contactItem}
+                          disableCreateItem={false}
+                          onCreateItem={() => navigate("/contacts")}
+                          value={contactID}
+                          valueInputAttribute="name"
+                          onChange={handleContactSet}
+                        />
+                      </Box>
+                    </Box>
+                    <Box>
+                      <Text fontSize="15px" color="ripple.200" pb="10px">
+                        Company
+                      </Text>
+                      <Text>{company}</Text>
+                    </Box>
+                    <Box>
+                      <Text
+                        pos="absolute"
+                        fontSize="15px"
+                        color="ripple.200"
+                        pb="10px"
+                      >
+                        Deal
+                      </Text>
+                      <Box pt="20px">
+                        <CustomAutoComplete
+                          variant="outline"
+                          size="md"
+                          placeholder="Select deal"
+                          items={deals}
+                          itemRenderer={dealItem}
+                          disableCreateItem={false}
+                          onCreateItem={() => navigate("/deals")}
+                          value={forDeal}
+                          valueInputAttribute="name"
+                          onChange={setForDeal}
+                          showImage={false}
+                        />
+                      </Box>
+                    </Box>
+                    <Box>
+                      <Text
+                        pos="absolute"
+                        fontSize="15px"
+                        color="ripple.200"
+                        pb="10px"
+                      >
+                        Activity
+                      </Text>
+                      <Box pt="20px">
+                        <CustomAutoComplete
+                          variant="outline"
+                          size="md"
+                          placeholder="Select task"
+                          items={tasks}
+                          itemRenderer={taskItem}
+                          disableCreateItem={false}
+                          onCreateItem={() => navigate("/tasks")}
+                          value={forTask}
+                          valueInputAttribute="name"
+                          onChange={setForTask}
+                          showImage={false}
+                        />
+                      </Box>
+                    </Box>
+                  </SimpleGrid>
+                  <Box w="100%">
+                    <Text
+                      pt="10px"
+                      fontSize="15px"
+                      color="ripple.200"
+                      pb="10px"
+                    >
+                      Interaction Description
+                    </Text>
+                    <Textarea
+                      resize="none"
+                      h="20vh"
+                      placeholder="Notes"
+                      value={notes}
+                      onChange={e => setNotes(e.target.value)}
+                    />
+                  </Box>
+                </VStack>
               </HStack>
-              <Box>
-                <Text m="10px" w="12vw" color="ripple.200">
-                  Activity
-                </Text>
-                <Box>
-                  <CustomAutoComplete
-                    variant="outline"
-                    size="md"
-                    placeholder="Select task"
-                    items={tasks}
-                    itemRenderer={taskItem}
-                    disableCreateItem={false}
-                    onCreateItem={() => navigate("/tasks")}
-                    value={forTask}
-                    valueInputAttribute="name"
-                    onChange={setForTask}
-                    showImage={false}
-                  />
-                </Box>
-                <HStack>
-                  <Text w="6vw" ml="1vw">
-                    Meeting Type :
-                  </Text>
-                  <Input
-                    placeholder="Meeting type"
-                    value={type}
-                    onChange={event => {
-                      setType(event.target.value)
-                    }}
-                  />
-                </HStack>
-                <HStack>
-                  <Text m="10px" w="12vw" color="ripple.200">
-                    Interaction Description{" "}
-                  </Text>
-                  <Textarea
-                    resize="none"
-                    h="20vh"
-                    placeholder="Notes"
-                    value={notes}
-                    onChange={e => setNotes(e.target.value)}
-                  />
-                </HStack>
-              </Box>
-              <Box align="end">
+              <Box pt="10px" align="end">
                 <Button
                   bgColor="ripple.200"
                   color="white"
                   fontFamily="Raleway-Bold"
-                  borderRadius="30px"
                   variant="solid"
+                  borderRadius="30px"
                   _hover={{
                     transform: "scale(1.05)",
                   }}
-                  onClick={() => {
-                    closeModal()
-                    createEvent()
-                  }}
+                  padding="20px"
+                  onClick={handleClick}
                 >
-                  Create Event
+                  Create Interaction
                 </Button>
               </Box>
             </VStack>
