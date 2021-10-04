@@ -12,7 +12,7 @@ Chart.register(pieceLabel)
  * @property {Object} org organization object
  * @returns
  */
-const DoughnutChart = ({ org }) => {
+const DoughnutChart = ({ deals }) => {
   const [prospect, setProspect] = useState(0)
   const [lead, setLead] = useState(0)
   const [pitch, setPitch] = useState(0)
@@ -33,14 +33,9 @@ const DoughnutChart = ({ org }) => {
       negotiation: 0,
       closed: 0,
     }
-    try {
-      const docs = await getDealsByOrg(org.id)
-      docs.forEach(doc => {
-        stageCount[doc.stage.toLowerCase().replace(" ", "")] += 1
-      })
-    } catch (err) {
-      console.error("Fail to retrieve data for ", err)
-    }
+    deals.forEach(doc => {
+      stageCount[doc.stage.toLowerCase().replace(" ", "")] += 1
+    })
 
     setProspect(stageCount.prospect)
     setLead(stageCount.lead)
@@ -49,6 +44,15 @@ const DoughnutChart = ({ org }) => {
     setProposal(stageCount.proposalsent)
     setNegotiation(stageCount.negotiation)
     setClosed(stageCount.closed)
+
+    // // For demo purposes, uncomment this
+    // setProspect(255)
+    // setLead(185)
+    // setPitch(135)
+    // setQualified(93)
+    // setProposal(92)
+    // setNegotiation(43)
+    // setClosed(12)
   })
   const data = {
     labels: [
@@ -101,24 +105,15 @@ const DoughnutChart = ({ org }) => {
         },
       },
       legend: {
-        position: "right",
+        position: "bottom",
         labels: { boxWidth: 10 },
-      },
-      title: {
-        display: true,
-        text: "Deals breakdown",
-        font: {
-          size: 24,
-        },
       },
     },
   }
 
   return (
     <>
-      <Box width={"30vw"}>
-        <Doughnut data={data} options={options} />
-      </Box>
+      <Doughnut data={data} options={options} />
     </>
   )
 }

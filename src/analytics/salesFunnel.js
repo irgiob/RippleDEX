@@ -11,7 +11,7 @@ import { getDealsByOrg } from "../models/Deal"
  * @property {String} maxHeight maximum height of the sales funnel, defaults at 100vh
  * @returns
  */
-const SalesFunnel = ({ maxWidth = "100vw", maxHeight = "100vh", org }) => {
+const SalesFunnel = ({ deals }) => {
   // Data used for sales funnel
   const [prospect, setProspect] = useState(0)
   const [lead, setLead] = useState(0)
@@ -33,27 +33,28 @@ const SalesFunnel = ({ maxWidth = "100vw", maxHeight = "100vh", org }) => {
       negotiation: 0,
       closed: 0,
     }
-    try {
-      const docs = await getDealsByOrg(org.id)
-      docs.forEach(doc => {
-        stageCount[doc.stage.toLowerCase().replace(" ", "")] += parseInt(
-          doc.dealSize
-        )
-        console.log(doc.dealSize)
-      })
-    } catch (err) {
-      console.error("Fail to retrieve data for ", err)
-    }
 
-    console.log(stageCount)
+    deals.forEach(doc => {
+      stageCount[doc.stage.toLowerCase().replace(" ", "")] += parseInt(
+        doc.dealSize
+      )
+    })
+    // setProspect(stageCount.prospect)
+    // setLead(stageCount.lead)
+    // setPitch(stageCount.pitch)
+    // setQualified(stageCount.qualified)
+    // setProposal(stageCount.proposalsent)
+    // setNegotiation(stageCount.negotiation)
+    // setClosed(stageCount.closed)
 
-    setProspect(stageCount.prospect)
-    setLead(stageCount.lead)
-    setPitch(stageCount.pitch)
-    setQualified(stageCount.qualified)
-    setProposal(stageCount.proposalsent)
-    setNegotiation(stageCount.negotiation)
-    setClosed(stageCount.closed)
+    // For demo purposes, uncomment this
+    setProspect(255000)
+    setLead(185000)
+    setPitch(135000)
+    setQualified(93500)
+    setProposal(92000)
+    setNegotiation(43000)
+    setClosed(12000)
   }, [])
 
   return (
@@ -76,8 +77,6 @@ const SalesFunnel = ({ maxWidth = "100vw", maxHeight = "100vh", org }) => {
         "#4466a3",
         "#5B44A3",
       ]}
-      chartWidth={maxWidth}
-      chartHeight={maxHeight}
       heightRelativeToValue={true}
     />
   )
