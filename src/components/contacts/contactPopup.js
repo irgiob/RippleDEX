@@ -90,7 +90,6 @@ const ContactPopUp = ({ selected, setSelected, companies, onUpdate }) => {
         //overflowY="scroll"
         value="inside"
       >
-        <ModalCloseButton m="20px" />
         <ModalBody m="20px">
           <Box value="inside">
             <Button

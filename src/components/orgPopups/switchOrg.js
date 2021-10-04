@@ -20,16 +20,16 @@ import {
   useToast,
 } from "@chakra-ui/react"
 
-import ProfilePicture from "../../images/RippleDEX.png"
+import ProfilePicture from "../../images/RippleDex.png"
 import { BiSearch } from "react-icons/bi"
 
 const SwitchOrgPopup = props => {
   const toast = useToast()
-  const [search, setSearch]   = useState("") 
+  const [search, setSearch] = useState("")
   const [orgs, setOrgs] = useState([props.org])
 
   useEffect(() => {
-    const getOrgs = async (orgIDs) => {
+    const getOrgs = async orgIDs => {
       const orgList = []
       for await (const orgID of orgIDs) {
         if (orgID !== props.org.id) {
@@ -70,37 +70,36 @@ const SwitchOrgPopup = props => {
               pointerEvents="none"
               children={<BiSearch style={{ color: "#a2b1c0" }} />}
             />
-            <Input 
-              type="text" 
-              placeholder="Search" 
-              onChange={(e) => setSearch(e.target.value.toLowerCase())}
+            <Input
+              type="text"
+              placeholder="Search"
+              onChange={e => setSearch(e.target.value.toLowerCase())}
             />
           </InputGroup>
           <VStack spacing="1em" align="left">
             {orgs
-              .filter((org) => org.name.toLowerCase().includes(search))
+              .filter(org => org.name.toLowerCase().includes(search))
               .map((org, i) => (
                 <OrgListItem
-                  key={i} 
+                  key={i}
                   org={org}
                   isCurrentOrg={org.id === props.org?.id}
                   onClick={() => {
                     updateUser(props.user?.id, {
                       lastOpenedOrganization: org.id,
                     }).then(
-                        toast({
-                          title: "Success",
-                          description: "Organization has been changed",
-                          status: "success",
-                          duration: 5000,
-                          isClosable: true,
-                        }),
-                        navigate("/")
-                      )
+                      toast({
+                        title: "Success",
+                        description: "Organization has been changed",
+                        status: "success",
+                        duration: 5000,
+                        isClosable: true,
+                      }),
+                      navigate("/")
+                    )
                   }}
                 />
-              ))
-            }
+              ))}
           </VStack>
         </Box>
       </ModalContent>
@@ -108,10 +107,10 @@ const SwitchOrgPopup = props => {
   )
 }
 
-const OrgListItem = ({onClick, org, isCurrentOrg}) => {
+const OrgListItem = ({ onClick, org, isCurrentOrg }) => {
   var transformScale = "scale(1.05)"
   var cursor = "pointer"
-  
+
   if (isCurrentOrg) {
     onClick = () => {}
     transformScale = "scale(1)"
@@ -119,8 +118,8 @@ const OrgListItem = ({onClick, org, isCurrentOrg}) => {
   }
 
   return (
-    <Flex 
-      _hover={{ transform: transformScale }} 
+    <Flex
+      _hover={{ transform: transformScale }}
       onClick={onClick}
       cursor={cursor}
     >
@@ -128,13 +127,15 @@ const OrgListItem = ({onClick, org, isCurrentOrg}) => {
       <Box ml="3">
         <Text fontWeight="bold">
           {org.name}
-          {isCurrentOrg &&
+          {isCurrentOrg && (
             <Badge ml="1" colorScheme="green">
               Current
             </Badge>
-          }
+          )}
         </Text>
-        <Text maxW = "100%" fontSize="sm">{org.description}</Text>
+        <Text maxW="100%" fontSize="sm">
+          {org.description}
+        </Text>
       </Box>
     </Flex>
   )
