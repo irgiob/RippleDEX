@@ -22,6 +22,7 @@ import {
   useToast,
   Textarea,
   navigate,
+  SimpleGrid,
 } from "@chakra-ui/react"
 
 import {
@@ -185,60 +186,43 @@ const InteractionPopUp = ({
     <Modal isCentered isOpen={isOpen} onClose={onClose}>
       <ModalOverlay />
 
-      <ModalContent
-        h="70vh"
-        maxW="60vw"
-        borderRadius="15px"
-        overflowY="scroll"
-        value="inside"
-      >
-        <ModalHeader m="10px" mb="0px" fontSize="36px">
-          <Button
-            leftIcon={<RiArrowLeftSLine size={40} />}
-            fontSize="25px"
-            color="ripple.200"
-            fontFamily="Raleway-Bold"
-            bg="none"
-            _hover={{
-              transform: "scale(1.05)",
-            }}
-            onClick={onClose}
-          >
-            Close Interaction
-          </Button>
-        </ModalHeader>
-        <ModalCloseButton m="20px" />
-        <ModalBody m="20px" mt="1vh">
-          <Grid
-            h="55vh"
-            alignContent="left"
-            templateRows="repeat(7, 1fr)"
-            templateColumns="repeat(6, 1fr)"
-            gap={5}
-          >
-            <GridItem rowSpan={1} colSpan={4}>
-              <HStack>
-                <Text ml="1vh" w="6vw" color="ripple.200">
-                  Meeting Name :
-                </Text>
-                <Input
-                  placeholder="Event title"
-                  value={title}
-                  onChange={event => {
-                    setTitle(event?.target.value)
-                  }}
-                />
-              </HStack>
-            </GridItem>
-            <GridItem
-              rowSpan={7}
-              colSpan={2}
-              style={{ borderLeft: "1px solid lightGray" }}
-            >
-              <VStack Align="left" justifyContent="space-between">
-                <HStack>
-                  <Text w="6vw" ml="1vw">
-                    Meeting Type :
+      <ModalContent maxW="1000px">
+        <ModalBody p="20px" pr="25px" pl="25px">
+          <VStack align="initial">
+            <Box align="start">
+              <Button
+                pl="0px"
+                mb="10px"
+                bg="none"
+                leftIcon={<RiArrowLeftSLine size="40px" />}
+                fontSize="25px"
+                color="ripple.200"
+                fontFamily="Raleway-Bold"
+                _hover={{
+                  transform: "scale(1.05)",
+                }}
+                onClick={onClose}
+              >
+                {title ? title : "Interaction"}
+              </Button>
+            </Box>
+            <HStack pl="10px" spacing="20px" align="start">
+              <SimpleGrid columns={2} spacing="20px">
+                <Box>
+                  <Text fontSize="15px" color="ripple.200" pb="10px">
+                    Meeting Name
+                  </Text>
+                  <Input
+                    placeholder="Event title"
+                    value={title}
+                    onChange={event => {
+                      setTitle(event?.target.value)
+                    }}
+                  />
+                </Box>
+                <Box>
+                  <Text fontSize="15px" color="ripple.200" pb="10px">
+                    Meeting Type
                   </Text>
                   <Input
                     placeholder="Meeting type"
@@ -247,9 +231,11 @@ const InteractionPopUp = ({
                       setType(event.target.value)
                     }}
                   />
-                </HStack>
-                <HStack pt="5vh" pl="2vw">
-                  <Text>Date of Interaction:</Text>
+                </Box>
+                <Box>
+                  <Text fontSize="15px" color="ripple.200" pb="10px">
+                    Date of Interaction
+                  </Text>
                   <DatePicker
                     selected={date}
                     onChange={date => {
@@ -257,146 +243,156 @@ const InteractionPopUp = ({
                     }}
                     customInput={<DatePickerInput />}
                   />
-                </HStack>
-                <Box>
-                  <HStack pt="3vh">
-                    <Text>Start Time:</Text>
-                    <TimePicker
-                      onChange={setStartTime}
-                      value={startTime}
-                      disableClock={true}
-                    />
-                  </HStack>
-                  <Text pl="2vw">|</Text>
-                  <HStack>
-                    <Text>End Time: </Text>
-                    <Box />
-                    <TimePicker
-                      onChange={setEndTime}
-                      value={endTime}
-                      disabled={isAllDay}
-                      disableClock={true}
-                    />
-                  </HStack>
                 </Box>
-                <Box pt="4vh">
-                  <HStack>
-                    <Text w="8vw">All day:</Text>
-                    <Switch
-                      onChange={switchChangeHandler}
-                      isChecked={isAllDay}
-                    />
-                  </HStack>
-                  <HStack pt="1vh">
-                    <Text w="8vw">Remind me:</Text>
-                    <Switch
-                      onChange={remindSwitchChangeHandler}
-                      isChecked={remindMe}
-                    />
-                  </HStack>
-                </Box>
-                <ModalFooter>
-                  <Box align="right">
-                    <Button
-                      mt="7vh"
-                      bgColor="ripple.200"
-                      color="white"
-                      fontFamily="Raleway-Bold"
-                      variant="solid"
-                      borderRadius="30px"
-                      _hover={{
-                        transform: "scale(1.05)",
-                      }}
-                      padding="20px"
-                      onClick={handleClick}
-                    >
-                      Save Changes
-                    </Button>
-                  </Box>
-                </ModalFooter>
-              </VStack>
-            </GridItem>
-            <GridItem rowSpan={1} colSpan={4}>
-              <HStack>
-                <Box>
-                  <Text m="10px" w="6vw" color="ripple.200">
-                    Contact
+                <SimpleGrid pt="5px" textAlign="left" columns={2} spacing="5px">
+                  <Text fontSize="15px" color="ripple.200" pb="10px">
+                    All Day
                   </Text>
-                  <CustomAutoComplete
-                    variant="outline"
-                    size="md"
-                    placeholder="Select task"
-                    items={contacts}
-                    itemRenderer={contactItem}
-                    disableCreateItem={false}
-                    onCreateItem={() => navigate("/contacts")}
-                    value={contactID}
-                    valueInputAttribute="name"
-                    onChange={handleContactSet}
+                  <Switch onChange={switchChangeHandler} isChecked={isAllDay} />
+                  <Text fontSize="15px" color="ripple.200" pb="10px">
+                    Remind Me
+                  </Text>
+                  <Switch
+                    onChange={remindSwitchChangeHandler}
+                    isChecked={remindMe}
+                  />
+                </SimpleGrid>
+                <Box>
+                  <Text fontSize="15px" color="ripple.200" pb="10px">
+                    Start Time
+                  </Text>
+                  <TimePicker
+                    onChange={setStartTime}
+                    value={startTime}
+                    disableClock={true}
                   />
                 </Box>
                 <Box>
-                  <Text m="10px" w="6vw" color="ripple.200">
-                    Company
+                  <Text fontSize="15px" color="ripple.200" pb="10px">
+                    End Time
                   </Text>
-                  <Text>{company}</Text>
+                  <TimePicker
+                    onChange={setEndTime}
+                    value={endTime}
+                    disabled={isAllDay}
+                    disableClock={true}
+                  />
                 </Box>
-                <Box>
-                  <Text m="10px" w="6vw" color="ripple.200">
-                    Deal
-                  </Text>
+              </SimpleGrid>
+              <VStack>
+                <SimpleGrid spacing="20px" columns={2}>
                   <Box>
-                    <CustomAutoComplete
-                      variant="outline"
-                      size="md"
-                      placeholder="Select deal"
-                      items={deals}
-                      itemRenderer={dealItem}
-                      disableCreateItem={false}
-                      onCreateItem={() => navigate("/deals")}
-                      value={forDeal}
-                      valueInputAttribute="name"
-                      onChange={setForDeal}
-                      showImage={false}
-                    />
+                    <Text
+                      pos="absolute"
+                      fontSize="15px"
+                      color="ripple.200"
+                      pb="10px"
+                    >
+                      Contact
+                    </Text>
+                    <Box pt="20px">
+                      <CustomAutoComplete
+                        variant="outline"
+                        size="md"
+                        placeholder="Select task"
+                        items={contacts}
+                        itemRenderer={contactItem}
+                        disableCreateItem={false}
+                        onCreateItem={() => navigate("/contacts")}
+                        value={contactID}
+                        valueInputAttribute="name"
+                        onChange={handleContactSet}
+                      />
+                    </Box>
                   </Box>
+                  <Box>
+                    <Text fontSize="15px" color="ripple.200" pb="10px">
+                      Company
+                    </Text>
+                    <Text>{company}</Text>
+                  </Box>
+                  <Box>
+                    <Text
+                      pos="absolute"
+                      fontSize="15px"
+                      color="ripple.200"
+                      pb="10px"
+                    >
+                      Deal
+                    </Text>
+                    <Box pt="20px">
+                      <CustomAutoComplete
+                        variant="outline"
+                        size="md"
+                        placeholder="Select deal"
+                        items={deals}
+                        itemRenderer={dealItem}
+                        disableCreateItem={false}
+                        onCreateItem={() => navigate("/deals")}
+                        value={forDeal}
+                        valueInputAttribute="name"
+                        onChange={setForDeal}
+                        showImage={false}
+                      />
+                    </Box>
+                  </Box>
+                  <Box>
+                    <Text
+                      pos="absolute"
+                      fontSize="15px"
+                      color="ripple.200"
+                      pb="10px"
+                    >
+                      Activity
+                    </Text>
+                    <Box pt="20px">
+                      <CustomAutoComplete
+                        variant="outline"
+                        size="md"
+                        placeholder="Select task"
+                        items={tasks}
+                        itemRenderer={taskItem}
+                        disableCreateItem={false}
+                        onCreateItem={() => navigate("/tasks")}
+                        value={forTask}
+                        valueInputAttribute="name"
+                        onChange={setForTask}
+                        showImage={false}
+                      />
+                    </Box>
+                  </Box>
+                </SimpleGrid>
+                <Box w="100%">
+                  <Text pt="10px" fontSize="15px" color="ripple.200" pb="10px">
+                    Interaction Description
+                  </Text>
+                  <Textarea
+                    resize="none"
+                    h="20vh"
+                    placeholder="Notes"
+                    value={notes}
+                    onChange={e => setNotes(e.target.value)}
+                  />
                 </Box>
-              </HStack>
-            </GridItem>
-            <GridItem rowSpan={1} colSpan={4}>
-              <Text m="10px" w="12vw" color="ripple.200">
-                Activity
-              </Text>
-              <Box>
-                <CustomAutoComplete
-                  variant="outline"
-                  size="md"
-                  placeholder="Select task"
-                  items={tasks}
-                  itemRenderer={taskItem}
-                  disableCreateItem={false}
-                  onCreateItem={() => navigate("/tasks")}
-                  value={forTask}
-                  valueInputAttribute="name"
-                  onChange={setForTask}
-                  showImage={false}
-                />
-              </Box>
-            </GridItem>
-
-            <GridItem rowSpan={4} colSpan={4}>
-              <Text m="10px" w="12vw" color="ripple.200">
-                Interaction Description{" "}
-              </Text>
-              <Textarea
-                resize="none"
-                h="20vh"
-                placeholder="Notes"
-                value={notes}
-                onChange={e => setNotes(e.target.value)}
-              />
-            </GridItem>
-          </Grid>
+              </VStack>
+            </HStack>
+            <Box pt="10px" align="end">
+              <Button
+                bgColor="ripple.200"
+                color="white"
+                fontFamily="Raleway-Bold"
+                variant="solid"
+                borderRadius="30px"
+                _hover={{
+                  transform: "scale(1.05)",
+                }}
+                padding="20px"
+                onClick={handleClick}
+              >
+                Save Changes
+              </Button>
+            </Box>
+          </VStack>
         </ModalBody>
       </ModalContent>
     </Modal>
