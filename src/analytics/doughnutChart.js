@@ -37,22 +37,22 @@ const DoughnutChart = ({ deals }) => {
       stageCount[doc.stage.toLowerCase().replace(" ", "")] += 1
     })
 
-    setProspect(stageCount.prospect)
-    setLead(stageCount.lead)
-    setPitch(stageCount.pitch)
-    setQualified(stageCount.qualified)
-    setProposal(stageCount.proposalsent)
-    setNegotiation(stageCount.negotiation)
-    setClosed(stageCount.closed)
+    // setProspect(stageCount.prospect)
+    // setLead(stageCount.lead)
+    // setPitch(stageCount.pitch)
+    // setQualified(stageCount.qualified)
+    // setProposal(stageCount.proposalsent)
+    // setNegotiation(stageCount.negotiation)
+    // setClosed(stageCount.closed)
 
-    // // For demo purposes, uncomment this
-    // setProspect(255)
-    // setLead(185)
-    // setPitch(135)
-    // setQualified(93)
-    // setProposal(92)
-    // setNegotiation(43)
-    // setClosed(12)
+    // For demo purposes, uncomment this
+    setProspect(255)
+    setLead(185)
+    setPitch(135)
+    setQualified(93)
+    setProposal(92)
+    setNegotiation(43)
+    setClosed(12)
   })
   const data = {
     labels: [

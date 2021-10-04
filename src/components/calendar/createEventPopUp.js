@@ -68,7 +68,7 @@ const CreateEventPopUp = ({
   const [forOrganization, setForOrganization] = useState("")
   const [forDeal, setForDeal] = useState("")
   const [notes, setNotes] = useState("")
-  const [remindMe, setRemindMe] = useState(false)
+  const [remindMe, setRemindMe] = useState(true)
   const [type, setType] = useState("")
   const [company, setCompany] = useState("")
 
