@@ -1,4 +1,5 @@
 import React, { forwardRef, createRef, useState, useEffect } from "react"
+import { navigate } from "gatsby-link"
 
 import Layout from "../components/layout"
 import Seo from "../components/seo"
@@ -51,7 +52,7 @@ import { AiFillEdit, AiOutlineFileAdd, AiOutlineCheck } from "react-icons/ai"
 /**
  * Renders the page content
  */
-const ContactsPage = ({ user, setUser, org, setOrg }) => {
+const ContactsPage = ({ user, setUser, org, setOrg, contactID, filter }) => {
   // Initialize table icons used
   const tableIcons = {
     Add: forwardRef((props, ref) => <AddBox {...props} ref={ref} />),
@@ -109,6 +110,7 @@ const ContactsPage = ({ user, setUser, org, setOrg }) => {
   const [companies, setCompanies] = useState([])
   const [selected, setSelected] = useState()
   const [newCompany, setNewCompany] = useState()
+  const [loading, setLoading] = useState(true)
 
   useEffect(() => {
     const fetchContacts = async orgID => {
@@ -120,15 +122,25 @@ const ContactsPage = ({ user, setUser, org, setOrg }) => {
         }
       }
       setContactList(contacts)
+
+      // if contact passed from previous page, set as selected
+      if (contactID) {
+        const selectedContact = contacts.filter(
+          contact => contact.id === contactID
+        )[0]
+        setSelected(selectedContact)
+      }
     }
     const fetchCompanies = async orgID => {
       const companyList = await getCompanyByOrg(orgID)
       for (const company of companyList) company.label = company.name
       setCompanies(companyList)
     }
-    fetchContacts(org.id)
-    fetchCompanies(org.id)
-  }, [org])
+
+    Promise.all([fetchContacts(org.id), fetchCompanies(org.id)]).then(() =>
+      setLoading(false)
+    )
+  }, [org, contactID])
 
   const currTime = new Date().toLocaleString()
 
@@ -162,6 +174,7 @@ const ContactsPage = ({ user, setUser, org, setOrg }) => {
           style={{ boxShadow: "none" }}
           tableRef={tableRef}
           icons={tableIcons}
+          isLoading={loading}
           columns={[
             {
               filtering: false,
@@ -213,6 +226,7 @@ const ContactsPage = ({ user, setUser, org, setOrg }) => {
             {
               title: "Company",
               field: "company",
+              ...(filter && { defaultFilter: filter }),
               customFilterAndSearch: (term, rowData) =>
                 rowData.company?.name
                   .toLowerCase()
@@ -271,10 +285,19 @@ const ContactsPage = ({ user, setUser, org, setOrg }) => {
               render: rowData => {
                 if (rowData.company) {
                   return (
-                    <AutoCompleteListItem
-                      name={rowData.company.name}
-                      profilePicture={rowData.company.profilePicture}
-                    />
+                    <Box
+                      cursor="pointer"
+                      onClick={() =>
+                        navigate("/companies/", {
+                          state: { selectedCompany: rowData.company.id },
+                        })
+                      }
+                    >
+                      <AutoCompleteListItem
+                        name={rowData.company.name}
+                        profilePicture={rowData.company.profilePicture}
+                      />
+                    </Box>
                   )
                 } else {
                   return <Text>Unassigned</Text>
@@ -443,11 +466,14 @@ const ContactsPage = ({ user, setUser, org, setOrg }) => {
 /**
  * Renders the page content wrapped in Layout
  */
-const Contacts = props => {
+const Contacts = ({ location }) => {
   return (
-    <Layout location={props.location}>
+    <Layout location={location}>
       <Seo title="Contacts" />
-      <ContactsPage />
+      <ContactsPage
+        contactID={location.state?.selectedContact}
+        filter={location.state?.selectedFilter}
+      />
     </Layout>
   )
 }

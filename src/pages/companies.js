@@ -1,4 +1,5 @@
 import React, { forwardRef, createRef, useState, useEffect } from "react"
+import { navigate } from "gatsby-link"
 
 import Layout from "../components/layout"
 import Seo from "../components/seo"
@@ -52,7 +53,7 @@ import ViewColumn from "@material-ui/icons/ViewColumn"
 import { AiFillEdit, AiOutlineFileAdd, AiOutlineCheck } from "react-icons/ai"
 import { ExternalLinkIcon } from "@chakra-ui/icons"
 
-const CompaniesPage = ({ user, setUser, org, setOrg }) => {
+const CompaniesPage = ({ user, setUser, org, setOrg, companyID }) => {
   // Initialize table icons used
   const tableIcons = {
     Add: forwardRef((props, ref) => <AddBox {...props} ref={ref} />),
@@ -109,6 +110,7 @@ const CompaniesPage = ({ user, setUser, org, setOrg }) => {
   const [companyList, setCompanyList] = useState([])
   const [selected, setSelected] = useState("")
   const [newContact, setNewContact] = useState()
+  const [loading, setLoading] = useState(true)
 
   useEffect(() => {
     const fetchCompanies = async orgID => {
@@ -120,9 +122,19 @@ const CompaniesPage = ({ user, setUser, org, setOrg }) => {
         }
       }
       setCompanyList(companies)
+
+      // if company passed from previous page, set as selected
+      if (companyID) {
+        const selectedCompany = companies.filter(
+          company => company.id === companyID
+        )[0]
+        setSelected(selectedCompany)
+      }
+
+      setLoading(false)
     }
     fetchCompanies(org.id)
-  }, [org])
+  }, [org, companyID])
 
   const currTime = new Date().toLocaleString()
 
@@ -156,6 +168,7 @@ const CompaniesPage = ({ user, setUser, org, setOrg }) => {
           style={{ boxShadow: "none" }}
           tableRef={tableRef}
           icons={tableIcons}
+          isLoading={loading}
           columns={[
             {
               filtering: false,
@@ -262,10 +275,19 @@ const CompaniesPage = ({ user, setUser, org, setOrg }) => {
               render: rowData => {
                 if (rowData.primaryContact) {
                   return (
-                    <AutoCompleteListItem
-                      name={rowData.primaryContact.name}
-                      profilePicture={rowData.primaryContact.profilePicture}
-                    />
+                    <Box
+                      cursor="pointer"
+                      onClick={() =>
+                        navigate("/contacts/", {
+                          state: { selectedContact: rowData.primaryContact.id },
+                        })
+                      }
+                    >
+                      <AutoCompleteListItem
+                        name={rowData.primaryContact.name}
+                        profilePicture={rowData.primaryContact.profilePicture}
+                      />
+                    </Box>
                   )
                 } else {
                   return <Text>Unassigned</Text>
@@ -279,13 +301,15 @@ const CompaniesPage = ({ user, setUser, org, setOrg }) => {
                 var match = ""
                 var re = true
                 if ((match = term.match(/(^|,)=(\d*)($|,)/)))
-                  re = re && rowData.dealSize.toString().startsWith(match[2])
+                  re =
+                    re && rowData.annualRevenue.toString().startsWith(match[2])
                 if ((match = term.match(/(^|,)!=(\d*)($|,)/)))
-                  re = re && !rowData.dealSize.toString().startsWith(match[2])
+                  re =
+                    re && !rowData.annualRevenue.toString().startsWith(match[2])
                 if ((match = term.match(/(^|,)>(\d+)($|,)/)))
-                  re = re && rowData.dealSize > parseInt(match[2])
+                  re = re && rowData.annualRevenue > parseInt(match[2])
                 if ((match = term.match(/(^|,)<(\d+)($|,)/)))
-                  re = re && rowData.dealSize < parseInt(match[2])
+                  re = re && rowData.annualRevenue < parseInt(match[2])
                 return re
               },
               editComponent: props => {
@@ -472,10 +496,10 @@ const CompaniesPage = ({ user, setUser, org, setOrg }) => {
   )
 }
 
-const Companies = props => (
-  <Layout location={props.location}>
+const Companies = ({ location }) => (
+  <Layout location={location}>
     <Seo title="Companies" />
-    <CompaniesPage />
+    <CompaniesPage companyID={location.state?.selectedCompany} />
   </Layout>
 )
 

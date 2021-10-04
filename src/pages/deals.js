@@ -48,7 +48,7 @@ import Search from "@material-ui/icons/Search"
 import ViewColumn from "@material-ui/icons/ViewColumn"
 import { AiFillEdit } from "react-icons/ai"
 
-const DealsPage = ({ user, setUser, org, setOrg }) => {
+const DealsPage = ({ user, setUser, org, setOrg, dealID, filter }) => {
   const stageOptions = {
     Prospect: "gray",
     Lead: "red",
@@ -111,6 +111,7 @@ const DealsPage = ({ user, setUser, org, setOrg }) => {
   const [members, setMembers] = useState([])
   const [companies, setCompanies] = useState([])
   const [selected, setSelected] = useState("")
+  const [loading, setLoading] = useState(true)
 
   useEffect(() => {
     const fetchDeals = async orgID => {
@@ -129,6 +130,12 @@ const DealsPage = ({ user, setUser, org, setOrg }) => {
         }
       }
       setDealList(deals)
+
+      // if deal passed from previous page, set as selected
+      if (dealID) {
+        const selectedDeal = deals.filter(deal => deal.id === dealID)[0]
+        setSelected(selectedDeal)
+      }
     }
 
     const fetchMembers = async members => {
@@ -147,10 +154,12 @@ const DealsPage = ({ user, setUser, org, setOrg }) => {
       setCompanies(companyList)
     }
 
-    fetchDeals(org.id)
-    fetchMembers(org.members)
-    fetchCompanies(org.id)
-  }, [org])
+    Promise.all([
+      fetchDeals(org.id),
+      fetchMembers(org.members),
+      fetchCompanies(org.id),
+    ]).then(() => setLoading(false))
+  }, [org, dealID])
 
   return (
     <Box p="25px">
@@ -183,6 +192,7 @@ const DealsPage = ({ user, setUser, org, setOrg }) => {
           style={{ boxShadow: "none" }}
           tableRef={tableRef}
           icons={tableIcons}
+          isLoading={loading}
           columns={[
             {
               title: "Deal Name",
@@ -204,6 +214,7 @@ const DealsPage = ({ user, setUser, org, setOrg }) => {
             {
               title: "Company",
               field: "company",
+              ...(filter && { defaultFilter: filter }),
               customFilterAndSearch: (term, rowData) =>
                 rowData.company?.name
                   .toLowerCase()
@@ -237,10 +248,19 @@ const DealsPage = ({ user, setUser, org, setOrg }) => {
               },
               render: rowData => {
                 return rowData.company ? (
-                  <AutoCompleteListItem
-                    name={rowData.company.name}
-                    profilePicture={rowData.company.profilePicture}
-                  />
+                  <Box
+                    cursor="pointer"
+                    onClick={() =>
+                      navigate("/companies/", {
+                        state: { selectedCompany: rowData.company.id },
+                      })
+                    }
+                  >
+                    <AutoCompleteListItem
+                      name={rowData.company.name}
+                      profilePicture={rowData.company.profilePicture}
+                    />
+                  </Box>
                 ) : (
                   <Text>Unassigned</Text>
                 )
@@ -544,10 +564,13 @@ const DealsPage = ({ user, setUser, org, setOrg }) => {
   )
 }
 
-const Deals = props => (
-  <Layout location={props.location}>
+const Deals = ({ location }) => (
+  <Layout location={location}>
     <Seo title="Deals" />
-    <DealsPage />
+    <DealsPage
+      dealID={location.state?.selectedDeal}
+      filter={location.state?.selectedFilter}
+    />
   </Layout>
 )
 
