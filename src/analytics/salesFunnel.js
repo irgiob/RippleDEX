@@ -77,7 +77,6 @@ const SalesFunnel = ({ deals }) => {
         "#4466a3",
         "#5B44A3",
       ]}
-      heightRelativeToValue={true}
     />
   )
 }
