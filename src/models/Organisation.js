@@ -17,8 +17,6 @@ import { getUser } from "./User"
 
 const db = getFirestore(firebase)
 
-export const DEFAULT_STATUS = "To-Do"
-
 /**
  * creates new organization
  *
@@ -35,7 +33,7 @@ export const createNewOrganization = async (userID, orgName, orgDesc) => {
     description: orgDesc,
     members: [],
     profilePicture: null,
-    kanbanLanes: [DEFAULT_STATUS],
+    kanbanLanes: [],
   })
   await addUserToOrganization(docRef.id, userID, "Admin")
   return docRef.id

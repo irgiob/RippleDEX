@@ -1,103 +1,105 @@
-import React, { useState, forwardRef, useEffect } from "react"
+import React, { useState, useEffect } from "react"
+
 import {
   Modal,
   ModalOverlay,
   ModalContent,
-  ModalHeader,
   ModalFooter,
   ModalBody,
   ModalCloseButton,
   Button,
-  useDisclosure,
-  Text,
   Input,
-  Switch,
   VStack,
   HStack,
   Box,
-  useMediaQuery,
+  Text,
   useToast,
   Textarea,
   Select,
   Spacer,
 } from "@chakra-ui/react"
 
+import { CustomAutoComplete, AutoCompleteListItem } from "../CustomAutoComplete"
+
 import { deleteTask, updateTask } from "../../models/Task"
 
 import { HiOutlineTrash } from "react-icons/hi"
 
 /**
- *
- * @property {bool} isOpen checks if pop up will be opened using useDisclosure
- * @property {function} onClose close the pop up using useDisclosure
- * @property {Object} value initial value passed to the pop up, Interaction document
+ * @property {Object} selected the currently selected task that opens the popup
+ * @property {function} setSelected functon to change currently selected task
  * @property {function} afterUpdate function to run after update is complete
+ * @property {Object} org organization data to updated task
  * @returns {JSX}
  */
-const TaskPopUp = ({ isOpen, onClose, value, setValue, afterUpdate, org }) => {
-  const [isLargeSize] = useMediaQuery("(min-width: 42em)")
-
+const TaskPopUp = ({
+  selected,
+  setSelected,
+  deals,
+  members,
+  afterUpdate,
+  org,
+}) => {
   const [name, setName] = useState("")
-  const [deal, setDeal] = useState("")
+  const [deal, setDeal] = useState()
   const [description, setDescription] = useState("")
   const [status, setStatus] = useState("")
-  const [company, setCompany] = useState([])
-  const [interactions, setInteractions] = useState([])
-  const [assignedUsers, setAssignedUsers] = useState([])
+  const [assignedUser, setAssignedUser] = useState()
   const [lanes, setLanes] = useState([])
   const toast = useToast()
 
   useEffect(() => {
-    if (value && org?.kanbanLanes) {
-      setName(value.name)
-      setDeal(value.deal)
-      setDescription(value.description)
-      setStatus(value.status)
-      setCompany(value.company)
-      setInteractions(value.interactions)
-      setAssignedUsers(value.assignedUsers)
+    if (selected && org?.kanbanLanes) {
       setLanes(org.kanbanLanes)
+      setName(selected.name)
+      setDescription(selected.description)
+      setStatus(selected.status)
+      setDeal(selected.deal)
+      setAssignedUser(selected.assignedUser)
     }
-  }, [value])
+  }, [selected, org])
 
   const handleClick = async () => {
     const options = {
-      deal: deal,
-      name: name,
-      description: description,
-      status: status,
-      company: company,
-      interactions: interactions,
-      assignedUsers: assignedUsers,
+      deal: deal?.id || null,
+      name: name || null,
+      description: description || null,
+      status: status.toLowerCase(),
+      assignedUser: assignedUser?.id || null,
     }
-
-    await updateTask(value.id, options)
-
+    await updateTask(selected.id, options)
     toast({
       title: "Success",
-      description: "Your The Interaction Detail Have Been Updated",
+      description: "Your task details have been updated",
       status: "success",
       duration: 5000,
       isClosable: true,
     })
-
-    afterUpdate()
-    onClose()
+    afterUpdate({
+      ...selected,
+      ...options,
+      deal: deal,
+      assignedUser: assignedUser,
+    })
+    setSelected(null)
   }
 
   const handleDelete = async () => {
-    try {
-      await deleteTask(value.id)
-      onClose()
-    } catch (err) {
-      console.error("Fail to delete")
-    }
+    await deleteTask(selected.id)
+    afterUpdate({ id: selected.id, deleted: true })
+    toast({
+      title: "Success",
+      description: "The task has been deleted",
+      status: "success",
+      duration: 5000,
+      isClosable: true,
+    })
+    setSelected(null)
   }
 
   return (
-    <Modal isCentered isOpen={isOpen} onClose={onClose}>
+    <Modal isCentered isOpen={selected} onClose={() => setSelected(null)}>
       <ModalOverlay />
-
       <ModalContent isCentered maxW="700px" borderRadius="15px">
         <ModalCloseButton m="20px" />
         <ModalBody m="20px">
@@ -116,9 +118,7 @@ const TaskPopUp = ({ isOpen, onClose, value, setValue, afterUpdate, org }) => {
                 <Input
                   placeholder="Task name"
                   value={name}
-                  onChange={event => {
-                    setName(event?.target.value)
-                  }}
+                  onChange={event => setName(event?.target.value)}
                 />
               </Box>
             </HStack>
@@ -136,12 +136,42 @@ const TaskPopUp = ({ isOpen, onClose, value, setValue, afterUpdate, org }) => {
             <HStack w="100%">
               <Text width="12vw">Deal :</Text>
               <Box w="60%">
-                <Input
+                <CustomAutoComplete
                   placeholder="Deal"
-                  value={deal}
-                  onChange={event => {
-                    setDeal(event?.target.value)
-                  }}
+                  items={deals}
+                  itemRenderer={deal => (
+                    <AutoCompleteListItem name={deal.name} showImage={false} />
+                  )}
+                  disableCreateItem={true}
+                  onCreateItem={() => null}
+                  value={deal ? deal : undefined}
+                  onChange={setDeal}
+                  valueInputAttribute="name"
+                  size="md"
+                  variant="outline"
+                  showImage={false}
+                />
+              </Box>
+            </HStack>
+            <HStack w="100%">
+              <Text width="12vw">Assigned to :</Text>
+              <Box w="60%">
+                <CustomAutoComplete
+                  placeholder="Member"
+                  items={members}
+                  itemRenderer={member => (
+                    <AutoCompleteListItem
+                      name={member.label}
+                      profilePicture={member.profilePicture}
+                    />
+                  )}
+                  disableCreateItem={true}
+                  onCreateItem={() => null}
+                  value={assignedUser ? assignedUser : undefined}
+                  onChange={setAssignedUser}
+                  valueInputAttribute="label"
+                  size="md"
+                  variant="outline"
                 />
               </Box>
             </HStack>
@@ -150,14 +180,15 @@ const TaskPopUp = ({ isOpen, onClose, value, setValue, afterUpdate, org }) => {
               <Box w="40%">
                 <Select
                   value={status}
-                  onChange={event => setStatus(event?.target.value)}
-                >
-                  {
-                    // Interate options from kanban lanes
-                    lanes.map(lane => (
-                      <option value={lane}>{lane}</option>
-                    ))
+                  onChange={event =>
+                    setStatus(event?.target.selectedOptions[0].value)
                   }
+                >
+                  {lanes.map(lane => (
+                    <option key={lane} value={lane.toLowerCase()}>
+                      {lane}
+                    </option>
+                  ))}
                 </Select>
               </Box>
             </HStack>
@@ -173,9 +204,7 @@ const TaskPopUp = ({ isOpen, onClose, value, setValue, afterUpdate, org }) => {
                 fontFamily="Raleway-Bold"
                 variant="solid"
                 borderRadius="30px"
-                _hover={{
-                  transform: "scale(1.05)",
-                }}
+                _hover={{ transform: "scale(1.05)" }}
                 padding="20px"
                 leftIcon={<HiOutlineTrash />}
                 onClick={handleDelete}
@@ -192,9 +221,7 @@ const TaskPopUp = ({ isOpen, onClose, value, setValue, afterUpdate, org }) => {
                 fontFamily="Raleway-Bold"
                 variant="solid"
                 borderRadius="30px"
-                _hover={{
-                  transform: "scale(1.05)",
-                }}
+                _hover={{ transform: "scale(1.05)" }}
                 padding="20px"
                 onClick={handleClick}
               >

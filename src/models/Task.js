@@ -22,6 +22,7 @@ const db = getFirestore(firebase)
  * @param {String} taskDesc the description of task to be created
  * @param {String} taskName the name of the task to be created
  * @param {String} orgID the ID of organizaiton to contain the task
+ * @param {Strig}  userID user assigned to the task
  *
  * @returns {DocumentReference} new task just created
  */
@@ -30,16 +31,15 @@ export const createNewTask = async (
   taskDesc,
   taskName,
   orgID,
-  status = ""
+  status = "",
+  userID
 ) => {
   const docRef = await addDoc(collection(db, "tasks"), {
     deal: dealID,
     name: taskName,
     description: taskDesc,
     status: status,
-    company: [],
-    interactions: [],
-    assignedUsers: [],
+    assignedUser: userID,
     forOrganization: orgID,
   })
   return docRef.id
