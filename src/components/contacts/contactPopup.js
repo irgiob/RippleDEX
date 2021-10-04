@@ -27,12 +27,11 @@ import {
   RiMailAddFill,
   RiCalendarEventFill,
   RiImageAddLine,
+  RiChat1Fill,
 } from "react-icons/ri"
 
 import { CustomAutoComplete, AutoCompleteListItem } from "../CustomAutoComplete"
 import UploadImageButton from "../uploadImageButton"
-
-import MaterialTable from "material-table"
 
 import LogoLight from "../../images/RippleDEXWhite.svg"
 
@@ -123,7 +122,6 @@ const ContactPopUp = ({ selected, setSelected, companies, onUpdate }) => {
                   mt="30px"
                   w="8em"
                   h="8em"
-                  bg="grey"
                   src={contactImage || LogoLight}
                   alt="Contact Image"
                 >
@@ -246,7 +244,12 @@ const ContactPopUp = ({ selected, setSelected, companies, onUpdate }) => {
                 <GridItem rowSpan={4} colSpan={1} pt="20px">
                   <VStack>
                     {contactEmail && (
-                      <Link w="100%" href={"mailto:" + contactEmail} isExternal>
+                      <Link
+                        w="100%"
+                        href={"mailto:" + contactEmail}
+                        isExternal
+                        style={{ textDecoration: "none" }}
+                      >
                         <Button
                           bgColor="ripple.200"
                           color="white"
@@ -255,9 +258,7 @@ const ContactPopUp = ({ selected, setSelected, companies, onUpdate }) => {
                           variant="solid"
                           w="100%"
                           leftIcon={<RiMailAddFill size={20} />}
-                          _hover={{
-                            transform: "scale(1.05)",
-                          }}
+                          _hover={{ transform: "scale(1.05)" }}
                         >
                           Email
                         </Button>
@@ -272,11 +273,22 @@ const ContactPopUp = ({ selected, setSelected, companies, onUpdate }) => {
                       variant="solid"
                       w="100%"
                       leftIcon={<RiCalendarEventFill size={20} />}
-                      _hover={{
-                        transform: "scale(1.05)",
-                      }}
+                      _hover={{ transform: "scale(1.05)" }}
                     >
                       Schedule Meeting
+                    </Button>
+                    <Spacer />
+                    <Button
+                      bgColor="ripple.200"
+                      color="white"
+                      fontFamily="Raleway-Bold"
+                      borderRadius="30px"
+                      variant="solid"
+                      w="100%"
+                      leftIcon={<RiChat1Fill size={20} />}
+                      _hover={{ transform: "scale(1.05)" }}
+                    >
+                      View Interactions
                     </Button>
                   </VStack>
                 </GridItem>

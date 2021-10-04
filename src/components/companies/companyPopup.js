@@ -30,17 +30,17 @@ import {
 import {
   RiArrowLeftSLine,
   RiSendPlaneFill,
-  RiQuillPenFill,
   RiImageAddLine,
+  RiUserFill,
+  RiBookOpenFill,
 } from "react-icons/ri"
 
 import { CustomAutoComplete, AutoCompleteListItem } from "../CustomAutoComplete"
 import UploadImageButton from "../uploadImageButton"
 import ContactPopUp from "../contacts/contactPopup"
 
-import MaterialTable from "material-table"
-
 import LogoLight from "../../images/RippleDEXWhite.svg"
+import { navigate } from "gatsby-link"
 
 const CompanyPopUp = ({
   selected,
@@ -163,7 +163,6 @@ const CompanyPopUp = ({
                     mt="30px"
                     w="8em"
                     h="8em"
-                    bg="grey"
                     src={companyImage || LogoLight}
                     alt="Company Image"
                   >
@@ -192,6 +191,7 @@ const CompanyPopUp = ({
                               : companyWebsite
                           }
                           isExternal
+                          style={{ textDecoration: "none" }}
                         >
                           <Button
                             bgColor="ripple.200"
@@ -214,12 +214,32 @@ const CompanyPopUp = ({
                         borderRadius="30px"
                         variant="solid"
                         w="100%"
-                        leftIcon={<RiQuillPenFill size={20} />}
-                        _hover={{
-                          transform: "scale(1.05)",
-                        }}
+                        leftIcon={<RiUserFill size={20} />}
+                        _hover={{ transform: "scale(1.05)" }}
+                        onClick={() =>
+                          navigate("/contacts/", {
+                            state: { selectedFilter: selected?.name },
+                          })
+                        }
                       >
-                        Create Deal
+                        View Contacts
+                      </Button>
+                      <Button
+                        bgColor="ripple.200"
+                        color="white"
+                        fontFamily="Raleway-Bold"
+                        borderRadius="30px"
+                        variant="solid"
+                        w="100%"
+                        leftIcon={<RiBookOpenFill size={20} />}
+                        _hover={{ transform: "scale(1.05)" }}
+                        onClick={() =>
+                          navigate("/deals/", {
+                            state: { selectedFilter: selected?.name },
+                          })
+                        }
+                      >
+                        View Deals
                       </Button>
                     </>
                   )}
@@ -385,28 +405,6 @@ const CompanyPopUp = ({
               </GridItem>
             </Grid>
           </Box>
-          {selected?.id && (
-            <VStack w="100%" align="left">
-              <Text
-                fontSize="25px"
-                color="ripple.200"
-                fontFamily="Raleway-Bold"
-              >
-                Contacts
-              </Text>
-              <hr />
-              <Box>Company Contacts Table Here</Box>
-              <Text
-                fontSize="25px"
-                color="ripple.200"
-                fontFamily="Raleway-Bold"
-              >
-                Deals
-              </Text>
-              <hr />
-              <Box>Deals Table Here</Box>
-            </VStack>
-          )}
         </ModalBody>
       </ModalContent>
     </Modal>
