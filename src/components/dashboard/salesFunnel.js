@@ -2,7 +2,6 @@ import React, { useEffect, useState } from "react"
 
 import { FunnelChart } from "react-funnel-pipeline"
 import "react-funnel-pipeline/dist/index.css"
-import { getDealsByOrg } from "../models/Deal"
 
 /**
  *
@@ -20,9 +19,8 @@ const SalesFunnel = ({ deals }) => {
   const [proposal, setProposal] = useState(0)
   const [negotiation, setNegotiation] = useState(0)
   const [closed, setClosed] = useState(0)
-  const [failed, setFailed] = useState(0)
 
-  useEffect(async () => {
+  useEffect(() => {
     // Fetch data from database
     const stageCount = {
       prospect: 0,
@@ -39,6 +37,7 @@ const SalesFunnel = ({ deals }) => {
         doc.dealSize
       )
     })
+
     // setProspect(stageCount.prospect)
     // setLead(stageCount.lead)
     // setPitch(stageCount.pitch)
@@ -55,7 +54,7 @@ const SalesFunnel = ({ deals }) => {
     setProposal(92000)
     setNegotiation(43000)
     setClosed(12000)
-  }, [])
+  }, [deals])
 
   return (
     <FunnelChart

@@ -6,7 +6,7 @@ import { Link } from "gatsby"
 import { ProSidebar, Menu, MenuItem } from "react-pro-sidebar"
 
 import { FaExpandAlt, FaTasks, FaDollarSign } from "react-icons/fa"
-import { BsFillChatSquareDotsFill, BsBarChartFill } from "react-icons/bs"
+import { BsFillChatSquareDotsFill } from "react-icons/bs"
 import { BiBuildingHouse, BiCalendar } from "react-icons/bi"
 import { RiContactsBook2Line } from "react-icons/ri"
 import { AiFillHome } from "react-icons/ai"

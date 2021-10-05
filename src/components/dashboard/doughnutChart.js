@@ -1,8 +1,6 @@
 import React, { useEffect, useState } from "react"
 import { Chart, Doughnut } from "react-chartjs-2"
-import { Box } from "@chakra-ui/react"
 import pieceLabel from "chartjs-plugin-datalabels"
-import { getDealsByOrg } from "../models/Deal"
 
 // Chartjs implementation reference: https://github.com/reactchartjs/react-chartjs-2/issues/201
 Chart.register(pieceLabel)
@@ -20,9 +18,8 @@ const DoughnutChart = ({ deals }) => {
   const [proposal, setProposal] = useState(0)
   const [negotiation, setNegotiation] = useState(0)
   const [closed, setClosed] = useState(0)
-  const [failed, setFailed] = useState(0)
 
-  useEffect(async () => {
+  useEffect(() => {
     // Fetch data from database
     const stageCount = {
       prospect: 0,
@@ -33,6 +30,7 @@ const DoughnutChart = ({ deals }) => {
       negotiation: 0,
       closed: 0,
     }
+
     deals.forEach(doc => {
       stageCount[doc.stage.toLowerCase().replace(" ", "")] += 1
     })
@@ -53,7 +51,8 @@ const DoughnutChart = ({ deals }) => {
     setProposal(92)
     setNegotiation(43)
     setClosed(12)
-  })
+  }, [deals])
+
   const data = {
     labels: [
       "Prospect",
@@ -97,9 +96,7 @@ const DoughnutChart = ({ deals }) => {
         formatter: (value, ctx) => {
           let sum = 0
           let dataArr = ctx.chart.data.datasets[0].data
-          dataArr.map(data => {
-            sum += data
-          })
+          dataArr.map(data => (sum += data))
           let percentage = ((value * 100) / sum).toFixed(2) + "%"
           return value > 0 ? percentage : ""
         },

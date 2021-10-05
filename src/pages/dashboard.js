@@ -1,11 +1,13 @@
-import * as React from "react"
+import React, { useState, useEffect } from "react"
 
 import Layout from "../components/layout"
 import Seo from "../components/seo"
+
 import ReminderComponent from "../components/dashboard/reminderComponent"
+import DoughnutChart from "../components/dashboard/doughnutChart"
+import SalesFunnel from "../components/dashboard/salesFunnel"
 
 import {
-  Heading,
   Grid,
   GridItem,
   Box,
@@ -14,31 +16,23 @@ import {
   VStack,
   HStack,
 } from "@chakra-ui/react"
-import DoughnutChart from "../analytics/doughnutChart"
-import SalesFunnel from "../analytics/salesFunnel"
 
 import { getDealsByOrg } from "../models/Deal"
 import { getInteractionsByOrg } from "../models/Interaction"
 
 const DashboardPage = ({ user, setUser, org, setOrg }) => {
-  const [deals, setDeals] = React.useState([])
-  const [interactions, setInteractions] = React.useState([])
-  React.useEffect(async () => {
-    // Fetch deals for analytics
-
-    try {
-      const dealsList = await getDealsByOrg(org.id)
-      if (dealsList) {
-        setDeals(dealsList)
-      }
-      const interactionsList = await getInteractionsByOrg(org.id)
-      if (interactionsList) {
-        setInteractions(interactionsList)
-      }
-    } catch (err) {
-      console.error(err)
+  const [deals, setDeals] = useState([])
+  const [interactions, setInteractions] = useState([])
+  useEffect(() => {
+    // Fetch deals and interactions for analytics
+    const fetchData = async orgID => {
+      const dealsList = await getDealsByOrg(orgID)
+      if (dealsList) setDeals(dealsList)
+      const interactionsList = await getInteractionsByOrg(orgID)
+      if (interactionsList) setInteractions(interactionsList)
     }
-  }, [])
+    fetchData(org.id)
+  }, [org])
 
   return (
     <>
