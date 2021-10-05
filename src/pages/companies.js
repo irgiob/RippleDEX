@@ -51,7 +51,7 @@ import Search from "@material-ui/icons/Search"
 import ViewColumn from "@material-ui/icons/ViewColumn"
 
 import { AiFillEdit, AiOutlineFileAdd, AiOutlineCheck } from "react-icons/ai"
-import { ExternalLinkIcon } from "@chakra-ui/icons"
+import { RiExternalLinkLine } from "react-icons/ri"
 
 const CompaniesPage = ({ user, setUser, org, setOrg, companyID }) => {
   // Initialize table icons used
@@ -386,7 +386,7 @@ const CompaniesPage = ({ user, setUser, org, setOrg, companyID }) => {
                   return (
                     <Link href={url} isExternal>
                       <Text>
-                        {rowData.website} <ExternalLinkIcon mx="2px" />
+                        {rowData.website} <RiExternalLinkLine mx="2px" />
                       </Text>
                     </Link>
                   )

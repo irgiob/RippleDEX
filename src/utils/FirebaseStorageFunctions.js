@@ -1,10 +1,5 @@
-
 import firebase from "../../plugins/gatsby-plugin-firebase-custom"
-import {
-  getStorage,
-  ref,
-  uploadBytesResumable,
-} from "@firebase/storage"
+import { getStorage, ref, uploadBytesResumable } from "firebase/storage"
 
 const storage = getStorage(firebase) // Middleware for firebase storage
 

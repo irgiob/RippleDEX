@@ -11,7 +11,6 @@ import {
   deleteDoc,
   addDoc,
 } from "firebase/firestore"
-import { createNull } from "typescript"
 
 const db = getFirestore(firebase)
 

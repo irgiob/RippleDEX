@@ -15,10 +15,10 @@ import {
   ModalContent,
   ModalCloseButton,
   useMediaQuery,
-  ModalFooter
+  ModalFooter,
 } from "@chakra-ui/react"
 
-import { getDownloadURL } from "@firebase/storage"
+import { getDownloadURL } from "firebase/storage"
 
 import Pic from "../images/Upload/upload.png"
 import { FiUpload } from "react-icons/fi"
@@ -26,15 +26,14 @@ import { FiUpload } from "react-icons/fi"
 import { uploadFile } from "../utils/FirebaseStorageFunctions"
 
 /**
- * 
+ *
  * Sets the image state as the file selected
  * Props:
- * @property {funcion} changeUrl prop which contains a function to set the URL state 
- * @property {string} buttonText prop for text in the button 
- * @property {object} style prop for button style 
+ * @property {funcion} changeUrl prop which contains a function to set the URL state
+ * @property {string} buttonText prop for text in the button
+ * @property {object} style prop for button style
  */
-const UploadImageButton = (props) => {
-
+const UploadImageButton = props => {
   const [image, setImage] = useState(null)
   const [progress, setProgress] = useState(0)
 
@@ -84,25 +83,25 @@ const UploadImageButton = (props) => {
       // File upload has failed
       error => {
         switch (error.code) {
-          case 'storage/unauthorized':
+          case "storage/unauthorized":
             // User doesn't have permission to access the object
-            break;
-          case 'storage/canceled':
+            break
+          case "storage/canceled":
             // User canceled the upload
             console.log("Upload canceled")
-            break;
-          case 'storage/unknown':
+            break
+          case "storage/unknown":
             // Unknown error occurred, inspect error.serverResponse
-            break;
+            break
           default:
-            break;
+            break
         }
         setProgress(false)
       },
 
       // File upload is successfull
       () => {
-        getDownloadURL(uploadTask.snapshot.ref).then( url => {
+        getDownloadURL(uploadTask.snapshot.ref).then(url => {
           props.changeUrl(url)
           clearState()
           onClose()
@@ -121,7 +120,7 @@ const UploadImageButton = (props) => {
 
   return (
     <>
-      <Button 
+      <Button
         color={props.color}
         fontFamily={props.fontFamily}
         borderRadius={props.borderRadius}
@@ -132,12 +131,8 @@ const UploadImageButton = (props) => {
       >
         {props.buttonMessage}
       </Button>
-      <Modal
-        isOpen={isOpen} 
-        onClose={onClose}
-        isCentered
-      >
-        <ModalOverlay/>
+      <Modal isOpen={isOpen} onClose={onClose} isCentered>
+        <ModalOverlay />
         <ModalContent
           pos="absolute"
           top="15vh"
@@ -147,61 +142,63 @@ const UploadImageButton = (props) => {
         >
           <ModalHeader>Upload photo</ModalHeader>
           <ModalCloseButton />
-          <ModalBody
-          >
+          <ModalBody>
             <Box left="50%" top="50%">
-                <Input
-                  pt="260px"
-                  h="300px"
-                  w="400px"
-                  top="25%"
-                  align="center"
-                  type="file"
-                  accept="image/x-png,image/jpeg"
-                  backgroundImage={Pic}
-                  backgroundRepeat="no-repeat"
-                  backgroundPosition="center"
-                  backgroundSize='75%'
-                  borderStyle="dashed"
-                  onChange={e => onImageChange(e)}
-                />
-                <Text 
-                  hidden={isSelected}
-                  pt="10px"
-                  color="gray.400" 
-                  align="center" 
-                >
-                  Choose a file or drag it here
-                </Text>
-                <Progress value={progress} max="100" colorScheme="cyan" hidden={!inProgress} width="400px" />
-              </Box>  
+              <Input
+                pt="260px"
+                h="300px"
+                w="400px"
+                top="25%"
+                align="center"
+                type="file"
+                accept="image/x-png,image/jpeg"
+                backgroundImage={Pic}
+                backgroundRepeat="no-repeat"
+                backgroundPosition="center"
+                backgroundSize="75%"
+                borderStyle="dashed"
+                onChange={e => onImageChange(e)}
+              />
+              <Text
+                hidden={isSelected}
+                pt="10px"
+                color="gray.400"
+                align="center"
+              >
+                Choose a file or drag it here
+              </Text>
+              <Progress
+                value={progress}
+                max="100"
+                colorScheme="cyan"
+                hidden={!inProgress}
+                width="400px"
+              />
+            </Box>
           </ModalBody>
-            <ModalFooter>
-              <Box
-                  align="center"
+          <ModalFooter>
+            <Box align="center">
+              <VStack>
+                <Button
+                  bgColor="ripple.200"
+                  color="white"
+                  fontFamily="Raleway-Bold"
+                  borderRadius="50px"
+                  variant="solid"
+                  size="md"
+                  leftIcon={<FiUpload />}
+                  _hover={{ transform: "scale(1.05)" }}
+                  value="Upload file"
+                  type="Submit"
+                  disabled={!isSelected}
+                  hidden={!isSelected || inProgress}
+                  onClick={handleClick}
                 >
-                  <VStack>
-                    <Button
-                      bgColor="ripple.200"
-                      color="white"
-                      fontFamily="Raleway-Bold"
-                      borderRadius="50px"
-                      variant="solid"
-                      size="md"
-                      leftIcon={<FiUpload />}
-                      _hover={{ transform: "scale(1.05)" }}
-                      value="Upload file"
-                      type="Submit"
-                      disabled={!isSelected}
-                      hidden={!isSelected || inProgress}
-                      onClick={handleClick}
-                    >
-                      Upload File
-                    </Button>
-
-                  </VStack>
-                </Box>
-            </ModalFooter>
+                  Upload File
+                </Button>
+              </VStack>
+            </Box>
+          </ModalFooter>
         </ModalContent>
       </Modal>
     </>
