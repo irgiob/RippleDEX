@@ -10,11 +10,12 @@ import {
   Button,
   Grid,
   GridItem,
+  Spacer,
   VStack,
   HStack,
 } from "@chakra-ui/react"
 
-import { AiOutlineExclamationCircle, AiTwotoneCalendar } from "react-icons/ai"
+import { AiOutlineExclamationCircle, AiTwotoneCalendar, AiFillPlusCircle } from "react-icons/ai"
 
 /**
  *
@@ -103,13 +104,16 @@ const ReminderComponent = ({ user, org }) => {
   const eventItems = allEvents.map((event, i) => {
     if (event?.forOrganization === org.id) {
       const startTime = getHourMinute(event?.meetingStart)
+      //By default events are all day
       var endTime = " "
       var duration = "All Day"
       var times = todaysEvent(event?.meetingStart.toDate())
+      //get the duration and ending time for scheduled items
       if (event?.meetingEnd) {
         endTime = getHourMinute(event?.meetingEnd)
         duration = getMinuteDiff(event?.meetingStart, event?.meetingEnd)
       }
+      // if there are events for today, Display
       if (times === 0) {
         return (
           <li key={i}>
@@ -168,12 +172,13 @@ const ReminderComponent = ({ user, org }) => {
     <Box>
       <VStack align="left" pl="1em" pr="2em" h="85vh" overflowY="auto">
         <Button
-          w="200px"
-          p="20px"
-          ml="100px"
+          w="15em"
+          p="1em"
+          ml="5em"
           bg="Grey"
           color="white"
           _hover={{
+            bg: "ripple.200",
             transform: "scale(1.03)",
           }}
           onClick={handleClick}
@@ -182,6 +187,21 @@ const ReminderComponent = ({ user, org }) => {
           {date}
         </Button>
         <ul style={{ listStyleType: "none" }}>{eventItems}</ul>
+        <Button
+          pl = "5em"
+          bgColor="transparent"
+          color="ripple.200"
+          borderRadius="15px"
+          w="100%"
+          _hover={{
+            color: "ripple.100",
+            transform: "scale(1.03)",
+          }}
+          onClick={handleClick}
+          leftIcon={<AiFillPlusCircle />}
+        >
+          Add event to calendar
+        </Button>
       </VStack>
     </Box>
   )
