@@ -1,26 +1,12 @@
-import React, { useState } from "react"
-
-import { ProSidebar, Menu, MenuItem, SubMenu } from "react-pro-sidebar"
+import React from "react"
 import "./proSideNav.scss"
 
 import { Box, Tooltip } from "@chakra-ui/react"
-
 import { Link } from "gatsby"
+import { ProSidebar, Menu, MenuItem } from "react-pro-sidebar"
 
-import {
-  FaExpandAlt,
-  FaTasks,
-  FaUsers,
-  FaRegBuilding,
-  FaDollarSign,
-  FaCalendarDay,
-} from "react-icons/fa"
-import { ImCalendar } from "react-icons/im"
-import {
-  BsFillChatSquareDotsFill,
-  BsBarChartFill,
-  BsFillPeopleFill,
-} from "react-icons/bs"
+import { FaExpandAlt, FaTasks, FaDollarSign } from "react-icons/fa"
+import { BsFillChatSquareDotsFill, BsBarChartFill } from "react-icons/bs"
 import { BiBuildingHouse, BiCalendar } from "react-icons/bi"
 import { RiContactsBook2Line } from "react-icons/ri"
 import { AiFillHome } from "react-icons/ai"
@@ -52,7 +38,7 @@ const ProSideNav = ({ location }) => {
             <MenuItem
               active={
                 pathname != null &&
-                (pathname == "/dashboard" || pathname == "/dashboard/")
+                (pathname === "/dashboard" || pathname === "/dashboard/")
               }
               icon={<AiFillHome size="20px" />}
             >
@@ -63,7 +49,7 @@ const ProSideNav = ({ location }) => {
             <MenuItem
               active={
                 pathname != null &&
-                (pathname == "/tasks" || pathname == "/tasks/")
+                (pathname === "/tasks" || pathname === "/tasks/")
               }
               icon={<FaTasks size="20px" />}
             >
@@ -74,7 +60,7 @@ const ProSideNav = ({ location }) => {
             <MenuItem
               active={
                 pathname != null &&
-                (pathname == "/calendar" || pathname == "/calendar/")
+                (pathname === "/calendar" || pathname === "/calendar/")
               }
               icon={<BiCalendar size="20px" />}
             >
@@ -85,7 +71,7 @@ const ProSideNav = ({ location }) => {
             <MenuItem
               active={
                 pathname != null &&
-                (pathname == "/contacts" || pathname == "/contacts/")
+                (pathname === "/contacts" || pathname === "/contacts/")
               }
               icon={<RiContactsBook2Line size="20px" />}
             >
@@ -96,7 +82,7 @@ const ProSideNav = ({ location }) => {
             <MenuItem
               active={
                 pathname != null &&
-                (pathname == "/companies" || pathname == "/companies/")
+                (pathname === "/companies" || pathname === "/companies/")
               }
               icon={<BiBuildingHouse size="20px" />}
             >
@@ -107,7 +93,7 @@ const ProSideNav = ({ location }) => {
             <MenuItem
               active={
                 pathname != null &&
-                (pathname == "/deals" || pathname == "/deals/")
+                (pathname === "/deals" || pathname === "/deals/")
               }
               icon={<FaDollarSign size="20px" />}
             >
@@ -122,22 +108,11 @@ const ProSideNav = ({ location }) => {
             <MenuItem
               active={
                 pathname != null &&
-                (pathname == "/interactions" || pathname == "/interactions/")
+                (pathname === "/interactions" || pathname === "/interactions/")
               }
               icon={<BsFillChatSquareDotsFill size="20px" />}
             >
               <Link to="/interactions">Interactions</Link>
-            </MenuItem>
-          </Tooltip>
-          <Tooltip isDisabled={!collapsed} label="Analytics" placement="right">
-            <MenuItem
-              active={
-                pathname != null &&
-                (pathname == "/analytics" || pathname == "/analytics/")
-              }
-              icon={<BsBarChartFill size="20px" />}
-            >
-              <Link to="/analytics">Analytics</Link>
             </MenuItem>
           </Tooltip>
         </Menu>

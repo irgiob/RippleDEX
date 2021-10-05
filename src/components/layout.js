@@ -3,7 +3,6 @@ import { navigate } from "gatsby-link"
 import PropTypes from "prop-types"
 import Header from "./headers/header"
 import HeaderUser from "./headers/headerUser"
-import SideNav from "./sideNav"
 import theme from "./theme"
 import "./layout.css"
 
