@@ -160,6 +160,7 @@ const TasksPage = ({ user, setUser, org, setOrg }) => {
         isClosable: true,
       })
       setLanes([...lanes, laneName])
+      setOrg({ ...org, kanbanLanes: [...lanes, laneName] })
     }
 
     return (

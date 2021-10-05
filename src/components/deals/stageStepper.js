@@ -1,17 +1,7 @@
-import * as React from "react"
+import React, { useState, useEffect } from "react"
 
-import { Box, Button, HStack, VStack, Text } from "@chakra-ui/react"
-
-import { updateDeal } from "../../models/Deal"
-
-import {
-  Stepper,
-  Step,
-  StepButton,
-  StepLabel,
-  Typography,
-} from "@material-ui/core"
-import { RiAppleFill } from "react-icons/ri"
+import { Button, HStack, VStack } from "@chakra-ui/react"
+import { Stepper, Step, StepLabel } from "@material-ui/core"
 
 const StageStepper = ({ setStage, value }) => {
   const steps = [
@@ -24,18 +14,17 @@ const StageStepper = ({ setStage, value }) => {
     "Closed",
   ]
 
-  const [activeStep, setActiveStep] = React.useState(0)
-  const [currStage, setCurrStage] = React.useState(0)
-  const [completed, setCompleted] = React.useState({})
+  const [activeStep, setActiveStep] = useState(0)
+  const [completed, setCompleted] = useState({})
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (value) {
       setActiveStep(value - 1)
       const newCompleted = {}
 
       let i = 0
 
-      if (value == 7) {
+      if (value === 7) {
         for (i; i < value; ++i) {
           newCompleted[i] = true
         }
@@ -48,7 +37,7 @@ const StageStepper = ({ setStage, value }) => {
       setCompleted(newCompleted)
       setStage(value)
     }
-  }, [value])
+  }, [value, setStage])
 
   const handleClick = index => {
     setActiveStep(index)
@@ -58,7 +47,7 @@ const StageStepper = ({ setStage, value }) => {
     setActiveStep(currStep + 1)
     const newCompleted = {}
 
-    if (currStep == 5) {
+    if (currStep === 5) {
       for (let i = 0; i < currStep + 2; ++i) {
         newCompleted[i] = true
       }

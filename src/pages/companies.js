@@ -12,6 +12,7 @@ import {
   NumberInput,
   NumberInputField,
   Link,
+  Flex,
   useToast,
 } from "@chakra-ui/react"
 
@@ -385,9 +386,10 @@ const CompaniesPage = ({ user, setUser, org, setOrg, companyID }) => {
                       : rowData.website
                   return (
                     <Link href={url} isExternal>
-                      <Text>
-                        {rowData.website} <RiExternalLinkLine mx="2px" />
-                      </Text>
+                      <Flex alignItems="center">
+                        <Text mr="0.25em">{rowData.website}</Text>
+                        <RiExternalLinkLine />
+                      </Flex>
                     </Link>
                   )
                 } else {
