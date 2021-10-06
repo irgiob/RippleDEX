@@ -21,6 +21,7 @@ import {
   Input,
   useDisclosure,
   useToast,
+  Center,
   Popover,
   PopoverTrigger,
   Portal,
@@ -235,78 +236,80 @@ const TasksPage = ({ user, setUser, org, setOrg }) => {
     }
 
     return (
-      <VStack pt="10px">
-        <Input
-          w="14em"
-          placeholder="Title"
-          size="md"
-          onChange={event => setName(event.target.value)}
-        />
-        <Input
-          w="14em"
-          placeholder="Description"
-          size="md"
-          onChange={event => setDescription(event.target.value)}
-        />
-        <CustomAutoComplete
-          placeholder="Deal"
-          items={deals}
-          itemRenderer={deal => (
-            <AutoCompleteListItem name={deal.name} showImage={false} />
-          )}
-          disableCreateItem={true}
-          onCreateItem={() => null}
-          value={deal ? deal : undefined}
-          onChange={setDeal}
-          valueInputAttribute="name"
-          size="md"
-          variant="outline"
-          showImage={false}
-        />
-        <CustomAutoComplete
-          placeholder="Member"
-          items={members}
-          itemRenderer={member => (
-            <AutoCompleteListItem
-              name={member.label}
-              profilePicture={member.profilePicture}
-            />
-          )}
-          disableCreateItem={true}
-          onCreateItem={() => null}
-          value={assignedUser ? assignedUser : undefined}
-          onChange={setAssignedUser}
-          valueInputAttribute="label"
-          size="md"
-          variant="outline"
-        />
-        <HStack pt="5px" pb="10px">
-          <Button
-            size="sm"
-            bgColor="ripple.200"
-            color="white"
-            _hover={{
-              bgColor: "transparent",
-              color: "ripple.200",
-            }}
-            onClick={props.onCancel}
-          >
-            Cancel
-          </Button>
-          <Button
-            size="sm"
-            bgColor="ripple.200"
-            color="white"
-            _hover={{
-              bgColor: "transparent",
-              color: "ripple.200",
-            }}
-            onClick={handleAdd}
-          >
-            Add Card
-          </Button>
-        </HStack>
-      </VStack>
+      <Center w="100%">
+        <VStack pt="10px" align="left" w="14em">
+          <Input
+            placeholder="Title"
+            size="md"
+            onChange={event => setName(event.target.value)}
+          />
+          <Input
+            placeholder="Description"
+            size="md"
+            onChange={event => setDescription(event.target.value)}
+          />
+          <CustomAutoComplete
+            placeholder="Deal"
+            items={deals}
+            itemRenderer={deal => (
+              <AutoCompleteListItem name={deal.name} showImage={false} />
+            )}
+            disableCreateItem={true}
+            onCreateItem={() => null}
+            value={deal ? deal : undefined}
+            onChange={setDeal}
+            valueInputAttribute="name"
+            size="md"
+            variant="outline"
+            showImage={false}
+          />
+          <CustomAutoComplete
+            placeholder="Member"
+            items={members}
+            itemRenderer={member => (
+              <AutoCompleteListItem
+                name={member.label}
+                profilePicture={member.profilePicture}
+              />
+            )}
+            disableCreateItem={true}
+            onCreateItem={() => null}
+            value={assignedUser ? assignedUser : undefined}
+            onChange={setAssignedUser}
+            valueInputAttribute="label"
+            size="md"
+            variant="outline"
+          />
+          <HStack pt="5px" pb="10px">
+            <Button
+              w="100%"
+              size="sm"
+              bgColor="ripple.200"
+              color="white"
+              _hover={{
+                bgColor: "transparent",
+                color: "ripple.200",
+              }}
+              onClick={props.onCancel}
+            >
+              Cancel
+            </Button>
+            <Button
+              w="100%"
+              size="sm"
+              bgColor="ripple.200"
+              color="white"
+              _hover={{
+                bgColor: "transparent",
+                color: "ripple.200",
+              }}
+              onClick={handleAdd}
+            >
+              Add Card
+            </Button>
+          </HStack>
+        </VStack>
+      </Center>
     )
   }
 

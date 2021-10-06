@@ -98,8 +98,12 @@ const DealsPage = ({ user, setUser, org, setOrg, dealID, filter }) => {
       },
     },
     overrides: {
-      ".react-datepicker-popper": {
-        zIndex: 11,
+      MuiPaper: {
+        root: {
+          "& > div[class^='Component']": {
+            overflowX: "visible !important",
+          },
+        },
       },
     },
   })
@@ -175,9 +179,6 @@ const DealsPage = ({ user, setUser, org, setOrg, dealID, filter }) => {
       <MuiThemeProvider theme={theme}>
         <MaterialTable
           options={{
-            headerStyle: {
-              zIndex: 1,
-            },
             showTitle: false,
             selection: true,
             searchFieldAlignment: "right",
@@ -414,12 +415,7 @@ const DealsPage = ({ user, setUser, org, setOrg, dealID, filter }) => {
                 )
               },
             },
-            {
-              title: "ID",
-              field: "id",
-              type: "string",
-              hidden: true,
-            },
+            { title: "ID", field: "id", type: "string", hidden: true },
             {
               title: "Recorded By",
               field: "recordedBy",

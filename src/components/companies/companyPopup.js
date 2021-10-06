@@ -318,7 +318,7 @@ const CompanyPopUp = ({
                       fontSize="15px"
                       color="ripple.200"
                     >
-                      Annual Revenue
+                      Primary Contact
                     </Text>
                     <Box pt="45px">
                       <CustomAutoComplete

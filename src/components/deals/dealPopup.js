@@ -147,7 +147,7 @@ const DealPopUp = ({ selected, setSelected, companies, members, onUpdate }) => {
                 {dealName}
               </Button>
               <HStack spacing="20px" w="100%">
-                <Box>
+                <Box w="100%">
                   <Text fontSize="15px" color="ripple.200" pb="10px">
                     Deal Name
                   </Text>
@@ -160,7 +160,7 @@ const DealPopUp = ({ selected, setSelected, companies, members, onUpdate }) => {
                     }}
                   />
                 </Box>
-                <Box>
+                <Box w="100%">
                   <Text fontSize="15px" color="ripple.200" pb="10px">
                     Deal Size
                   </Text>
@@ -175,8 +175,7 @@ const DealPopUp = ({ selected, setSelected, companies, members, onUpdate }) => {
                     <NumberInputField />
                   </NumberInput>
                 </Box>
-                <Spacer />
-                <Box>
+                <Box w="100%">
                   <Text fontSize="15px" color="ripple.200" pb="10px">
                     Closing Date
                   </Text>
@@ -191,19 +190,19 @@ const DealPopUp = ({ selected, setSelected, companies, members, onUpdate }) => {
                 </Box>
               </HStack>
               <HStack w="100%">
-                <Box>
+                <Box mr="0.5em">
                   <Text fontSize="15px" color="ripple.200" pt="20px">
                     Current Stage
                   </Text>
                   <StageStepper setStage={setStage} value={stage} />
                 </Box>
                 <Spacer />
-                <VStack spacing="15px">
-                  <Box>
+                <VStack spacing="15px" align="left" w="100%">
+                  <Box w="100%">
                     <Text pos="absolute" fontSize="15px" color="ripple.200">
                       Company
                     </Text>
-                    <Box pt="20px">
+                    <Box pt="20px" w="100%">
                       <CustomAutoComplete
                         variant="outline"
                         size="md"
@@ -219,7 +218,7 @@ const DealPopUp = ({ selected, setSelected, companies, members, onUpdate }) => {
                     </Box>
                   </Box>
                   <Spacer />
-                  <Box>
+                  <Box w="100%">
                     <Text pos="absolute" fontSize="15px" color="ripple.200">
                       Recorded By
                     </Text>
