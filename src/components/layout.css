@@ -62,6 +62,11 @@ body {
   }
 }
 
-.react-datepicker-popper {
+.react-datepicker-popper,
+.chakra-popover__popper {
   z-index: 2000 !important;
+}
+
+.react-datepicker__time-list {
+  height: 18.9em !important;
 }

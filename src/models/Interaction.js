@@ -42,12 +42,10 @@ export const createNewInteraction = async (
   taskID,
   remindMe = true,
   name = "",
-  end = null,
-  interPart = []
+  end = null
 ) => {
   const docRef = await addDoc(collection(db, "interactions"), {
     contact: contactID,
-    participants: interPart,
     addedBy: userID,
     forDeal: dealID,
     forTask: taskID,

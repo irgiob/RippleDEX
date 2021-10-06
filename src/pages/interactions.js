@@ -1,44 +1,33 @@
-import * as React from "react"
+import React, { useState, useEffect, createRef, forwardRef } from "react"
+import { navigate } from "gatsby-link"
 
 import Layout from "../components/layout"
 import Seo from "../components/seo"
 
-import {
-  Box,
-  Text,
-  IconButton,
-  Input,
-  Tooltip,
-  useDisclosure,
-  useToast,
-  navigate,
-} from "@chakra-ui/react"
-
-import InteractionPopUp from "../components/interactions/interactionPopup"
-
-import { dateToFirebaseTimestamp } from "../utils/DateTimeHelperFunctions"
-
-import { getUser } from "../models/User"
+import { Box, Text, Input, useToast } from "@chakra-ui/react"
+import { createMuiTheme, MuiThemeProvider } from "@material-ui/core"
 
 import {
   createNewInteraction,
   getInteractionsByOrg,
   deleteInteraction,
 } from "../models/Interaction"
-
-import { getContact, getContactsByOrg } from "../models/Contact"
-
-import { getDeal } from "../models/Deal"
-
-import { getTask, getTasksByOrg } from "../models/Task"
-
-import DatePicker from "react-datepicker"
-
-import { createMuiTheme, MuiThemeProvider } from "@material-ui/core"
-
-import { forwardRef } from "react"
+import { getUser } from "../models/User"
+import { getContactsByOrg } from "../models/Contact"
+import { getCompanyByOrg } from "../models/Company"
+import { getDealsByOrg } from "../models/Deal"
+import { getTasksByOrg } from "../models/Task"
 
 import MaterialTable from "material-table"
+
+import {
+  AutoCompleteListItem,
+  CustomAutoComplete,
+} from "../components/CustomAutoComplete"
+import InteractionPopUp from "../components/interactions/interactionPopup"
+import CustomDatePicker from "../components/CustomDatePicker"
+
+import { dateToFirebaseTimestamp } from "../utils/DateTimeHelperFunctions"
 
 import AddBox from "@material-ui/icons/AddBox"
 import ArrowDownward from "@material-ui/icons/ArrowDownward"
@@ -58,13 +47,7 @@ import ViewColumn from "@material-ui/icons/ViewColumn"
 
 import { AiFillEdit } from "react-icons/ai"
 
-import {
-  AutoCompleteListItem,
-  CustomAutoComplete,
-} from "../components/CustomAutoComplete"
-import { getDealsByOrg } from "../models/Deal"
-
-const InteractionsPage = ({ user, setUser, org, setOrg }) => {
+const InteractionsPage = ({ user, setUser, org, setOrg, interID, filter }) => {
   const tableIcons = {
     Add: forwardRef((props, ref) => <AddBox {...props} ref={ref} />),
     Check: forwardRef((props, ref) => <Check {...props} ref={ref} />),
@@ -103,92 +86,88 @@ const InteractionsPage = ({ user, setUser, org, setOrg }) => {
         main: "#168aa8",
       },
     },
+    overrides: {
+      MuiPaper: {
+        root: {
+          "& > div[class^='Component']": {
+            overflowX: "visible !important",
+          },
+        },
+      },
+    },
   })
 
+  const tableRef = createRef()
+  const [selected, setSelected] = useState()
+  const [interactionList, setInteractionList] = useState([])
+  const [contacts, setContacts] = useState([])
+  const [deals, setDeals] = useState([])
+  const [tasks, setTasks] = useState([])
+  const [companies, setCompanies] = useState([])
+  const [loading, setLoading] = useState(true)
+  const [members, setMembers] = useState([])
+  const [selectedDeal, setSelectedDeal] = useState()
   const toast = useToast()
 
-  // Modal or Popup triggers
-  const { isOpen, onOpen, onClose } = useDisclosure()
+  useEffect(() => {
+    // Fetch all data for the table
+    const fetchData = async org => {
+      // fetch contacts
+      const contactList = await getContactsByOrg(org.id)
+      for (const contact of contactList) contact.label = contact.name
+      setContacts(contactList)
 
-  const tableRef = React.createRef()
-  const [interactionList, setInteractionList] = React.useState([])
-  const [value, setValue] = React.useState("")
-  const [contacts, setContacts] = React.useState([])
-  const [deals, setDeals] = React.useState([])
-  const [tasks, setTasks] = React.useState([])
-  const [companies, setCompanies] = React.useState([])
+      // fetch companies
+      const companyList = await getCompanyByOrg(org.id)
+      for (const company of companyList) company.label = company.name
+      setCompanies(companyList)
 
-  React.useEffect(() => {
-    // Fetch interactions for the table
-    const fetchInteractions = async orgID => {
-      const interactions = await getInteractionsByOrg(orgID)
+      // fetch deals
+      const dealList = await getDealsByOrg(org.id)
+      for (const deal of dealList) deal.label = deal.name
+      setDeals(dealList)
+
+      // fetch tasks
+      const taskList = await getTasksByOrg(org.id)
+      for (const task of taskList) task.label = task.name
+      setTasks(taskList)
+
+      // fetch members
+      const memberList = []
+      for await (const mem of org.members) {
+        const member = await getUser(mem.userID)
+        member.label = member.firstName + " " + member.lastName
+        memberList.push(member)
+      }
+      setMembers(memberList)
+
+      // fetch interactions
+      const interactions = await getInteractionsByOrg(org.id)
+      // replace fields with document ids with actual objects of those documents
       for await (const interaction of interactions) {
-        // Fetch data on fields with associated documents
-        if (interaction.contact) {
-          const contact = await getContact(interaction.contact)
-          if (contact) {
-            contact.label = contact.name
-          }
-          interaction.contact = contact
-        }
-
-        if (interaction.addedBy) {
-          const addedBy = await getUser(interaction.addedBy)
-          if (addedBy) {
-            addedBy.label = addedBy.firstName + " " + addedBy.lastName
-          }
-          interaction.addedBy = addedBy
-        }
-
-        if (interaction.forDeal) {
-          const deal = await getDeal(interaction.forDeal)
-          if (deal) {
-            deal.label = deal.name
-          }
-          interaction.forDeal = deal
-        }
-
-        if (interaction.forTask) {
-          const task = await getTask(interaction.forTask)
-          if (task) {
-            task.label = task.name
-          }
-          interaction.forTask = task
-        }
+        interaction.dates = [interaction.meetingStart, interaction.meetingEnd]
+        if (interaction.contact)
+          interaction.contact = contactList.filter(
+            contact => contact.id === interaction.contact
+          )[0]
+        if (interaction.forDeal)
+          interaction.forDeal = dealList.filter(
+            deal => deal.id === interaction.forDeal
+          )[0]
+        if (interaction.forTask)
+          interaction.forTask = taskList.filter(
+            task => task.id === interaction.forTask
+          )[0]
+        if (interaction.addedBy)
+          interaction.addedBy = memberList.filter(
+            member => member.id === interaction.addedBy
+          )[0]
       }
       setInteractionList(interactions)
     }
 
-    // Fetch contacts for autocomplete
-    const fetchContacts = async orgID => {
-      const contactList = await getContactsByOrg(orgID)
-      for (const contact of contactList) contact.label = contact.name
-      setContacts(contactList)
-    }
-    // Fetch deals to autocomplete
-    const fetchDeals = async orgID => {
-      const dealList = await getDealsByOrg(orgID)
-      for (const deal of dealList) deal.label = deal.name
-      setDeals(dealList)
-    }
-
-    // Fetch tasks to autocomplete
-    const fetchTasks = async orgID => {
-      const taskList = await getTasksByOrg(orgID)
-      for (const task of taskList) task.label = task.name
-      setTasks(taskList)
-    }
-
-    fetchInteractions(org.id)
-    fetchContacts(org.id)
-    fetchDeals(org.id)
-    fetchTasks(org.id)
+    fetchData(org).then(() => setLoading(false))
   }, [org])
-
-  const handlePopUp = value => {
-    setValue(value)
-    onOpen()
-  }
 
   return (
     <Box p="25px">
@@ -207,59 +186,19 @@ const InteractionsPage = ({ user, setUser, org, setOrg }) => {
             showTitle: false,
             selection: true,
             searchFieldAlignment: "right",
-            maxBodyHeight: "80vh",
             padding: "dense",
             filtering: true,
             exportButton: true,
             tableLayout: "auto",
             toolbarButtonAlignment: "left",
-            actionsColumnIndex: 7,
+            actionsColumnIndex: 6,
           }}
           data={interactionList}
           style={{ boxShadow: "none" }}
           tableRef={tableRef}
           icons={tableIcons}
+          isLoading={loading}
           columns={[
-            {
-              title: "Contact",
-              field: "contact",
-              customFilterAndSearch: (term, rowData) =>
-                rowData.contact?.label
-                  .toLowerCase()
-                  .includes(term.toLowerCase()),
-              editComponent: props => {
-                const contactItem = contact => {
-                  return (
-                    <AutoCompleteListItem
-                      name={contact.name}
-                      profilePicture={contact.profilePicture}
-                    />
-                  )
-                }
-                return (
-                  <CustomAutoComplete
-                    placeholder="Select contact"
-                    items={contacts}
-                    itemRenderer={contactItem}
-                    disableCreateItem={false}
-                    onCreateItem={() => navigate("/contacts")}
-                    value={props.value}
-                    onChange={props.onChange}
-                    valueInputAttribute="name"
-                    size="sm"
-                    variant="flushed"
-                    focusBorderColor="ripple.200"
-                  />
-                )
-              },
-              render: rowData => {
-                return rowData.contact ? (
-                  <AutoCompleteListItem name={rowData.contact.name} />
-                ) : (
-                  <Text>Unassigned</Text>
-                )
-              },
-            },
             {
               title: "Deal",
               field: "forDeal",
@@ -280,12 +219,16 @@ const InteractionsPage = ({ user, setUser, org, setOrg }) => {
                     itemRenderer={dealItem}
                     disableCreateItem={false}
                     onCreateItem={() => navigate("/deals")}
-                    value={props.value}
-                    onChange={props.onChange}
+                    value={props.value || selectedDeal}
+                    onChange={deal => {
+                      props.onChange(deal)
+                      setSelectedDeal(deal)
+                    }}
                     valueInputAttribute="name"
                     size="sm"
                     variant="flushed"
                     focusBorderColor="ripple.200"
+                    showImage={false}
                   />
                 )
               },
@@ -319,16 +262,33 @@ const InteractionsPage = ({ user, setUser, org, setOrg }) => {
                 return (
                   <CustomAutoComplete
                     placeholder="Select task"
-                    items={tasks}
+                    items={
+                      selectedDeal
+                        ? tasks.filter(task => task.deal === selectedDeal.id)
+                        : tasks
+                    }
                     itemRenderer={taskItem}
                     disableCreateItem={false}
                     onCreateItem={() => navigate("/tasks")}
-                    value={props.value}
-                    onChange={props.onChange}
+                    value={
+                      selectedDeal && props.value
+                        ? selectedDeal.id === props.value.deal
+                          ? props.value
+                          : undefined
+                        : props.value
+                    }
+                    onChange={task => {
+                      props.onChange(task)
+                      if (!selectedDeal && task)
+                        setSelectedDeal(
+                          deals.filter(deal => deal.id === task.deal)[0]
+                        )
+                    }}
                     valueInputAttribute="name"
                     size="sm"
                     variant="flushed"
                     focusBorderColor="ripple.200"
+                    showImage={false}
                   />
                 )
               },
@@ -344,94 +304,269 @@ const InteractionsPage = ({ user, setUser, org, setOrg }) => {
               },
             },
             {
-              title: "Meeting Date",
-              field: "meetingStart",
+              title: "Contact",
+              field: "contact",
+              ...(filter && { defaultFilter: filter }),
+              customFilterAndSearch: (term, rowData) =>
+                rowData.contact?.label
+                  .toLowerCase()
+                  .includes(term.toLowerCase()),
               editComponent: props => {
-                const DateCustomInput = forwardRef(
-                  ({ value, onClick }, ref) => (
+                const contactItem = contact => {
+                  return (
+                    <AutoCompleteListItem
+                      name={contact.name}
+                      profilePicture={contact.profilePicture}
+                    />
+                  )
+                }
+                return (
+                  <CustomAutoComplete
+                    placeholder="Select contact"
+                    items={
+                      selectedDeal
+                        ? contacts.filter(contact => {
+                            const company = companies.filter(
+                              company => company.id === selectedDeal.company
+                            )[0]
+                            return company
+                              ? company.id === contact.company
+                              : false
+                          })
+                        : contacts
+                    }
+                    itemRenderer={contactItem}
+                    disableCreateItem={false}
+                    onCreateItem={() => navigate("/contacts")}
+                    value={
+                      selectedDeal && props.value
+                        ? companies.filter(
+                            company =>
+                              company.id === selectedDeal?.company &&
+                              company.id === props.value?.company
+                          ).length > 0
+                          ? props.value
+                          : undefined
+                        : props.value
+                    }
+                    onChange={props.onChange}
+                    valueInputAttribute="name"
+                    size="sm"
+                    variant="flushed"
+                    focusBorderColor="ripple.200"
+                  />
+                )
+              },
+              render: rowData => {
+                return rowData.contact ? (
+                  <AutoCompleteListItem name={rowData.contact.name} />
+                ) : (
+                  <Text>Unassigned</Text>
+                )
+              },
+            },
+            {
+              title: "Interacted With",
+              field: "addedBy",
+              customFilterAndSearch: (term, rowData) =>
+                rowData.addedBy?.label
+                  .toLowerCase()
+                  .includes(term.toLowerCase()),
+              editComponent: props => {
+                const memberItem = member => {
+                  return (
+                    <AutoCompleteListItem
+                      name={member.label}
+                      profilePicture={member.profilePicture}
+                    />
+                  )
+                }
+                return (
+                  <CustomAutoComplete
+                    placeholder="Select member"
+                    items={members}
+                    itemRenderer={memberItem}
+                    disableCreateItem={true}
+                    onCreateItem={() => null}
+                    value={props.value || undefined}
+                    onChange={props.onChange}
+                    valueInputAttribute="label"
+                    size="sm"
+                    variant="flushed"
+                    focusBorderColor="ripple.200"
+                  />
+                )
+              },
+              render: rowData => {
+                return rowData.addedBy ? (
+                  <AutoCompleteListItem
+                    name={rowData.addedBy.label}
+                    profilePicture={rowData.addedBy.profilePicture}
+                  />
+                ) : (
+                  <Text>Unassigned</Text>
+                )
+              },
+            },
+            {
+              title: "Meeting Date",
+              field: "dates",
+              customFilterAndSearch: (term, rowData) => {
+                const ops = {
+                  "=": (x, y) => x === y,
+                  "!=": (x, y) => x !== y,
+                  ">": (x, y) => x > y,
+                  "<": (x, y) => x < y,
+                }
+                if (rowData.meetingStart) {
+                  var match = ""
+                  var re = true
+                  const date = rowData.meetingStart.toDate()
+                  if ((match = term.matchAll(/(^|,?)(D|d)(=|>|<)(\d*)($|,?)/g)))
+                    for (const m of match)
+                      re = re && ops[m[3]](date.getDate(), parseInt(m[4]))
+                  if ((match = term.matchAll(/(^|,?)(M|m)(=|>|<)(\d*)($|,?)/g)))
+                    for (const m of match)
+                      re = re && ops[m[3]](date.getMonth() + 1, parseInt(m[4]))
+                  if ((match = term.matchAll(/(^|,?)(Y|y)(=|>|<)(\d*)($|,?)/g)))
+                    for (const m of match)
+                      re = re && ops[m[3]](date.getFullYear(), parseInt(m[4]))
+                  return re
+                } else {
+                  return false
+                }
+              },
+              editComponent: props => {
+                const displayDates = dates => {
+                  var date = dates[0].toLocaleDateString("en-GB")
+                  if (dates[1]) {
+                    date +=
+                      " " +
+                      dates[0].toLocaleTimeString([], {
+                        hour: "2-digit",
+                        minute: "2-digit",
+                      })
+                    date +=
+                      " - " +
+                      dates[1].toLocaleTimeString([], {
+                        hour: "2-digit",
+                        minute: "2-digit",
+                      })
+                  }
+                  return date
+                }
+                return (
+                  <CustomDatePicker
+                    times={props.value}
+                    setTimes={props.onChange}
+                  >
                     <Input
-                      className="datepicker-custom-input"
-                      ref={ref}
-                      onClick={onClick}
-                      value={value || new Date()}
+                      placeholder="Select meeting time"
+                      value={props.value ? displayDates(props.value) : null}
                       size="sm"
                       variant="flushed"
                       focusBorderColor="ripple.200"
                       isReadOnly
                     />
-                  )
-                )
-                return (
-                  <DatePicker
-                    dateFormat="dd/MM/yyyy hh:mm"
-                    showTimeSelect
-                    selected={Date.parse(props.value)}
-                    onChange={date => props.onChange(date)}
-                    customInput={<DateCustomInput />}
-                    portalId="root-portal"
-                  />
+                  </CustomDatePicker>
                 )
               },
               render: rowData => {
                 return rowData.meetingStart ? (
-                  <Text>
-                    {rowData.meetingStart.toDate().toLocaleDateString()}
-                  </Text>
+                  <>
+                    <Text>
+                      {rowData.meetingStart.toDate().toLocaleDateString()}
+                    </Text>
+                    {rowData.meetingEnd ? (
+                      <Text color="gray" fontSize="sm">
+                        {rowData.meetingStart.toDate().toLocaleTimeString([], {
+                          hour: "2-digit",
+                          minute: "2-digit",
+                        }) +
+                          "-" +
+                          rowData.meetingEnd.toDate().toLocaleTimeString([], {
+                            hour: "2-digit",
+                            minute: "2-digit",
+                          })}
+                      </Text>
+                    ) : (
+                      <Text color="gray" fontSize="sm">
+                        ALL DAY
+                      </Text>
+                    )}
+                  </>
                 ) : (
-                  <Text>{"Not set"}</Text>
+                  <Text>Not set</Text>
                 )
               },
             },
             {
               title: "Meeting Type",
               field: "meetingType",
-              type: "string",
-              width: "18%",
-            },
-
-            { title: "ID", field: "id", type: "string", hidden: true },
-            {
-              title: "Notes",
-              field: "notes",
-              type: "string",
-              width: "18%",
-            },
-            {
-              render: rowData => (
-                <Tooltip hasArrow label="Edit Contact">
-                  <IconButton
-                    pt="11px"
-                    pb="10px"
-                    color="black"
-                    variant="link"
-                    size="lg"
-                    icon={<AiFillEdit />}
-                    onClick={() => handlePopUp(rowData)}
+              editComponent: props => {
+                return (
+                  <Input
+                    value={props.value}
+                    placeholder="Enter meeting type"
+                    onChange={e => props.onChange(e.target.value)}
+                    size="sm"
+                    variant="flushed"
+                    focusBorderColor="ripple.200"
                   />
-                </Tooltip>
-              ),
-              width: "0%",
+                )
+              },
+            },
+            { title: "ID", field: "id", type: "string", hidden: true },
+            { title: "Notes", field: "notes", type: "string", hidden: true },
+          ]}
+          actions={[
+            {
+              icon: () => <AiFillEdit />,
+              tooltip: "Edit Interaction",
+              onClick: (event, rowData) => setSelected(rowData),
+              position: "row",
             },
           ]}
           editable={{
             onRowAdd: newData => {
               const promise = new Promise((resolve, reject) => {
                 setTimeout(() => {
-                  newData.meetingStart = newData.meetingStart
-                    ? dateToFirebaseTimestamp(newData.meetingStart)
-                    : null
+                  if (newData.dates) {
+                    newData.meetingStart = newData.dates[0]
+                      ? dateToFirebaseTimestamp(newData.dates[0])
+                      : null
+                    newData.meetingEnd = newData.dates[1]
+                      ? dateToFirebaseTimestamp(newData.dates[1])
+                      : null
+                  }
+                  newData.name = "Meeting"
+                  if (newData.meetingStart)
+                    newData.name =
+                      newData.meetingStart
+                        .toDate()
+                        .toLocaleDateString("en-GB") +
+                      " " +
+                      newData.name
+                  if (newData.contact)
+                    newData.name += " with " + newData.contact.name
                   createNewInteraction(
                     org.id,
-                    newData.contact?.id,
-                    user.id,
-                    newData.forDeal?.id,
+                    newData.contact?.id || null,
+                    newData.addedBy?.id || null,
+                    newData.forDeal?.id || null,
                     newData.meetingStart,
-                    newData.meetingType,
-                    newData.notes,
-                    newData.forTask?.id
+                    newData.meetingType || null,
+                    newData.notes || null,
+                    newData.forTask?.id || null,
+                    true,
+                    newData.name,
+                    newData.meetingEnd
                   ).then(interactionID => {
                     if (interactionID) {
-                      setInteractionList([...interactionList, newData])
+                      setInteractionList([
+                        ...interactionList,
+                        { ...newData, id: interactionID },
+                      ])
                       resolve()
                     } else {
                       reject()
@@ -445,7 +580,8 @@ const InteractionsPage = ({ user, setUser, org, setOrg }) => {
                   status: "success",
                   duration: 5000,
                   isClosable: true,
-                })
+                }),
+                setSelectedDeal(null)
               )
               return promise
             },
@@ -474,14 +610,21 @@ const InteractionsPage = ({ user, setUser, org, setOrg }) => {
         />
       </MuiThemeProvider>
       <InteractionPopUp
-        value={value}
-        onOpen={onOpen}
-        isOpen={isOpen}
-        onClose={onClose}
+        selected={selected}
+        setSelected={setSelected}
         contacts={contacts}
         deals={deals}
         tasks={tasks}
-        afterUpdate={() => {}}
+        companies={companies}
+        members={members}
+        afterUpdate={updatedInteraction => {
+          setInteractionList([
+            ...interactionList.filter(
+              interaction => interaction.id !== updatedInteraction.id
+            ),
+            updatedInteraction,
+          ])
+        }}
       />
     </Box>
   )
