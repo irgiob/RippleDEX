@@ -49,7 +49,7 @@ import { updateOrganization } from "../models/Organisation"
 /**
  * Renders the page content
  */
-const TasksPage = ({ user, setUser, org, setOrg }) => {
+const TasksPage = ({ user, setUser, org, setOrg, taskID }) => {
   const [tasks, setTasks] = useState([])
   const [lanes, setLanes] = useState([])
   const [deals, setDeals] = useState()
@@ -86,9 +86,15 @@ const TasksPage = ({ user, setUser, org, setOrg }) => {
           )[0]
       }
       setTasks(tasks)
+
+      // if company passed from previous page, set as selected
+      if (taskID) {
+        const selectedTask = tasks.filter(task => task.id === taskID)[0]
+        setSelected(selectedTask)
+      }
     }
     fetchData(org)
-  }, [org])
+  }, [org, taskID])
 
   // generate data object accepted by board component using tasks & lanes
   const generateBoardData = (tasks, lanes) => {
@@ -596,10 +602,10 @@ const TasksPage = ({ user, setUser, org, setOrg }) => {
   )
 }
 
-const Tasks = props => {
+const Tasks = ({ location }) => {
   return (
-    <Layout location={props.location}>
-      <TasksPage />
+    <Layout location={location}>
+      <TasksPage taskID={location.state?.selectedTask} />
     </Layout>
   )
 }

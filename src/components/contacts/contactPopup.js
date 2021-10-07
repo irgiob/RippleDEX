@@ -1,4 +1,6 @@
 import React, { useEffect, useState } from "react"
+import { navigate } from "gatsby-link"
+
 import { updateContact } from "../../models/Contact"
 
 import {
@@ -24,7 +26,6 @@ import {
 import {
   RiArrowLeftSLine,
   RiMailAddFill,
-  RiCalendarEventFill,
   RiImageAddLine,
   RiChat1Fill,
 } from "react-icons/ri"
@@ -83,12 +84,7 @@ const ContactPopUp = ({ selected, setSelected, companies, onUpdate }) => {
   return (
     <Modal isCentered isOpen={selected} onClose={() => setSelected(null)}>
       <ModalOverlay />
-      <ModalContent
-        maxW="1000px"
-        borderRadius="15px"
-        //overflowY="scroll"
-        value="inside"
-      >
+      <ModalContent maxW="1000px" borderRadius="15px" value="inside">
         <ModalBody m="20px">
           <Box value="inside">
             <Button
@@ -270,21 +266,13 @@ const ContactPopUp = ({ selected, setSelected, companies, onUpdate }) => {
                       borderRadius="30px"
                       variant="solid"
                       w="100%"
-                      leftIcon={<RiCalendarEventFill size={20} />}
-                      _hover={{ transform: "scale(1.05)" }}
-                    >
-                      Schedule Meeting
-                    </Button>
-                    <Spacer />
-                    <Button
-                      bgColor="ripple.200"
-                      color="white"
-                      fontFamily="Raleway-Bold"
-                      borderRadius="30px"
-                      variant="solid"
-                      w="100%"
                       leftIcon={<RiChat1Fill size={20} />}
                       _hover={{ transform: "scale(1.05)" }}
+                      onClick={() =>
+                        navigate("/interactions/", {
+                          state: { selectedFilter: selected?.name },
+                        })
+                      }
                     >
                       View Interactions
                     </Button>
@@ -293,19 +281,6 @@ const ContactPopUp = ({ selected, setSelected, companies, onUpdate }) => {
               )}
             </Grid>
           </Box>
-          {/* selected?.id && (
-            <VStack w="100%" align="left">
-              <Text
-                fontSize="25px"
-                color="ripple.200"
-                fontFamily="Raleway-Bold"
-              >
-                Interactions
-              </Text>
-              <hr />
-              <Box>Interactions Table Here</Box>
-            </VStack>
-          )*/}
         </ModalBody>
       </ModalContent>
     </Modal>

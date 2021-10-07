@@ -233,10 +233,19 @@ const InteractionsPage = ({ user, setUser, org, setOrg, interID, filter }) => {
               },
               render: rowData => {
                 return rowData.forDeal ? (
-                  <AutoCompleteListItem
-                    name={rowData.forDeal.name}
-                    showImage={false}
-                  />
+                  <Box
+                    cursor="pointer"
+                    onClick={() =>
+                      navigate("/deals/", {
+                        state: { selectedDeal: rowData.forDeal.id },
+                      })
+                    }
+                  >
+                    <AutoCompleteListItem
+                      name={rowData.forDeal.name}
+                      showImage={false}
+                    />
+                  </Box>
                 ) : (
                   <Text>Unassigned</Text>
                 )
@@ -293,10 +302,19 @@ const InteractionsPage = ({ user, setUser, org, setOrg, interID, filter }) => {
               },
               render: rowData => {
                 return rowData.forTask ? (
-                  <AutoCompleteListItem
-                    name={rowData.forTask.name}
-                    showImage={false}
-                  />
+                  <Box
+                    cursor="pointer"
+                    onClick={() =>
+                      navigate("/tasks/", {
+                        state: { selectedTask: rowData.forTask.id },
+                      })
+                    }
+                  >
+                    <AutoCompleteListItem
+                      name={rowData.forTask.name}
+                      showImage={false}
+                    />
+                  </Box>
                 ) : (
                   <Text>Unassigned</Text>
                 )
@@ -358,7 +376,19 @@ const InteractionsPage = ({ user, setUser, org, setOrg, interID, filter }) => {
               },
               render: rowData => {
                 return rowData.contact ? (
-                  <AutoCompleteListItem name={rowData.contact.name} />
+                  <Box
+                    cursor="pointer"
+                    onClick={() =>
+                      navigate("/contacts/", {
+                        state: { selectedContact: rowData.contact.id },
+                      })
+                    }
+                  >
+                    <AutoCompleteListItem
+                      name={rowData.contact.name}
+                      profilePicture={rowData.contact.profilePicture}
+                    />
+                  </Box>
                 ) : (
                   <Text>Unassigned</Text>
                 )
@@ -629,9 +659,12 @@ const InteractionsPage = ({ user, setUser, org, setOrg, interID, filter }) => {
   )
 }
 
-const Interactions = props => (
-  <Layout location={props.location}>
-    <InteractionsPage />
+const Interactions = ({ location }) => (
+  <Layout location={location}>
+    <InteractionsPage
+      interID={location.state?.selectedInteraction}
+      filter={location.state?.selectedFilter}
+    />
   </Layout>
 )
 
