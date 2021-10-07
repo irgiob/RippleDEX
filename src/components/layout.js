@@ -3,7 +3,6 @@ import { navigate } from "gatsby-link"
 import PropTypes from "prop-types"
 import Header from "./headers/header"
 import HeaderUser from "./headers/headerUser"
-import theme from "./theme"
 import "./layout.css"
 
 import ProSidebar from "./proSideNav"
@@ -20,7 +19,24 @@ import {
   VStack,
   Box,
   useToast,
+  extendTheme,
 } from "@chakra-ui/react"
+
+const theme = extendTheme({
+  colors: {
+    ripple: {
+      100: "#78cfec",
+      200: "#168aa8",
+    },
+    trans: {
+      100: "rgba(120, 207, 236, 0.1)",
+    },
+  },
+  fonts: {
+    heading: "Raleway-Extra",
+    body: "Nunito",
+  },
+})
 
 const Layout = ({ children, location }) => {
   const pathname = location.pathname
