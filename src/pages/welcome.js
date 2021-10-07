@@ -1,7 +1,6 @@
 import * as React from "react"
 
 import Layout from "../components/layout"
-import Seo from "../components/seo"
 
 import LogoDark from "../images/RippleDEXDark.svg"
 
@@ -99,7 +98,7 @@ const WelcomePage = ({ user, setUser, org, setOrg }) => {
           <JoinOrgPopup
             userID={user.id}
             userEmail={user?.email}
-            onOpen = {onJoinOpen}
+            onOpen={onJoinOpen}
             isOpen={isJoinOpen}
             onClose={onJoinClose}
           />
@@ -112,7 +111,6 @@ const WelcomePage = ({ user, setUser, org, setOrg }) => {
 const Welcome = props => {
   return (
     <Layout location={props.location}>
-      <Seo title="Welcome" />
       <WelcomePage />
     </Layout>
   )

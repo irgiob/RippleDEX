@@ -2,7 +2,6 @@ import React, { useState, forwardRef, useEffect, createRef } from "react"
 import { navigate } from "gatsby-link"
 
 import Layout from "../components/layout"
-import Seo from "../components/seo"
 import DealPopUp from "../components/deals/dealPopup"
 
 import { dateToFirebaseTimestamp } from "../utils/DateTimeHelperFunctions"
@@ -562,7 +561,6 @@ const DealsPage = ({ user, setUser, org, setOrg, dealID, filter }) => {
 
 const Deals = ({ location }) => (
   <Layout location={location}>
-    <Seo title="Deals" />
     <DealsPage
       dealID={location.state?.selectedDeal}
       filter={location.state?.selectedFilter}

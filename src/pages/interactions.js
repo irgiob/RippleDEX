@@ -2,7 +2,6 @@ import React, { useState, useEffect, createRef, forwardRef } from "react"
 import { navigate } from "gatsby-link"
 
 import Layout from "../components/layout"
-import Seo from "../components/seo"
 
 import { Box, Text, Input, useToast } from "@chakra-ui/react"
 import { createMuiTheme, MuiThemeProvider } from "@material-ui/core"
@@ -632,7 +631,6 @@ const InteractionsPage = ({ user, setUser, org, setOrg, interID, filter }) => {
 
 const Interactions = props => (
   <Layout location={props.location}>
-    <Seo title="Interactions" />
     <InteractionsPage />
   </Layout>
 )

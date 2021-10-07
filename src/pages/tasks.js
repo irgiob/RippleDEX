@@ -3,7 +3,6 @@ import React, { useState, useEffect } from "react"
 import Board from "react-trello"
 
 import Layout from "../components/layout"
-import Seo from "../components/seo"
 import TaskPopUp from "../components/tasks/taskPopup"
 import {
   CustomAutoComplete,
@@ -600,7 +599,6 @@ const TasksPage = ({ user, setUser, org, setOrg }) => {
 const Tasks = props => {
   return (
     <Layout location={props.location}>
-      <Seo title="Tasks" />
       <TasksPage />
     </Layout>
   )

@@ -1,7 +1,6 @@
 import * as React from "react"
 
 import Layout from "../components/layout"
-import Seo from "../components/seo"
 
 import { Box } from "@chakra-ui/react"
 import CalendarComponent from "../components/calendar/calendarComponent"
@@ -16,7 +15,6 @@ const CalendarPage = ({ user, setUser, org, setOrg }) => {
 
 const Calendar = props => (
   <Layout location={props.location}>
-    <Seo title="Calendar" />
     <CalendarPage />
   </Layout>
 )

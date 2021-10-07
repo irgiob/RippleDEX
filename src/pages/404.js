@@ -1,6 +1,5 @@
 import * as React from "react"
 
-import Seo from "../components/seo"
 import theme from "../components/theme"
 import NotFound from "../images/404/404_1.png"
 
@@ -8,7 +7,6 @@ import { Text, Heading, Image, Box, ChakraProvider } from "@chakra-ui/react"
 
 const NotFoundPage = () => (
   <ChakraProvider theme={theme}>
-    <Seo title="404: Not found" />
     <Box h="100vh" w="100vw" bgColor="ripple.100">
       <Box pos="absolute" top="25%" left="25%" textAlign="center">
         <Heading color="ripple.200" fontSize="10rem" mb="0.1em">

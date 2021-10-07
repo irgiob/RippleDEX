@@ -2,7 +2,6 @@ import React, { forwardRef, createRef, useState, useEffect } from "react"
 import { navigate } from "gatsby-link"
 
 import Layout from "../components/layout"
-import Seo from "../components/seo"
 
 import { Box, Text, Input, useToast, Avatar } from "@chakra-ui/react"
 
@@ -469,7 +468,6 @@ const ContactsPage = ({ user, setUser, org, setOrg, contactID, filter }) => {
 const Contacts = ({ location }) => {
   return (
     <Layout location={location}>
-      <Seo title="Contacts" />
       <ContactsPage
         contactID={location.state?.selectedContact}
         filter={location.state?.selectedFilter}

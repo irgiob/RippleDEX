@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react"
 
 import Layout from "../components/layout"
-import Seo from "../components/seo"
 
 import ReminderComponent from "../components/dashboard/reminderComponent"
 import DoughnutChart from "../components/dashboard/doughnutChart"
@@ -117,7 +116,6 @@ const DashboardPage = ({ user, setUser, org, setOrg }) => {
 
 const Dashboard = props => (
   <Layout location={props.location}>
-    <Seo title="Dashboard" />
     <DashboardPage />
   </Layout>
 )

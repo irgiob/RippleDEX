@@ -2,7 +2,6 @@ import React, { forwardRef, createRef, useState, useEffect } from "react"
 import { navigate } from "gatsby-link"
 
 import Layout from "../components/layout"
-import Seo from "../components/seo"
 
 import {
   Avatar,
@@ -500,7 +499,6 @@ const CompaniesPage = ({ user, setUser, org, setOrg, companyID }) => {
 
 const Companies = ({ location }) => (
   <Layout location={location}>
-    <Seo title="Companies" />
     <CompaniesPage companyID={location.state?.selectedCompany} />
   </Layout>
 )

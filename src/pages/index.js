@@ -2,7 +2,6 @@ import React, { useEffect, useRef } from "react"
 import { onAuthLoad } from "../utils/AuthFunctions"
 
 import Layout from "../components/layout"
-import Seo from "../components/seo"
 
 import "./index.scss"
 
@@ -49,8 +48,6 @@ const IndexPage = props => {
 
   return (
     <Layout location={props.location}>
-      <Seo title="Home" />
-
       <Box
         overflow="hidden"
         bgColor="ripple.100"
