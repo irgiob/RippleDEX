@@ -1,4 +1,4 @@
-import React, { useState } from "react"
+import React from "react"
 import { logout } from "../../utils/AuthFunctions"
 import { updateUser } from "../../models/User"
 import { removeUserFromOrganization } from "../../models/Organisation"
@@ -37,14 +37,13 @@ import Logo from "../../images/RippleDEXWhite.svg"
 import ProfilePicture from "../../images/RippleDEXWhite.svg"
 
 import ProfileSettings from "../settings/profileSettings"
+import OrganizationSettings from "../settings/organizationSettings"
 import SwitchOrgPopup from "../orgPopups/switchOrg"
 import CreateOrgPopup from "../orgPopups/createOrg"
 import JoinOrgPopup from "../orgPopups/joinOrg"
 import InviteOrgPopup from "../orgPopups/inviteOrg"
 
 const HeaderUser = props => {
-  const { isOpen, onOpen, onClose } = useDisclosure()
-  const [tab, setTab] = useState(0)
   const { user, setUser, org, setOrg } = props
   const toast = useToast()
 
@@ -53,10 +52,17 @@ const HeaderUser = props => {
     navigate("/")
   }
 
-  const handleOpen = val => {
-    setTab(val)
-    onOpen()
-  }
+  const {
+    isOpen: isProfileOpen,
+    onOpen: onProfileOpen,
+    onClose: onProfileClose,
+  } = useDisclosure()
+
+  const {
+    isOpen: isAdminOpen,
+    onOpen: onAdminOpen,
+    onClose: onAdminClose,
+  } = useDisclosure()
 
   const {
     isOpen: isSwitchOpen,
@@ -157,12 +163,8 @@ const HeaderUser = props => {
                         </InviteOrgPopup>
                         <Button
                           bgColor="white"
-                          _hover={{
-                            transform: "scale(1.08)",
-                          }}
-                          onClick={() => {
-                            handleOpen(3)
-                          }}
+                          _hover={{ transform: "scale(1.08)" }}
+                          onClick={() => onAdminOpen()}
                         >
                           Settings & Administration
                         </Button>
@@ -249,9 +251,16 @@ const HeaderUser = props => {
         {/* Header Profile Right Side */}
         <Box pr="15px">
           <ProfileSettings
-            isOpen={isOpen}
-            onClose={onClose}
-            tab={tab}
+            isOpen={isProfileOpen}
+            onClose={onProfileClose}
+            user={user}
+            setUser={setUser}
+            org={org}
+            setOrg={setOrg}
+          />
+          <OrganizationSettings
+            isOpen={isAdminOpen}
+            onClose={onAdminClose}
             user={user}
             setUser={setUser}
             org={org}
@@ -316,30 +325,12 @@ const HeaderUser = props => {
                   >
                     Set as {user?.isInvisible ? "Visible" : "Invisible"}
                   </Button>
-                  {/* should be a button*/}
                   <Button
                     bgColor="white"
                     _hover={{ transform: "scale(1.08)" }}
-                    onClick={() => handleOpen(1)}
+                    onClick={() => onProfileOpen()}
                   >
-                    Notifications
-                  </Button>
-                  <Divider />
-                  <Button
-                    bgColor="white"
-                    _hover={{ transform: "scale(1.08)" }}
-                    onClick={() => handleOpen(0)}
-                  >
-                    Edit Profile
-                  </Button>
-                  <Button
-                    bgColor="white"
-                    _hover={{ transform: "scale(1.08)" }}
-                    onClick={() => {
-                      handleOpen(0)
-                    }}
-                  >
-                    View Profile
+                    View/Edit Profile
                   </Button>
                   <Divider />
                   <Button
