@@ -20,10 +20,10 @@ const CustomDatePicker = ({ children, times, setTimes }) => {
   const today = new Date()
   today.setHours(0, 0, 0, 0)
 
-  const [date, setDate] = useState()
-  const [start, setStart] = useState()
-  const [end, setEnd] = useState()
-  const [allDay, setAllDay] = useState(false)
+  const [date, setDate] = useState(times ? times[0] : null)
+  const [start, setStart] = useState(times ? times[0] : null)
+  const [end, setEnd] = useState(times ? times[1] : null)
+  const [allDay, setAllDay] = useState(times ? (times[1] ? false : true) : null)
 
   useEffect(() => {
     if (date) {

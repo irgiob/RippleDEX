@@ -22,7 +22,10 @@ import { RiArrowLeftSLine } from "react-icons/ri"
 import { CustomAutoComplete, AutoCompleteListItem } from "../CustomAutoComplete"
 import CustomDatePicker from "../CustomDatePicker"
 import { dateToFirebaseTimestamp } from "../../utils/DateTimeHelperFunctions"
-import { updateInteraction } from "../../models/Interaction"
+import {
+  createNewInteraction,
+  updateInteraction,
+} from "../../models/Interaction"
 
 /**
  *
@@ -92,10 +95,41 @@ const InteractionPopUp = ({
       meetingEnd: end,
       remindMe: remindMe,
     }
-    await updateInteraction(selected.id, options)
+
+    var toastString = ""
+    if (selected.id) {
+      await updateInteraction(selected.id, options)
+      toastString = "Your The Interaction Detail Have Been Updated"
+    } else {
+      if (!options.name) {
+        options.name = "Meeting"
+        if (options.meetingStart)
+          options.name =
+            options.meetingStart.toDate().toLocaleDateString("en-GB") +
+            " " +
+            options.name
+        if (contact) options.name += " with " + contact.name
+      }
+      const interactionID = await createNewInteraction(
+        selected.forOrganization,
+        options.contact,
+        options.addedBy,
+        options.forDeal,
+        options.meetingStart,
+        options.meetingType,
+        options.notes,
+        options.forTask,
+        options.remindMe,
+        options.name,
+        options.meetingEnd
+      )
+      selected.id = interactionID
+      toastString = "New interaction has been added"
+    }
+
     toast({
       title: "Success",
-      description: "Your The Interaction Detail Have Been Updated",
+      description: toastString,
       status: "success",
       duration: 5000,
       isClosable: true,
@@ -385,7 +419,7 @@ const InteractionPopUp = ({
                       padding="20px"
                       onClick={handleClick}
                     >
-                      Save Changes
+                      {selected?.id ? "Save Changes" : "Add Meeting"}
                     </Button>
                   </Box>
                 </VStack>
