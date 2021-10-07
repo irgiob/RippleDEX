@@ -22,6 +22,7 @@ import {
   useDisclosure,
   useToast,
   Center,
+  Badge,
   Popover,
   PopoverTrigger,
   Portal,
@@ -358,6 +359,12 @@ const TasksPage = ({ user, setUser, org, setOrg }) => {
               <Text maxW="50px" isTruncated color="green" fontSize="11px">
                 ${intToString(parseFloat(props.deal.dealSize))}
               </Text>
+            </HStack>
+          )}
+          {props.assignedUser?.id === user.id && (
+            <HStack>
+              <Spacer />
+              <Badge colorScheme="green">Assigned to me</Badge>
             </HStack>
           )}
         </VStack>
