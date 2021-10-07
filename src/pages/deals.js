@@ -24,6 +24,7 @@ import { getCompanyByOrg, getCompany } from "../models/Company"
 import { MuiThemeProvider, createMuiTheme } from "@material-ui/core"
 
 import MaterialTable from "material-table"
+import { CsvBuilder } from "filefy"
 import DatePicker from "react-datepicker"
 import {
   CustomAutoComplete,
@@ -164,6 +165,9 @@ const DealsPage = ({ user, setUser, org, setOrg, dealID, filter }) => {
     ]).then(() => setLoading(false))
   }, [org, dealID])
 
+  const currTime = new Date().toLocaleDateString("en-GB")
+  const tableTitle = currTime + " - Deals for " + org.name
+
   return (
     <Box p="25px">
       <Text
@@ -177,13 +181,29 @@ const DealsPage = ({ user, setUser, org, setOrg, dealID, filter }) => {
 
       <MuiThemeProvider theme={theme}>
         <MaterialTable
+          title={tableTitle}
           options={{
             showTitle: false,
             selection: true,
             searchFieldAlignment: "right",
             padding: "dense",
             filtering: true,
-            exportButton: true,
+            exportButton: { csv: true, pdf: false },
+            exportCsv: (col, data) => {
+              col = col.filter(c => c.export !== false)
+              data = data.map(row => ({
+                ...row,
+                company: row.company?.name,
+                recordedBy: row.recordedBy?.label,
+                closeDate: row.closeDate
+                  ? row.closeDate.toDate().toLocaleDateString("en-GB")
+                  : null,
+              }))
+              return new CsvBuilder(tableTitle + ".csv")
+                .setColumns(col.map(colDef => colDef.title))
+                .addRows(data.map(row => col.map(c => row[c.field])))
+                .exportFile()
+            },
             tableLayout: "auto",
             toolbarButtonAlignment: "left",
             actionsColumnIndex: 6,
@@ -414,7 +434,8 @@ const DealsPage = ({ user, setUser, org, setOrg, dealID, filter }) => {
                 )
               },
             },
-            { title: "ID", field: "id", type: "string", hidden: true },
+            { title: "ID", field: "id", hidden: true, export: false },
+            { title: "Description", field: "description", hidden: true },
             {
               title: "Recorded By",
               field: "recordedBy",

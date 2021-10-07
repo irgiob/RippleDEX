@@ -16,6 +16,7 @@
     "chart.js": "^3.5.1",
     "chartjs-plugin-datalabels": "^2.0.0",
     "emailjs-com": "^3.2.0",
+    "filefy": "^0.1.11",
     "firebase": "^9.0.0",
     "framer-motion": "^4.1.17",
     "gatsby": "^3.11.1",

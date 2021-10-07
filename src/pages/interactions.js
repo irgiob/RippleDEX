@@ -18,6 +18,7 @@ import { getDealsByOrg } from "../models/Deal"
 import { getTasksByOrg } from "../models/Task"
 
 import MaterialTable from "material-table"
+import { CsvBuilder } from "filefy"
 
 import {
   AutoCompleteListItem,
@@ -168,6 +169,9 @@ const InteractionsPage = ({ user, setUser, org, setOrg, interID, filter }) => {
     fetchData(org).then(() => setLoading(false))
   }, [org])
 
+  const currTime = new Date().toLocaleDateString("en-GB")
+  const tableTitle = currTime + " - Interactions for " + org.name
+
   return (
     <Box p="25px">
       <Text
@@ -181,13 +185,36 @@ const InteractionsPage = ({ user, setUser, org, setOrg, interID, filter }) => {
 
       <MuiThemeProvider theme={theme}>
         <MaterialTable
+          title={tableTitle}
           options={{
             showTitle: false,
             selection: true,
             searchFieldAlignment: "right",
             padding: "dense",
             filtering: true,
-            exportButton: true,
+            exportButton: { csv: true, pdf: false },
+            exportCsv: (col, data) => {
+              col = col.filter(c => c.export !== false)
+              data = data.map(row => ({
+                ...row,
+                forDeal: row.forDeal?.name,
+                forTask: row.forTask?.name,
+                contact: row.contact?.name,
+                addedBy: row.addedBy?.label,
+                meetingStart: row.meetingStart
+                  ? row.meetingEnd
+                    ? row.meetingStart.toDate().toLocaleString("en-GB")
+                    : row.meetingStart.toDate().toLocaleDateString("en-GB")
+                  : null,
+                meetingEnd: row.meetingEnd
+                  ? row.meetingEnd.toDate().toLocaleString("en-GB")
+                  : null,
+              }))
+              return new CsvBuilder(tableTitle + ".csv")
+                .setColumns(col.map(colDef => colDef.title))
+                .addRows(data.map(row => col.map(c => row[c.field])))
+                .exportFile()
+            },
             tableLayout: "auto",
             toolbarButtonAlignment: "left",
             actionsColumnIndex: 6,
@@ -440,6 +467,7 @@ const InteractionsPage = ({ user, setUser, org, setOrg, interID, filter }) => {
             {
               title: "Meeting Date",
               field: "dates",
+              export: false,
               customFilterAndSearch: (term, rowData) => {
                 const ops = {
                   "=": (x, y) => x === y,
@@ -545,8 +573,11 @@ const InteractionsPage = ({ user, setUser, org, setOrg, interID, filter }) => {
                 )
               },
             },
-            { title: "ID", field: "id", type: "string", hidden: true },
+            { title: "ID", field: "id", hidden: true, export: false },
+            { title: "Meeting Start", field: "meetingStart", hidden: true },
+            { title: "Meeting End", field: "meetingEnd", hidden: true },
             { title: "Notes", field: "notes", type: "string", hidden: true },
+            { title: "Meeting Name", field: "name", hidden: true },
           ]}
           actions={[
             {

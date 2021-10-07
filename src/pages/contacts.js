@@ -29,6 +29,7 @@ import {
 import { createMuiTheme, MuiThemeProvider } from "@material-ui/core"
 
 import MaterialTable from "material-table"
+import { CsvBuilder } from "filefy"
 
 import AddBox from "@material-ui/icons/AddBox"
 import ArrowDownward from "@material-ui/icons/ArrowDownward"
@@ -141,7 +142,8 @@ const ContactsPage = ({ user, setUser, org, setOrg, contactID, filter }) => {
     )
   }, [org, contactID])
 
-  const currTime = new Date().toLocaleString()
+  const currTime = new Date().toLocaleDateString("en-GB")
+  const tableTitle = currTime + " - Contacts for " + org.name
 
   return (
     <Box p="25px">
@@ -156,7 +158,7 @@ const ContactsPage = ({ user, setUser, org, setOrg, contactID, filter }) => {
 
       <MuiThemeProvider theme={theme}>
         <MaterialTable
-          title={`Contacts for ${org.name} (${currTime})`}
+          title={tableTitle}
           options={{
             showTitle: false,
             selection: true,
@@ -164,7 +166,15 @@ const ContactsPage = ({ user, setUser, org, setOrg, contactID, filter }) => {
             maxBodyHeight: "80vh",
             padding: "dense",
             filtering: true,
-            exportButton: true,
+            exportButton: { csv: true, pdf: false },
+            exportCsv: (col, data) => {
+              col = col.filter(c => c.export !== false)
+              data = data.map(row => ({ ...row, company: row.company?.name }))
+              return new CsvBuilder(tableTitle + ".csv")
+                .setColumns(col.map(colDef => colDef.title))
+                .addRows(data.map(row => col.map(c => row[c.field])))
+                .exportFile()
+            },
             tableLayout: "auto",
             toolbarButtonAlignment: "left",
             actionsColumnIndex: 6,
@@ -177,6 +187,7 @@ const ContactsPage = ({ user, setUser, org, setOrg, contactID, filter }) => {
           columns={[
             {
               filtering: false,
+              export: false,
               width: "5%",
               field: "profilePicture",
               editComponent: props => {
@@ -319,7 +330,7 @@ const ContactsPage = ({ user, setUser, org, setOrg, contactID, filter }) => {
                 )
               },
             },
-            { title: "ID", field: "id", type: "string", hidden: true },
+            { title: "ID", field: "id", hidden: true, export: false },
             {
               title: "Email",
               field: "email",

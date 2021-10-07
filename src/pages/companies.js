@@ -29,6 +29,8 @@ import { createNewContact, updateContact, getContact } from "../models/Contact"
 import { createMuiTheme, MuiThemeProvider } from "@material-ui/core"
 
 import MaterialTable from "material-table"
+import { CsvBuilder } from "filefy"
+
 import {
   CustomAutoComplete,
   AutoCompleteListItem,
@@ -136,7 +138,8 @@ const CompaniesPage = ({ user, setUser, org, setOrg, companyID }) => {
     fetchCompanies(org.id)
   }, [org, companyID])
 
-  const currTime = new Date().toLocaleString()
+  const currTime = new Date().toLocaleDateString("en-GB")
+  const tableTitle = currTime + " - Companies for " + org.name
 
   return (
     <Box p="25px">
@@ -151,7 +154,7 @@ const CompaniesPage = ({ user, setUser, org, setOrg, companyID }) => {
 
       <MuiThemeProvider theme={theme}>
         <MaterialTable
-          title={`Companies for ${org.name} (${currTime})`}
+          title={tableTitle}
           options={{
             showTitle: false,
             selection: true,
@@ -159,7 +162,18 @@ const CompaniesPage = ({ user, setUser, org, setOrg, companyID }) => {
             maxBodyHeight: "80vh",
             padding: "dense",
             filtering: true,
-            exportButton: true,
+            exportButton: { csv: true, pdf: false },
+            exportCsv: (col, data) => {
+              col = col.filter(c => c.export !== false)
+              data = data.map(row => ({
+                ...row,
+                primaryContact: row.primaryContact?.name,
+              }))
+              return new CsvBuilder(tableTitle + ".csv")
+                .setColumns(col.map(colDef => colDef.title))
+                .addRows(data.map(row => col.map(c => row[c.field])))
+                .exportFile()
+            },
             tableLayout: "auto",
             toolbarButtonAlignment: "left",
             actionsColumnIndex: 6,
@@ -172,6 +186,7 @@ const CompaniesPage = ({ user, setUser, org, setOrg, companyID }) => {
           columns={[
             {
               filtering: false,
+              export: false,
               width: "5%",
               field: "profilePicture",
               editComponent: props => {
@@ -359,7 +374,11 @@ const CompaniesPage = ({ user, setUser, org, setOrg, companyID }) => {
                 )
               },
             },
-            { title: "ID", field: "id", type: "string", hidden: true },
+            { title: "ID", field: "id", hidden: true, export: false },
+            { title: "Description", field: "description", hidden: true },
+            { title: "Personnel", field: "personnel", hidden: true },
+            { title: "Relationship", field: "relationship", hidden: true },
+            { title: "Address", field: "address", hidden: true },
             {
               title: "Company Website",
               field: "website",
