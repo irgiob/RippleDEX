@@ -48,12 +48,12 @@ const DashboardPage = ({ user, setUser, org, setOrg }) => {
               <DoughnutChart deals={deals} />
             </Box>
           </Box>
-          <HStack spacing="1.5em" h="100%" w="100%">
+          <HStack spacing="1.5em" w="100%">
             <Box
               backgroundColor={"rgba(120, 207, 236, 0.1)"}
               borderRadius="10px"
               width="100%"
-              height="100%"
+              p="0.5em"
             >
               <Text align={"left"} fontFamily="Raleway-Bold" padding="10px">
                 Total Potential Sales Revenue
@@ -81,7 +81,7 @@ const DashboardPage = ({ user, setUser, org, setOrg }) => {
               backgroundColor={"rgba(120, 207, 236, 0.1)"}
               borderRadius="10px"
               width="100%"
-              height="100%"
+              p="0.5em"
             >
               <Text align={"left"} fontFamily="Raleway-Bold" padding="10px">
                 Conversion Rate
@@ -89,11 +89,11 @@ const DashboardPage = ({ user, setUser, org, setOrg }) => {
               <Divider orientation="horizontal" />
               <Box>
                 <Text fontSize="64px" align="center">
-                  {(
+                  {Math.round(
                     (deals.filter(deal => deal.stage.toLowerCase() === "closed")
                       .length /
                       deals.length) *
-                    100
+                      100
                   ).toString() + "%"}
                 </Text>
                 <Text align="center">
@@ -111,7 +111,6 @@ const DashboardPage = ({ user, setUser, org, setOrg }) => {
         <Box
           backgroundColor={"rgba(120, 207, 236, 0.1)"}
           borderRadius="10px"
-          h="100%"
           w="40vw"
         >
           <Text align={"left"} fontFamily="Raleway-Bold" padding="10px">

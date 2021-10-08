@@ -554,7 +554,7 @@ const TasksPage = ({ user, setUser, org, setOrg, taskID }) => {
         <Box
           bgColor="rgba(128, 128, 128, 0.4)"
           w="95%"
-          h="93%"
+          h="95%"
           ml="-10px"
           mt="-10px"
           pos="absolute"
@@ -580,7 +580,7 @@ const TasksPage = ({ user, setUser, org, setOrg, taskID }) => {
       </Box>
       <Board
         style={{
-          height: "80vh",
+          height: "85vh",
           backgroundColor: "transparent",
           padding: "20px",
         }}
@@ -588,6 +588,7 @@ const TasksPage = ({ user, setUser, org, setOrg, taskID }) => {
           borderRadius: "20px",
           backgroundColor: "#f7f7f7",
           paddingTop: "15px",
+          maxHeight: "80vh",
         }}
         tagStyle={{
           paddingTop: "5px",

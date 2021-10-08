@@ -198,6 +198,7 @@ const InteractionsPage = ({ user, setUser, org, setOrg, interID, filter }) => {
             showTitle: false,
             selection: true,
             searchFieldAlignment: "right",
+            pageSize: 10,
             padding: "dense",
             filtering: true,
             exportButton: { csv: true, pdf: false },

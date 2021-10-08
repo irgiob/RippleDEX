@@ -159,7 +159,7 @@ const CompaniesPage = ({ user, setUser, org, setOrg, companyID }) => {
             showTitle: false,
             selection: true,
             searchFieldAlignment: "right",
-            maxBodyHeight: "80vh",
+            pageSize: 10,
             padding: "dense",
             filtering: true,
             exportButton: { csv: true, pdf: false },

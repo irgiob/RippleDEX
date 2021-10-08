@@ -36,12 +36,7 @@ const DoughnutChart = ({ deals }) => {
     }
 
     deals.forEach(doc => {
-      stageCount[
-        (doc.stage.charAt(0).toUpperCase() + doc.stage.slice(1)).replace(
-          " ",
-          ""
-        )
-      ] += 1
+      stageCount[doc.stage.charAt(0).toUpperCase() + doc.stage.slice(1)] += 1
     })
 
     setFreqs(stageCount)
@@ -78,11 +73,7 @@ const DoughnutChart = ({ deals }) => {
     },
   }
 
-  return (
-    <>
-      <Doughnut data={data} options={options} />
-    </>
-  )
+  return <Doughnut data={data} options={options} />
 }
 
 export default DoughnutChart

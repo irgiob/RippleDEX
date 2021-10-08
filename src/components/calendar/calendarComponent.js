@@ -137,7 +137,7 @@ const CalendarComponent = ({ user, org }) => {
         </Box>
       )}
       <FullCalendar
-        aspectRatio="2.5"
+        height="calc(100vh - 100px)"
         ref={calendarRef}
         plugins={[dayGridPlugin, interactionPlugin, timeGridPlugin]}
         initialView="dayGridMonth"
