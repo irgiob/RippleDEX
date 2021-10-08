@@ -31,6 +31,7 @@ import {
   PopoverCloseButton,
   PopoverBody,
   PopoverFooter,
+  Spinner,
 } from "@chakra-ui/react"
 
 import { HiOutlineTrash, HiCheck, HiOutlineX, HiPencil } from "react-icons/hi"
@@ -55,6 +56,7 @@ const TasksPage = ({ user, setUser, org, setOrg, taskID }) => {
   const [deals, setDeals] = useState()
   const [members, setMembers] = useState()
   const [selected, setSelected] = useState()
+  const [loading, setLoading] = useState(true)
   const toast = useToast()
 
   useEffect(() => {
@@ -93,7 +95,7 @@ const TasksPage = ({ user, setUser, org, setOrg, taskID }) => {
         setSelected(selectedTask)
       }
     }
-    fetchData(org)
+    fetchData(org).then(() => setLoading(false))
   }, [org, taskID])
 
   // generate data object accepted by board component using tasks & lanes
@@ -106,13 +108,14 @@ const TasksPage = ({ user, setUser, org, setOrg, taskID }) => {
         cards: [],
       })
     }
-    for (var task of tasks) {
+
+    tasks.forEach(task => {
       task.status = task.status.toLowerCase()
       if (lanes.map(lane => lane.toLowerCase()).includes(task.status))
         data.lanes
           .filter(lane => lane.id.toLowerCase() === task.status)[0]
           .cards.push(task)
-    }
+    })
     return data
   }
 
@@ -547,6 +550,28 @@ const TasksPage = ({ user, setUser, org, setOrg, taskID }) => {
 
   return (
     <>
+      {loading && (
+        <Box
+          bgColor="rgba(128, 128, 128, 0.4)"
+          w="95%"
+          h="93%"
+          ml="-10px"
+          mt="-10px"
+          pos="absolute"
+          zIndex="100"
+        >
+          <Spinner
+            pos="absolute"
+            top="45%"
+            left="45%"
+            size="xl"
+            thickness="4px"
+            speed="0.65s"
+            emptyColor="gray.200"
+            color="ripple.200"
+          />
+        </Box>
+      )}
       <Box pt="25px" pl="25px">
         <Text fontFamily="Raleway-Bold" fontSize="28px" color="ripple.200">
           Tasks
