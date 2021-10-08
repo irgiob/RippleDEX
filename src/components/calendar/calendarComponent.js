@@ -25,7 +25,7 @@ import { getUser } from "../../models/User"
  */
 const CalendarComponent = ({ user, org }) => {
   const calendarRef = useRef(null)
-  const [date, setDate] = useState(new Date())
+  const [date, setDate] = useState()
   const [loading, setLoading] = useState(true)
   const [selected, setSelected] = useState()
   const [contacts, setContacts] = useState([])
@@ -89,6 +89,8 @@ const CalendarComponent = ({ user, org }) => {
     fetchData(org).then(() => setLoading(false))
   }, [org])
 
+  useEffect(() => setDate(null), [selected])
+
   const generateEventData = interactions => {
     const events = []
     for (const interaction of interactions) {
@@ -151,6 +153,7 @@ const CalendarComponent = ({ user, org }) => {
           }
         }}
         events={generateEventData(interactions)}
+        eventColor="#168aa8"
         editable={true}
         selectable={true}
         eventClick={info =>
@@ -161,11 +164,11 @@ const CalendarComponent = ({ user, org }) => {
           )
         }
         dateClick={info => {
-          if (date.getTime() === info.date.getTime())
+          if (date && date.getTime() === info.date.getTime())
             setSelected({
               id: null,
               forOrganization: org.id,
-              name: null,
+              name: "New Event",
               addedBy: null,
               contact: null,
               forDeal: null,
