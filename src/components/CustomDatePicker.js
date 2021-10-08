@@ -14,6 +14,7 @@ import {
 import { RiArrowLeftSLine, RiArrowRightSLine } from "react-icons/ri"
 
 import DatePicker from "react-datepicker"
+import "react-datepicker/dist/react-datepicker.css"
 
 const CustomDatePicker = ({ children, times, setTimes }) => {
   const oneDay = 24 * 60 * 60 * 1000

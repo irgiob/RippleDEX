@@ -3,6 +3,7 @@ import { navigate } from "gatsby-link"
 
 import StageStepper from "./stageStepper"
 import DatePicker from "react-datepicker"
+import "react-datepicker/dist/react-datepicker.css"
 import { CustomAutoComplete, AutoCompleteListItem } from "../CustomAutoComplete"
 
 import { updateDeal } from "../../models/Deal"

@@ -26,6 +26,8 @@ import { MuiThemeProvider, createMuiTheme } from "@material-ui/core"
 import MaterialTable from "material-table"
 import { CsvBuilder } from "filefy"
 import DatePicker from "react-datepicker"
+import "react-datepicker/dist/react-datepicker.css"
+
 import {
   CustomAutoComplete,
   AutoCompleteListItem,
