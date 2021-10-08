@@ -86,19 +86,35 @@ export const deleteInteraction = async interID => {
 }
 
 export const getInteractionsByOrg = async orgID => {
-  return await getInteractionsByField("forOrganization", orgID)
-}
-
-export const getInteractionsByDeal = async dealID => {
-  return await getInteractionsByField("forDeal", dealID)
-}
-
-export const getInteractionsByTask = async taskID => {
-  return await getInteractionsByField("forTask", taskID)
+  const q = query(
+    collection(db, "interactions"),
+    where("forOrganization", "==", orgID)
+  )
+  return await getInteractionsByQuery(q)
 }
 
 export const getInteractionsByAddedBy = async addedID => {
-  return await getInteractionsByField("addedBy", addedID)
+  const q = query(
+    collection(db, "interactions"),
+    where("addedBy", "==", addedID)
+  )
+  return await getInteractionsByQuery(q)
+}
+
+export const getInteractionsForDashboard = async (userID, orgID) => {
+  const today = new Date()
+  today.setHours(0, 0, 0, 0)
+  const tomorrow = new Date()
+  tomorrow.setDate(today.getDate() + 1)
+  tomorrow.setHours(0, 0, 0, 0)
+  const q = query(
+    collection(db, "interactions"),
+    where("forOrganization", "==", orgID),
+    where("addedBy", "==", userID),
+    where("meetingStart", ">=", today),
+    where("meetingStart", "<=", tomorrow)
+  )
+  return await getInteractionsByQuery(q)
 }
 
 /**
@@ -109,11 +125,7 @@ export const getInteractionsByAddedBy = async addedID => {
  *
  * @returns {Object} the list of all interactions
  */
-const getInteractionsByField = async (field, foreignKey) => {
-  const q = query(
-    collection(db, "interactions"),
-    where(field, "==", foreignKey)
-  )
+const getInteractionsByQuery = async q => {
   const querySnapshot = await getDocs(q)
   const interactionList = []
   querySnapshot.forEach(interaction => {

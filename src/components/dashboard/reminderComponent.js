@@ -1,7 +1,4 @@
-import React, { useState, useRef, useEffect } from "react"
-
-import { getInteractionsByAddedBy } from "../../models/Interaction"
-
+import React, { useState, useEffect } from "react"
 import { navigate } from "gatsby"
 
 import {
@@ -10,12 +7,20 @@ import {
   Button,
   Grid,
   GridItem,
-  Spacer,
   VStack,
   HStack,
+  Center,
+  Spacer,
 } from "@chakra-ui/react"
 
-import { AiOutlineExclamationCircle, AiTwotoneCalendar, AiFillPlusCircle } from "react-icons/ai"
+import {
+  AiOutlineExclamationCircle,
+  AiTwotoneCalendar,
+  AiFillPlusCircle,
+} from "react-icons/ai"
+
+import { getInteractionsForDashboard } from "../../models/Interaction"
+import { getContact } from "../../models/Contact"
 
 /**
  *
@@ -24,186 +29,151 @@ import { AiOutlineExclamationCircle, AiTwotoneCalendar, AiFillPlusCircle } from 
  * @returns
  */
 
-const ReminderComponent = ({ user, org }) => {
-  const [date, setDate] = useState(new Date().toLocaleDateString())
+const ReminderComponent = ({ user, org, deals }) => {
   const [allEvents, setAllEvents] = useState([])
 
   useEffect(() => {
+    // Load the events for this user from firestore
+    const loadEvents = async () => {
+      var interList = await getInteractionsForDashboard(user.id, org.id)
+      // Sort Event List by time referenced from https://www.codegrepper.com/code-examples/javascript/how+to+sort+array+of+objects+according+to+epoch+time
+      for (const inter of interList) {
+        if (inter.forDeal)
+          inter.forDeal = deals.filter(deal => deal.id === inter.forDeal)[0]
+        if (inter.contact) inter.contact = await getContact(inter.contact)
+      }
+      interList = interList.sort((a, b) => a.meetingStart - b.meetingStart)
+      setAllEvents(interList)
+    }
     loadEvents()
-    console.log("this is the " + allEvents)
-  }, [])
+  }, [user, org, deals])
 
-  // Load the events for this user
-  const loadEvents = async () => {
-    // Fetch all data from firestore
-    const interactions = await getInteractionsByAddedBy(user.id).then(
-      interactions =>
-        setAllEvents(
-          // Sort Event List by time referenced from https://www.codegrepper.com/code-examples/javascript/how+to+sort+array+of+objects+according+to+epoch+time
-          interactions.sort(function (a, b) {
-            var dateA = a.meetingStart,
-              dateB = b.meetingStart
-            return dateA - dateB
-          })
-        )
-
-      // setAllEvents(interactions)
-    )
-    console.log("this is the " + interactions)
-  }
-
-  const handleClick = () => {
-    navigate("/calendar")
-  }
-
-  // Ensure that the time is in 00:00 format
-  const addZero = i => {
-    if (i < 10) {
-      i = "0" + i
-    }
-    return i
-  }
-
-  // get The Event Times in hh:mm format
-  const getHourMinute = time => {
-    var h = addZero(time.toDate().getHours())
-    var m = addZero(time.toDate().getMinutes())
-    var eventTime = h + ":" + m
-    return eventTime
-  }
-  // get The duration of the event from start and Finish
-  const getMinuteDiff = (start, end) => {
-    var m1 = addZero(start.toDate())
-    var m2 = addZero(end.toDate())
-    var diff = (m1.getTime() - m2.getTime()) / 1000
-    diff /= 60
-    var minDiff = Math.abs(Math.round(diff))
-    var durationHour = Math.floor(minDiff / 60)
-    var durationMinute = minDiff % 60
-    if (durationHour === 0) {
-      return durationMinute + " min"
-    } else if (durationMinute === 0) {
-      return durationHour + " h"
-    } else {
-      return durationHour + "h " + durationMinute + "min"
-    }
-  }
-
-  // Only show events that are relevant in the day
-  const todaysEvent = start => {
-    const currentDate = new Date()
-    var thisDate =
-      currentDate.getDate() + currentDate.getMonth() + currentDate.getFullYear()
-    var eventDate = start.getDate() + start.getMonth() + start.getFullYear()
-    //days between event and today
-    var dayDiff = thisDate - eventDate
-    return dayDiff
-  }
-
-  // Get List of Scheduled Items for the day
-  const eventItems = allEvents.map((event, i) => {
-    if (event?.forOrganization === org.id) {
-      const startTime = getHourMinute(event?.meetingStart)
-      //By default events are all day
-      var endTime = " "
-      var duration = "All Day"
-      var times = todaysEvent(event?.meetingStart.toDate())
-      //get the duration and ending time for scheduled items
-      if (event?.meetingEnd) {
-        endTime = getHourMinute(event?.meetingEnd)
-        duration = getMinuteDiff(event?.meetingStart, event?.meetingEnd)
-      }
-      // if there are events for today, Display
-      if (times === 0) {
-        return (
-          <li key={i}>
-            <HStack mt="2vh" h="125px" maxW="350px">
-              <VStack color="grey">
-                <Text>{startTime}</Text>
-                {event?.meetingEnd && <Text>|</Text>}
-                <Text>{endTime}</Text>
-              </VStack>
-              <Grid
-                h="125px"
-                w="350px"
-                p="10px"
-                bg="green.300"
-                color="white"
-                borderRadius="15px"
-                templateRows="repeat(4, 1fr)"
-                templateColumns="repeat(4, 1fr)"
-                gap={2}
-                overflow="hidden"
-              >
-                <GridItem
-                  rowSpan={1}
-                  colSpan={4}
-                  style={{ borderBottom: "1px solid white" }}
-                >
-                  <HStack justifyContent="space-between">
-                    <HStack>
-                      <Text>
-                        {event?.remindMe && (
-                          <AiOutlineExclamationCircle color="red" />
-                        )}
-                      </Text>
-                      <Text>{event?.name || "Untitled Event"}</Text>
-                    </HStack>
-                    <Text alignContent="right">{duration}</Text>
-                  </HStack>
-                </GridItem>
-                <GridItem fontSize="12px" h="20px" rowSpan={2} colSpan={4}>
-                  <Text>{event?.forTask || "No Task Description"}</Text>
-                </GridItem>
-                <GridItem rowSpan={1} colSpan={4}>
-                  <Text>
-                    <Text>{event?.meetingType || ""}</Text>
-                  </Text>
-                </GridItem>
-              </Grid>
+  const ReminderItem = ({ event, key }) => {
+    const startTime = event.meetingStart
+      .toDate()
+      .toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })
+    const endTime = event.meetingEnd
+      ? event.meetingEnd
+          .toDate()
+          .toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })
+      : ""
+    const duration = event.meetingEnd
+      ? (
+          (event.meetingEnd.toDate() - event.meetingStart.toDate()) /
+          60000
+        ).toString() + "m"
+      : "All Day"
+    return (
+      <HStack mt="0.75em" h="125px" maxW="350px">
+        <VStack color="grey">
+          <Text color={event?.meetingEnd ? "grey" : "white"}>{startTime}</Text>
+          {event?.meetingEnd && <Text>|</Text>}
+          <Text>{endTime}</Text>
+        </VStack>
+        <Grid
+          h="125px"
+          w="350px"
+          p="10px"
+          bg="green.300"
+          color="white"
+          borderRadius="15px"
+          templateRows="repeat(4, 1fr)"
+          templateColumns="repeat(4, 1fr)"
+          gap={2}
+          overflow="hidden"
+          _hover={{ bg: "green.200" }}
+          cursor="pointer"
+          onClick={() =>
+            navigate("/interactions/", {
+              state: { selectedInteraction: event?.id },
+            })
+          }
+        >
+          <GridItem
+            rowSpan={1}
+            colSpan={4}
+            style={{ borderBottom: "1px solid white" }}
+          >
+            <HStack w="100%">
+              {event?.remindMe && <AiOutlineExclamationCircle color="red" />}
+              <Box w="60%">
+                <Text isTruncated>{event?.name || "Untitled Event"}</Text>
+              </Box>
+              <Spacer />
+              <Text textAlign="right" w="60px">
+                {duration}
+              </Text>
             </HStack>
-          </li>
-        )
-      }
-    }
-  })
+          </GridItem>
+          <GridItem fontSize="12px" h="20px" rowSpan={1} colSpan={4}>
+            <Text>
+              {event.forDeal
+                ? "Deal: " + event.forDeal.name
+                : "No Deal Assigned"}
+            </Text>
+          </GridItem>
+          <GridItem fontSize="12px" h="20px" rowSpan={1} colSpan={4}>
+            <Text>
+              {event.contact ? "Contact: " + event.contact.name : "No Contact"}
+            </Text>
+          </GridItem>
+          <GridItem fontSize="12px" h="20px" rowSpan={1} colSpan={4}>
+            <Text>
+              <Text>
+                {event.meetingType ? "Meeting Type: " + event.meetingType : ""}
+              </Text>
+            </Text>
+          </GridItem>
+        </Grid>
+      </HStack>
+    )
+  }
 
   return (
-    <Box>
-      <VStack align="left" pl="1em" pr="2em" h="85vh" overflowY="auto">
-        <Button
-          w="15em"
-          p="1em"
-          ml="5em"
-          bg="Grey"
-          color="white"
-          _hover={{
-            bg: "ripple.200",
-            transform: "scale(1.03)",
-          }}
-          onClick={handleClick}
-          leftIcon={<AiTwotoneCalendar />}
-        >
-          {date}
-        </Button>
-        <ul style={{ listStyleType: "none" }}>{eventItems}</ul>
-        <Button
-          pl = "5em"
-          bgColor="transparent"
-          color="ripple.200"
-          borderRadius="15px"
-          w="100%"
-          _hover={{
-            color: "ripple.100",
-            transform: "scale(1.03)",
-          }}
-          onClick={handleClick}
-          leftIcon={<AiFillPlusCircle />}
-        >
-          Add event to calendar
-        </Button>
-      </VStack>
-    </Box>
+    <VStack align="left" h="100%" overflowY="auto">
+      <Button
+        w="15em"
+        p="1em"
+        ml="5em"
+        bg="Grey"
+        color="white"
+        _hover={{
+          bg: "ripple.200",
+          transform: "scale(1.03)",
+        }}
+        onClick={() => navigate("/calendar")}
+        leftIcon={<AiTwotoneCalendar />}
+      >
+        {new Date().toLocaleDateString()}
+      </Button>
+      {allEvents.map((event, i) => (
+        <Box>
+          <ReminderItem event={event} key={i} />
+        </Box>
+      ))}
+      <Button
+        pl="5em"
+        bgColor="transparent"
+        color="ripple.200"
+        borderRadius="15px"
+        w="100%"
+        _hover={{
+          color: "ripple.100",
+          transform: "scale(1.03)",
+        }}
+        onClick={() => navigate("/calendar")}
+        leftIcon={<AiFillPlusCircle />}
+      >
+        Add event to calendar
+      </Button>
+      {allEvents.length === 0 && (
+        <Box pl="5em" w="100%" h="100%">
+          <Center w="100%" h="100%">
+            <Text>No events today</Text>
+          </Center>
+        </Box>
+      )}
+    </VStack>
   )
 }
 

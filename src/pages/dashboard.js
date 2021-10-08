@@ -6,111 +6,124 @@ import ReminderComponent from "../components/dashboard/reminderComponent"
 import DoughnutChart from "../components/dashboard/doughnutChart"
 import SalesFunnel from "../components/dashboard/salesFunnel"
 
-import {
-  Grid,
-  GridItem,
-  Box,
-  Text,
-  Divider,
-  VStack,
-  HStack,
-} from "@chakra-ui/react"
+import { Box, Text, Divider, VStack, HStack } from "@chakra-ui/react"
 
 import { getDealsByOrg } from "../models/Deal"
-import { getInteractionsByOrg } from "../models/Interaction"
+
+// attribute from https://stackoverflow.com/questions/10599933/convert-long-number-into-abbreviated-string-in-javascript-with-a-special-shortn
+const intToString = v => {
+  var s = ["", "K", "M", "B", "T"]
+  var n = Math.floor(("" + v).length / 3)
+  var sv = parseFloat((n !== 0 ? v / Math.pow(1000, n) : v).toPrecision(2))
+  if (sv % 1 !== 0) sv = sv.toFixed(1)
+  return sv + s[n]
+}
 
 const DashboardPage = ({ user, setUser, org, setOrg }) => {
   const [deals, setDeals] = useState([])
-  const [interactions, setInteractions] = useState([])
+  const today = new Date()
   useEffect(() => {
     // Fetch deals and interactions for analytics
-    const fetchData = async orgID => {
-      const dealsList = await getDealsByOrg(orgID)
-      if (dealsList) setDeals(dealsList)
-      const interactionsList = await getInteractionsByOrg(orgID)
-      if (interactionsList) setInteractions(interactionsList)
-    }
+    const fetchData = async orgID => setDeals(await getDealsByOrg(orgID))
     fetchData(org.id)
   }, [org])
 
   return (
-    <>
-      {/* <Heading>Dashboard for {org != null ? org.name : ""}</Heading> */}
-      <Grid
-        h="90vh"
-        maxW="100vw"
-        p="10px"
-        alignContent="left"
-        templateRows="repeat(5, 1fr)"
-        templateColumns="repeat(6, 1fr)"
-        gap={6}
-      >
-        <GridItem rowSpan={5} colSpan={1}>
-          <ReminderComponent user={user} org={org} />
-        </GridItem>
-        <GridItem rowSpan={5} colSpan={2}>
-          <VStack gridGap={6}>
+    <Box h="calc(100vh - 60px)" w="100%" p="1.5em" overflowY="hidden">
+      <HStack align="start" spacing="1.5em" h="100%">
+        <Box h="110%">
+          <ReminderComponent user={user} org={org} deals={deals} />
+        </Box>
+        <VStack spacing="1.5em" h="100%" width="25vw">
+          <Box
+            backgroundColor={"rgba(120, 207, 236, 0.1)"}
+            borderRadius="10px"
+            width="25vw"
+          >
+            <Text align={"left"} fontFamily="Raleway-Bold" padding="10px">
+              Deals breakdown
+            </Text>
+            <Divider orientation="horizontal" />
+            <Box border="10px" m="1em">
+              <DoughnutChart deals={deals} />
+            </Box>
+          </Box>
+          <HStack spacing="1.5em" h="100%" w="100%">
             <Box
               backgroundColor={"rgba(120, 207, 236, 0.1)"}
               borderRadius="10px"
-              width="25vw"
+              width="100%"
+              height="100%"
             >
               <Text align={"left"} fontFamily="Raleway-Bold" padding="10px">
-                Deals breakdown
+                Total Potential Sales Revenue
               </Text>
               <Divider orientation="horizontal" />
-              <Box border="10px">
-                <DoughnutChart deals={deals} />
+              <Box>
+                <Text fontSize="48px" align="center">
+                  $
+                  {intToString(
+                    deals.reduce((a, b) => a + (b["dealSize"] || 0), 0)
+                  )}
+                </Text>
+                <Text align="center">
+                  $
+                  {intToString(
+                    deals
+                      .filter(deal => deal.stage.toLowerCase() === "closed")
+                      .reduce((a, b) => a + (b["dealSize"] || 0), 0)
+                  )}{" "}
+                  {" Aquired"}
+                </Text>
               </Box>
             </Box>
-            <HStack>
-              <Box
-                backgroundColor={"rgba(120, 207, 236, 0.1)"}
-                borderRadius="10px"
-                width="12vw"
-              >
-                <Text align={"left"} fontFamily="Raleway-Bold" padding="10px">
-                  Deals in pipeline
+            <Box
+              backgroundColor={"rgba(120, 207, 236, 0.1)"}
+              borderRadius="10px"
+              width="100%"
+              height="100%"
+            >
+              <Text align={"left"} fontFamily="Raleway-Bold" padding="10px">
+                Conversion Rate
+              </Text>
+              <Divider orientation="horizontal" />
+              <Box>
+                <Text fontSize="64px" align="center">
+                  {(
+                    (deals.filter(deal => deal.stage.toLowerCase() === "closed")
+                      .length /
+                      deals.length) *
+                    100
+                  ).toString() + "%"}
                 </Text>
-                <Divider orientation="horizontal" />
-                <Box>
-                  <Text fontSize="64px" align="center">
-                    {deals.length}
-                  </Text>
-                </Box>
-              </Box>
-
-              <Box
-                backgroundColor={"rgba(120, 207, 236, 0.1)"}
-                borderRadius="10px"
-                width="12vw"
-              >
-                <Text align={"left"} fontFamily="Raleway-Bold" padding="10px">
-                  Interactions
+                <Text align="center">
+                  {deals.filter(
+                    deal =>
+                      deal.stage.toLowerCase() === "closed" &&
+                      deal.closeDate &&
+                      deal.closeDate.toDate().getMonth() === today.getMonth()
+                  ).length + " this month"}
                 </Text>
-                <Divider orientation="horizontal" />
-                <Box>
-                  <Text fontSize="64px" align="center">
-                    {interactions.length}
-                  </Text>
-                </Box>
               </Box>
-            </HStack>
-          </VStack>
-        </GridItem>
-        <GridItem rowSpan={5} colSpan={3}>
-          <Box backgroundColor={"rgba(120, 207, 236, 0.1)"} borderRadius="10px">
-            <Text align={"left"} fontFamily="Raleway-Bold" padding="10px">
-              Deals size in each stage ($)
-            </Text>
-            <Divider orientation="horizontal" size="3px" />
-            <Box border="10px" padding="20px">
-              <SalesFunnel deals={deals} />
             </Box>
+          </HStack>
+        </VStack>
+        <Box
+          backgroundColor={"rgba(120, 207, 236, 0.1)"}
+          borderRadius="10px"
+          h="100%"
+          w="40vw"
+        >
+          <Text align={"left"} fontFamily="Raleway-Bold" padding="10px">
+            Sales Funnel ($)
+          </Text>
+          <Divider orientation="horizontal" size="3px" />
+          <Box border="10px" padding="20px" h="100%">
+            <SalesFunnel deals={deals} />
           </Box>
-        </GridItem>
-      </Grid>
-    </>
+        </Box>
+      </HStack>
+    </Box>
   )
 }
 

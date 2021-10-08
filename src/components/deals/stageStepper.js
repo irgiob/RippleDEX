@@ -41,23 +41,19 @@ const StageStepper = ({ setStage, value }) => {
 
   const handleClick = index => {
     setActiveStep(index)
-  }
-
-  const handleComplete = currStep => {
-    setActiveStep(currStep + 1)
     const newCompleted = {}
 
-    if (currStep === 5) {
-      for (let i = 0; i < currStep + 2; ++i) {
+    if (index === 5) {
+      for (let i = 0; i < index + 2; ++i) {
         newCompleted[i] = true
       }
     } else {
-      for (let i = 0; i < currStep + 1; ++i) {
+      for (let i = 0; i < index + 1; ++i) {
         newCompleted[i] = true
       }
     }
     setCompleted(newCompleted)
-    setStage(currStep + 2)
+    setStage(index + 2)
   }
 
   const handleReset = () => {
@@ -71,7 +67,9 @@ const StageStepper = ({ setStage, value }) => {
       <Stepper alternativeLabel nonLinear activeStep={activeStep}>
         {steps.map((label, index) => (
           <Step key={label} completed={completed[index]}>
-            <StepLabel onClick={() => handleClick(index)}>{label}</StepLabel>
+            <StepLabel onClick={() => handleClick(index - 1)}>
+              {label}
+            </StepLabel>
           </Step>
         ))}
       </Stepper>
@@ -95,7 +93,7 @@ const StageStepper = ({ setStage, value }) => {
           color="white"
           size="sm"
           borderRadius="20px"
-          onClick={() => handleComplete(activeStep)}
+          onClick={() => handleClick(activeStep)}
           _hover={{
             transform: "scale(1.05)",
           }}

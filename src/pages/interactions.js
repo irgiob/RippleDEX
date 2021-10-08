@@ -164,10 +164,18 @@ const InteractionsPage = ({ user, setUser, org, setOrg, interID, filter }) => {
           )[0]
       }
       setInteractionList(interactions)
+
+      // if deal passed from previous page, set as selected
+      if (interID) {
+        const selectedInteraction = interactions.filter(
+          interaction => interaction.id === interID
+        )[0]
+        setSelected(selectedInteraction)
+      }
     }
 
     fetchData(org).then(() => setLoading(false))
-  }, [org])
+  }, [org, interID])
 
   const currTime = new Date().toLocaleDateString("en-GB")
   const tableTitle = currTime + " - Interactions for " + org.name

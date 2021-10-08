@@ -11,79 +11,49 @@ Chart.register(pieceLabel)
  * @returns
  */
 const DoughnutChart = ({ deals }) => {
-  const [prospect, setProspect] = useState(0)
-  const [lead, setLead] = useState(0)
-  const [pitch, setPitch] = useState(0)
-  const [qualified, setQualified] = useState(0)
-  const [proposal, setProposal] = useState(0)
-  const [negotiation, setNegotiation] = useState(0)
-  const [closed, setClosed] = useState(0)
+  const [freqs, setFreqs] = useState()
+
+  const colors = [
+    "#ffb3ba",
+    "#ffdfba",
+    "#ffffba",
+    "#baffc9",
+    "#bae1ff",
+    "#d0d0d0",
+    "#7bd8f1",
+  ]
 
   useEffect(() => {
     // Fetch data from database
     const stageCount = {
-      prospect: 0,
-      lead: 0,
-      pitch: 0,
-      qualified: 0,
-      proposalsent: 0,
-      negotiation: 0,
-      closed: 0,
+      Prospect: 0,
+      Lead: 0,
+      Pitch: 0,
+      Qualified: 0,
+      "Proposal Sent": 0,
+      Negotiation: 0,
+      Closed: 0,
     }
 
     deals.forEach(doc => {
-      stageCount[doc.stage.toLowerCase().replace(" ", "")] += 1
+      stageCount[
+        (doc.stage.charAt(0).toUpperCase() + doc.stage.slice(1)).replace(
+          " ",
+          ""
+        )
+      ] += 1
     })
 
-    // setProspect(stageCount.prospect)
-    // setLead(stageCount.lead)
-    // setPitch(stageCount.pitch)
-    // setQualified(stageCount.qualified)
-    // setProposal(stageCount.proposalsent)
-    // setNegotiation(stageCount.negotiation)
-    // setClosed(stageCount.closed)
-
-    // For demo purposes, uncomment this
-    setProspect(255)
-    setLead(185)
-    setPitch(135)
-    setQualified(93)
-    setProposal(92)
-    setNegotiation(43)
-    setClosed(12)
+    setFreqs(stageCount)
   }, [deals])
 
   const data = {
-    labels: [
-      "Prospect",
-      "Lead",
-      "Pitch",
-      "Qualified",
-      "Proposal Sent",
-      "Negotiation",
-      "Closed",
-    ],
+    labels: freqs ? Object.keys(freqs) : [],
     datasets: [
       {
-        data: [prospect, lead, pitch, qualified, proposal, negotiation, closed],
-        backgroundColor: [
-          "#ffb3ba",
-          "#ffdfba",
-          "#ffffba",
-          "#baffc9",
-          "#bae1ff",
-          "#d0d0d0",
-          "#7bd8f1",
-        ],
-        borderColor: [
-          "#ffb3ba",
-          "#ffdfba",
-          "#ffffba",
-          "#baffc9",
-          "#bae1ff",
-          "#d0d0d0 ",
-          "#7bd8f1",
-        ],
+        data: freqs ? Object.values(freqs) : [],
+        backgroundColor: freqs ? colors : [],
+        borderColor: freqs ? colors : [],
         borderWidth: 1,
       },
     ],

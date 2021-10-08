@@ -52,7 +52,7 @@ const DealPopUp = ({ selected, setSelected, companies, members, onUpdate }) => {
     const newCloseDate = closeDate ? dateToFirebaseTimestamp(closeDate) : null
     const options = {
       company: company?.id || null,
-      dealSize: dealSize || null,
+      dealSize: parseFloat(dealSize) || null,
       name: dealName || null,
       notes: notes || null,
       recordedBy: recordedBy?.id || null,
