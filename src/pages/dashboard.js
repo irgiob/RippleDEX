@@ -6,7 +6,7 @@ import ReminderComponent from "../components/dashboard/reminderComponent"
 import DoughnutChart from "../components/dashboard/doughnutChart"
 import SalesFunnel from "../components/dashboard/salesFunnel"
 
-import { Box, Text, Divider, VStack, HStack } from "@chakra-ui/react"
+import { Box, Text, Divider, VStack, HStack, Center } from "@chakra-ui/react"
 
 import { getDealsByOrg } from "../models/Deal"
 
@@ -92,7 +92,7 @@ const DashboardPage = ({ user, setUser, org, setOrg }) => {
                   {Math.round(
                     (deals.filter(deal => deal.stage.toLowerCase() === "closed")
                       .length /
-                      deals.length) *
+                      (deals.length || 1)) *
                       100
                   ).toString() + "%"}
                 </Text>
@@ -111,6 +111,7 @@ const DashboardPage = ({ user, setUser, org, setOrg }) => {
         <Box
           backgroundColor={"rgba(120, 207, 236, 0.1)"}
           borderRadius="10px"
+          h="100%"
           w="40vw"
         >
           <Text align={"left"} fontFamily="Raleway-Bold" padding="10px">
@@ -118,7 +119,13 @@ const DashboardPage = ({ user, setUser, org, setOrg }) => {
           </Text>
           <Divider orientation="horizontal" size="3px" />
           <Box border="10px" padding="20px" h="100%">
-            <SalesFunnel deals={deals} />
+            {deals.length !== 0 ? (
+              <SalesFunnel deals={deals} />
+            ) : (
+              <Center h="100%" w="100%">
+                No deal data available
+              </Center>
+            )}
           </Box>
         </Box>
       </HStack>

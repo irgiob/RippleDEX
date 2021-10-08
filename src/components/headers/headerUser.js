@@ -258,14 +258,16 @@ const HeaderUser = props => {
             org={org}
             setOrg={setOrg}
           />
-          <OrganizationSettings
-            isOpen={isAdminOpen}
-            onClose={onAdminClose}
-            user={user}
-            setUser={setUser}
-            org={org}
-            setOrg={setOrg}
-          />
+          {org && (
+            <OrganizationSettings
+              isOpen={isAdminOpen}
+              onClose={onAdminClose}
+              user={user}
+              setUser={setUser}
+              org={org}
+              setOrg={setOrg}
+            />
+          )}
           <Popover>
             <PopoverTrigger>
               <Avatar
