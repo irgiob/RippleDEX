@@ -40,7 +40,7 @@ export const createNewDeal = async (
   company
 ) => {
   const docRef = await addDoc(collection(db, "deals"), {
-    forOrganizaiton: orgID,
+    forOrganization: orgID,
     name: dealName,
     dealSize: dealSize,
     closeDate: closeDate,
@@ -88,7 +88,7 @@ export const deleteDeal = async dealID => {
 export const getDealsByOrg = async orgID => {
   const q = query(
     collection(db, "deals"),
-    where("forOrganizaiton", "==", orgID)
+    where("forOrganization", "==", orgID)
   )
   const querySnapshot = await getDocs(q)
   const dealList = []

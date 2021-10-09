@@ -34,6 +34,7 @@ export const createNewOrganization = async (userID, orgName, orgDesc) => {
     members: [],
     profilePicture: null,
     kanbanLanes: [],
+    invited: [],
   })
   await addUserToOrganization(docRef.id, userID, "Admin")
   return docRef.id
@@ -51,6 +52,9 @@ export const inviteToOrganization = async (email, orgID, position) => {
     email: email,
     organizationID: orgID,
     position: position,
+  })
+  await updateDoc(doc(db, "organizations", orgID), {
+    invited: arrayUnion(email),
   })
   return docRef.id
 }
@@ -139,6 +143,10 @@ export const removeUserFromOrganization = async (orgID, userID) => {
   await updateDoc(doc(db, "users", userID), {
     lastOpenedOrganization: orgList.length > 0 ? orgList[0] : null,
     organizations: arrayRemove(orgID),
+  })
+  // removes email from invited list
+  await updateDoc(doc(db, "organizations", orgID), {
+    invited: arrayRemove(user.email),
   })
 }
 

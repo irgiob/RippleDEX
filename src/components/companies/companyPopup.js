@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react"
 import { updateCompany } from "../../models/Company"
-import { createNewContact, getContactsByCompany } from "../../models/Contact"
+import { createNewContact, getContactsByOrg } from "../../models/Contact"
 
 import {
   Modal,
@@ -75,12 +75,13 @@ const CompanyPopUp = ({
     setCompanyRelation(selected?.relationship)
     setCompanyAddress(selected?.address)
 
-    const fetchCompanyContacts = async companyID => {
-      const contacts = await getContactsByCompany(companyID)
+    const fetchCompanyContacts = async (orgID, companyID) => {
+      var contacts = await getContactsByOrg(orgID)
+      contacts = contacts.filter(contact => contact.company === companyID)
       setContacts(contacts)
     }
-    if (selected && selected.id) fetchCompanyContacts(selected?.id)
-  }, [selected])
+    if (selected && selected.id) fetchCompanyContacts(orgID, selected.id)
+  }, [selected, orgID])
 
   const handleClick = async () => {
     if (companyContact && companyContact.id === null) {

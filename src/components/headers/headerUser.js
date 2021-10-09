@@ -91,7 +91,7 @@ const HeaderUser = props => {
       duration: 5000,
       isClosable: true,
     })
-    navigate("/dashboard")
+    navigate("/")
   }
 
   return (
