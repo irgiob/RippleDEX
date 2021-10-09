@@ -2,13 +2,18 @@ import React, { useState } from "react"
 import { login, signInGoogle } from "../../utils/AuthFunctions"
 import { navigate } from "gatsby"
 
+import { ResetPasswordPopup } from "./resetPassword"
+
 import {
   Box,
+  Text,
   Button,
   Center,
   Input,
   InputGroup,
   InputRightElement,
+  HStack,
+  Spacer,
   useToast,
 } from "@chakra-ui/react"
 
@@ -114,7 +119,21 @@ const Login = () => {
             </Button>
           </InputRightElement>
         </InputGroup>
-        <Box h="30px" />
+        <Box h="10px" />
+        <HStack>
+          <Spacer />
+          <ResetPasswordPopup>
+            <Text
+              w="auto"
+              color="ripple.200"
+              cursor="pointer"
+              _hover={{ transform: "scale(1.05)" }}
+            >
+              Forgot password?
+            </Text>
+          </ResetPasswordPopup>
+        </HStack>
+        <Box h="20px" />
         <Center>
           <Button
             bgColor="ripple.200"

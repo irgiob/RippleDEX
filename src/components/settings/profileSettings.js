@@ -28,6 +28,7 @@ import ProfilePicture from "../../images/RippleDEXWhite.svg"
 import { BiTrash } from "react-icons/bi"
 
 import UploadImageButton from "../uploadImageButton"
+import { ResetPasswordPopup } from "../auth/resetPassword"
 
 const ProfileSettings = props => {
   const [firstName, setFirstName] = useState(props.user?.firstName)
@@ -149,6 +150,18 @@ const ProfileSettings = props => {
                     value={phoneNumber}
                     onChange={event => setPhoneNumber(event.target.value)}
                   />
+                </Box>
+                <Box textAlign="left" w="300px">
+                  <ResetPasswordPopup email={props.user?.email} readOnly={true}>
+                    <Text
+                      w="auto"
+                      color="ripple.200"
+                      cursor="pointer"
+                      _hover={{ transform: "scale(1.05)" }}
+                    >
+                      Reset Password
+                    </Text>
+                  </ResetPasswordPopup>
                 </Box>
               </VStack>
               <Spacer />

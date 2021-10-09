@@ -144,6 +144,15 @@ export async function sendVerificationEmail(user = null) {
 }
 
 /**
+ * resets the password for the user
+ * @param {string} email address to send the password reset link to
+ */
+export function resetPassword(email) {
+  const auth = getAuth(firebase)
+  return sendPasswordResetEmail(auth, email)
+}
+
+/**
  * Signs out current user
  * @returns {firebase.auth.signOut}
  */
