@@ -84,24 +84,6 @@ export const getContactsByOrg = async orgID => {
 }
 
 /**
- * gets all contacts based on company ID
- * @param {String} companyID ID of the company
- *
- * @returns {Object} the list of all contacts
- */
-export const getContactsByCompany = async companyID => {
-  const q = query(collection(db, "contacts"), where("company", "==", companyID))
-  const querySnapshot = await getDocs(q)
-  const contactList = []
-  querySnapshot.forEach(contact => {
-    const data = contact.data()
-    data.id = contact.id
-    contactList.push(data)
-  })
-  return contactList
-}
-
-/**
  * gets contact based on its ID
  *
  * @param {String} contactID ID of the contact

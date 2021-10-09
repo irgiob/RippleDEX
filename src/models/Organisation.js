@@ -60,22 +60,6 @@ export const inviteToOrganization = async (email, orgID, position) => {
 }
 
 /**
- * invite a new individual to gain access to the organization
- * @param {String} inviteID of the new member in the organization
- */
-export const getInvite = async inviteID => {
-  const docRef = doc(db, "invites", inviteID)
-  return getDoc(docRef)
-    .then(invite => {
-      return invite.data()
-    })
-    .catch(error => {
-      console.error("Error getting invite: ", error)
-      return null
-    })
-}
-
-/**
  * returns all invites for a specific email address
  *
  * @param {String} email address associated with the invite
@@ -148,32 +132,6 @@ export const removeUserFromOrganization = async (orgID, userID) => {
   await updateDoc(doc(db, "organizations", orgID), {
     invited: arrayRemove(user.email),
   })
-}
-
-/**
- * checks if a specific user is a member of a specific organization
- *
- * @param {String} orgID ID of organization
- * @param {String} userID ID of user
- *
- * @returns bool
- */
-export const isUserInOrganization = async (orgID, userID) => {
-  const org = await getOrganization(orgID)
-  return org.members.some(member => member.userID === userID)
-}
-
-/**
- * checks if a user is the admin of a specific organization
- *
- * @param {String} orgID ID of organization
- * @param {String} userID ID of user
- *
- * @returns bool
- */
-export const isUserAdmin = async (orgID, userID) => {
-  const org = await getOrganization(orgID)
-  return org.admin === userID
 }
 
 /**

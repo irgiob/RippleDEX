@@ -93,14 +93,6 @@ export const getInteractionsByOrg = async orgID => {
   return await getInteractionsByQuery(q)
 }
 
-export const getInteractionsByAddedBy = async addedID => {
-  const q = query(
-    collection(db, "interactions"),
-    where("addedBy", "==", addedID)
-  )
-  return await getInteractionsByQuery(q)
-}
-
 export const getInteractionsForDashboard = async (userID, orgID) => {
   const today = new Date()
   today.setHours(0, 0, 0, 0)
