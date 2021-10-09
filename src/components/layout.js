@@ -50,6 +50,7 @@ const Layout = ({ children, location }) => {
       onAuthLoad(
         async loggedUser => {
           const user = await getUser(loggedUser.uid, true)
+          user.isVerified = loggedUser.emailVerified
           setUser(user)
           if (user.lastOpenedOrganization) {
             const org = await getOrganization(user.lastOpenedOrganization)
