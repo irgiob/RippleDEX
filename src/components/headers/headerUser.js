@@ -303,7 +303,7 @@ const HeaderUser = props => {
                     >
                       <AvatarBadge
                         boxSize="20px"
-                        borderColor="black"
+                        borderColor="white"
                         bg={user?.isInvisible ? "gray.300" : "green.300"}
                       />
                       {/* bg is online or offline, change based on boolean later */}

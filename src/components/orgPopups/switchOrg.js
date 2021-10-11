@@ -43,7 +43,7 @@ const SwitchOrgPopup = props => {
   }, [props])
 
   return (
-    <Modal isOpen={props.isOpen} onClose={props.onClose}>
+    <Modal isCentered isOpen={props.isOpen} onClose={props.onClose}>
       <ModalOverlay />
       <ModalContent
         pos="absolute"
@@ -55,7 +55,7 @@ const SwitchOrgPopup = props => {
         scrollBehavior="inside"
       >
         <ModalCloseButton m="15px" />
-        <Box textAlign="left" w="100%" h="100%" p="2em" overflowY="scroll">
+        <Box textAlign="left" w="100%" h="100%" p="2em">
           <Text
             mb="0.5em"
             fontFamily="Nunito-Bold"
@@ -64,7 +64,6 @@ const SwitchOrgPopup = props => {
           >
             Switch Organizations
           </Text>
-          <hr w="100%" />
           <InputGroup mb="1em">
             <InputLeftElement
               pointerEvents="none"
@@ -76,7 +75,7 @@ const SwitchOrgPopup = props => {
               onChange={e => setSearch(e.target.value.toLowerCase())}
             />
           </InputGroup>
-          <VStack spacing="1em" align="left">
+          <VStack overflowY="scroll" spacing="1em" align="left">
             {orgs
               .filter(org => org.name.toLowerCase().includes(search))
               .map((org, i) => (

@@ -58,8 +58,13 @@ const JoinOrgPopup = props => {
   return (
     <Modal isOpen={props.isOpen} onClose={props.onClose} isCentered>
       <ModalOverlay />
-      <ModalContent maxW="128vh" maxH="80vh" borderRadius="15px" value="inside">
-        <Box w="128vh" h="80vh">
+      <ModalContent
+        maxW="900px"
+        maxH="500px"
+        borderRadius="15px"
+        value="inside"
+      >
+        <Box w="900px" h="500px">
           <Image
             position="absolute"
             src={AcceptInvite}
@@ -82,15 +87,15 @@ const JoinOrgPopup = props => {
           <Center>
             <Box
               bg="white"
-              h="64vh"
-              w="64vh"
+              h="350px"
+              w="500px"
               borderRadius="50px"
               value="inside"
             >
               {focusedInvitation === false && (
                 <>
                   <ModalCloseButton size="50px" m="15px" />
-                  <Box p="2em" h="100%" overflowY="scroll">
+                  <Box p="2em" h="100%">
                     <ModalHeader
                       fontFamily="Raleway-Bold"
                       fontSize="2rem"
@@ -109,8 +114,9 @@ const JoinOrgPopup = props => {
                         </Text>
                       </Center>
                     )}
+
                     {invites.length !== 0 && (
-                      <Center w="100%">
+                      <Center overflowY="scroll" w="100%">
                         <VStack spacing="1em" align="left" w="100%" pl="1em">
                           {invites.map((invite, i) => (
                             <InviteListItem
@@ -138,9 +144,9 @@ const JoinOrgPopup = props => {
                     Accept Invitation
                   </ModalHeader>
                   <Text fontSize="20px" color="gray" pl="40px">
-                    You are invited to join as {focusedInvitation?.position}
+                    You are invited to join
                   </Text>
-                  <HStack pt="40px">
+                  <HStack pt="20px">
                     <Spacer />
                     <Image
                       boxSize="100px"
@@ -161,7 +167,6 @@ const JoinOrgPopup = props => {
                       >
                         {focusedInvitation?.organization.name} <br />
                       </Text>
-                      <hr />
 
                       <Text
                         fontSize="15px"
@@ -172,12 +177,11 @@ const JoinOrgPopup = props => {
                       >
                         {focusedInvitation?.organization.description} <br />
                       </Text>
-                      <hr />
                     </Box>
                     <Spacer />
                   </HStack>
                   <Box>
-                    <HStack pt="40px" m="20px" justifyContent="space-between">
+                    <HStack pt="10px" m="20px" justifyContent="space-between">
                       <Spacer />
                       <Button
                         w="40%"
@@ -207,7 +211,6 @@ const JoinOrgPopup = props => {
                       >
                         Decline
                       </Button>
-                      <Box w="20px" />
                       <Button
                         w="40%"
                         bgColor="ripple.200"

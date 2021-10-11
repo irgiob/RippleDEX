@@ -135,7 +135,6 @@ const UploadImageButton = props => {
         <ModalOverlay />
         <ModalContent
           pos="absolute"
-          top="15vh"
           maxW={!isLargeSize ? "90vw" : "500px"}
           borderRadius="20px"
           p="20px"
@@ -161,9 +160,11 @@ const UploadImageButton = props => {
               />
               <Text
                 hidden={isSelected}
-                pt="10px"
+                top="120px"
+                left="50%"
+                transform="translate(-50%)"
                 color="gray.400"
-                align="center"
+                pos="absolute"
               >
                 Choose a file or drag it here
               </Text>
