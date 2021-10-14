@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react"
 import { navigate } from "gatsby-link"
+import { Helmet } from "react-helmet"
 import PropTypes from "prop-types"
 import Header from "./headers/header"
 import HeaderUser from "./headers/headerUser"
@@ -51,6 +52,7 @@ const Layout = ({ children, location }) => {
         async loggedUser => {
           const user = await getUser(loggedUser.uid, true)
           user.isVerified = loggedUser.emailVerified
+          user.signInMethod = loggedUser.providerData[0].providerId
           setUser(user)
           if (user.lastOpenedOrganization) {
             const org = await getOrganization(user.lastOpenedOrganization)
@@ -73,6 +75,7 @@ const Layout = ({ children, location }) => {
   if (pathname === "/") {
     return (
       <ChakraProvider theme={theme}>
+        <MetaData location={{ pathname: "RippleDEX", href: location.hred }} />
         <Header />
         <main style={{ paddingTop: "60px" }}>{children}</main>
       </ChakraProvider>
@@ -81,6 +84,7 @@ const Layout = ({ children, location }) => {
     if (loading) {
       return (
         <ChakraProvider theme={theme}>
+          <MetaData location={location} />
           <Center h="100vh">
             <VStack>
               <Box>
@@ -112,6 +116,7 @@ const Layout = ({ children, location }) => {
 
     return (
       <ChakraProvider theme={theme}>
+        <MetaData location={location} />
         <HeaderUser user={user} setUser={setUser} org={org} setOrg={setOrg} />
         {pathname !== "/welcome/" && <ProSidebar location={location} />}
         <main
@@ -127,6 +132,17 @@ const Layout = ({ children, location }) => {
     )
   }
 }
+
+const MetaData = ({ location }) => (
+  <Helmet>
+    <meta charSet="utf-8" />
+    <title>
+      {location.pathname.replaceAll("/", "").charAt(0).toUpperCase() +
+        location.pathname.replaceAll("/", "").slice(1)}
+    </title>
+    <link rel="canonical" href={location.href} />
+  </Helmet>
+)
 
 Layout.propTypes = {
   children: PropTypes.node.isRequired,
