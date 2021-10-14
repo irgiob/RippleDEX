@@ -151,18 +151,23 @@ const ProfileSettings = props => {
                     onChange={event => setPhoneNumber(event.target.value)}
                   />
                 </Box>
-                <Box textAlign="left" w="300px">
-                  <ResetPasswordPopup email={props.user?.email} readOnly={true}>
-                    <Text
-                      w="auto"
-                      color="ripple.200"
-                      cursor="pointer"
-                      _hover={{ transform: "scale(1.05)" }}
+                {props.user?.signInMethod === "password" && (
+                  <Box textAlign="left" w="300px">
+                    <ResetPasswordPopup
+                      email={props.user?.email}
+                      readOnly={true}
                     >
-                      Reset Password
-                    </Text>
-                  </ResetPasswordPopup>
-                </Box>
+                      <Text
+                        w="auto"
+                        color="ripple.200"
+                        cursor="pointer"
+                        _hover={{ transform: "scale(1.05)" }}
+                      >
+                        Reset Password
+                      </Text>
+                    </ResetPasswordPopup>
+                  </Box>
+                )}
               </VStack>
               <Spacer />
               <VStack spacing={0}>

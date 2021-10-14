@@ -93,9 +93,9 @@ const JoinOrgPopup = props => {
               value="inside"
             >
               {focusedInvitation === false && (
-                <>
+                <Box w="100%" h="100%">
                   <ModalCloseButton size="50px" m="15px" />
-                  <Box p="2em" h="100%">
+                  <Box p="2em" pt="0.5em" h="100%">
                     <ModalHeader
                       fontFamily="Raleway-Bold"
                       fontSize="2rem"
@@ -116,20 +116,25 @@ const JoinOrgPopup = props => {
                     )}
 
                     {invites.length !== 0 && (
-                      <Center overflowY="scroll" w="100%">
-                        <VStack spacing="1em" align="left" w="100%" pl="1em">
-                          {invites.map((invite, i) => (
-                            <InviteListItem
-                              key={"invite_" + i}
-                              invite={invite}
-                              setFocusedInvitation={setFocusedInvitation}
-                            />
-                          ))}
-                        </VStack>
-                      </Center>
+                      <VStack
+                        spacing="1em"
+                        align="left"
+                        w="100%"
+                        h="80%"
+                        pl="1em"
+                        overflowY="auto"
+                      >
+                        {invites.map((invite, i) => (
+                          <InviteListItem
+                            key={"invite_" + i}
+                            invite={invite}
+                            setFocusedInvitation={setFocusedInvitation}
+                          />
+                        ))}
+                      </VStack>
                     )}
                   </Box>
-                </>
+                </Box>
               )}
               {focusedInvitation !== false && (
                 <>
@@ -173,7 +178,7 @@ const JoinOrgPopup = props => {
                         color="gray"
                         pl="40px"
                         maxH="100px"
-                        overflowY="Scroll"
+                        overflowY="auto"
                       >
                         {focusedInvitation?.organization.description} <br />
                       </Text>

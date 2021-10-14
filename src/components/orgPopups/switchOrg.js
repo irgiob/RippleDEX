@@ -55,7 +55,7 @@ const SwitchOrgPopup = props => {
         scrollBehavior="inside"
       >
         <ModalCloseButton m="15px" />
-        <Box textAlign="left" w="100%" h="100%" p="2em">
+        <Box textAlign="left" w="100%" h="100%" p="2em" pb="0">
           <Text
             mb="0.5em"
             fontFamily="Nunito-Bold"
@@ -75,32 +75,39 @@ const SwitchOrgPopup = props => {
               onChange={e => setSearch(e.target.value.toLowerCase())}
             />
           </InputGroup>
-          <VStack overflowY="scroll" spacing="1em" align="left">
-            {orgs
-              .filter(org => org.name.toLowerCase().includes(search))
-              .map((org, i) => (
-                <OrgListItem
-                  key={i}
-                  org={org}
-                  isCurrentOrg={org.id === props.org?.id}
-                  onClick={() => {
-                    updateUser(props.user?.id, {
-                      lastOpenedOrganization: org.id,
-                    }).then(
-                      toast({
-                        title: "Success",
-                        description: "Organization has been changed",
-                        status: "success",
-                        duration: 5000,
-                        isClosable: true,
-                      }),
-                      navigate("/")
-                    )
-                  }}
-                />
-              ))}
-          </VStack>
         </Box>
+        <VStack
+          overflowY="auto"
+          align="left"
+          spacing="1em"
+          w="100%"
+          p="2em"
+          pt="0"
+        >
+          {orgs
+            .filter(org => org.name.toLowerCase().includes(search))
+            .map((org, i) => (
+              <OrgListItem
+                key={i}
+                org={org}
+                isCurrentOrg={org.id === props.org?.id}
+                onClick={() => {
+                  updateUser(props.user?.id, {
+                    lastOpenedOrganization: org.id,
+                  }).then(
+                    toast({
+                      title: "Success",
+                      description: "Organization has been changed",
+                      status: "success",
+                      duration: 5000,
+                      isClosable: true,
+                    }),
+                    navigate("/")
+                  )
+                }}
+              />
+            ))}
+        </VStack>
       </ModalContent>
     </Modal>
   )

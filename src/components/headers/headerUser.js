@@ -23,6 +23,12 @@ import {
   Text,
   VStack,
   useToast,
+  AlertDialog,
+  AlertDialogBody,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogContent,
+  AlertDialogOverlay,
 } from "@chakra-ui/react"
 
 import {
@@ -80,6 +86,12 @@ const HeaderUser = props => {
     isOpen: isCreateOpen,
     onOpen: onCreateOpen,
     onClose: onCreateClose,
+  } = useDisclosure()
+
+  const {
+    isOpen: isLeaveOpen,
+    onOpen: onLeaveOpen,
+    onClose: onLeaveClose,
   } = useDisclosure()
 
   const leaveWorkspace = async () => {
@@ -222,12 +234,34 @@ const HeaderUser = props => {
                         _hover={{
                           transform: "scale(1.08)",
                         }}
-                        onClick={leaveWorkspace}
+                        onClick={onLeaveOpen}
                         leftIcon={<RiLogoutBoxLine />}
                       >
                         Leave Workspace
                       </Button>
                     )}
+                    <AlertDialog isOpen={isLeaveOpen} onClose={onLeaveClose}>
+                      <AlertDialogOverlay>
+                        <AlertDialogContent>
+                          <AlertDialogHeader fontSize="lg" fontWeight="bold">
+                            Leave Organization
+                          </AlertDialogHeader>
+                          <AlertDialogBody>
+                            Are you sure you want to leave? You can't undo this.
+                          </AlertDialogBody>
+                          <AlertDialogFooter>
+                            <Button onClick={onLeaveClose}>Cancel</Button>
+                            <Button
+                              colorScheme="red"
+                              onClick={leaveWorkspace}
+                              ml={3}
+                            >
+                              Leave
+                            </Button>
+                          </AlertDialogFooter>
+                        </AlertDialogContent>
+                      </AlertDialogOverlay>
+                    </AlertDialog>
                   </VStack>
                 </PopoverBody>
               </PopoverContent>
