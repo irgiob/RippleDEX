@@ -9,13 +9,10 @@ import {
   ModalCloseButton,
   useMediaQuery,
   Text,
-  Image,
 } from "@chakra-ui/react"
 
 import SignUp from "./signup"
 import LogIn from "./login"
-
-import SignUpIll from "../../images/RippleDEXDark.svg"
 
 const AuthPopUp = ({ isOpen, onClose, type }) => {
   const [isLargeSize] = useMediaQuery("(min-width: 42em)")
@@ -52,15 +49,6 @@ const AuthPopUp = ({ isOpen, onClose, type }) => {
         </ModalHeader>
         <ModalCloseButton m="20px" />
         <ModalBody>{type === "SignUp" ? <SignUp /> : <LogIn />}</ModalBody>
-        {type === "SignUp" && (
-          <Image
-            w="70px"
-            right="40px"
-            bottom="30px"
-            pos="absolute"
-            src={SignUpIll}
-          />
-        )}
       </ModalContent>
     </Modal>
   )
