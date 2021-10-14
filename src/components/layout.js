@@ -50,6 +50,7 @@ const Layout = ({ children, location }) => {
     if (pathname !== "/") {
       onAuthLoad(
         async loggedUser => {
+          console.log(location)
           const user = await getUser(loggedUser.uid, true)
           user.isVerified = loggedUser.emailVerified
           user.signInMethod = loggedUser.providerData[0].providerId
@@ -75,7 +76,7 @@ const Layout = ({ children, location }) => {
   if (pathname === "/") {
     return (
       <ChakraProvider theme={theme}>
-        <MetaData location={{ pathname: "RippleDEX", href: location.hred }} />
+        <MetaData location={{ pathname: "RippleDEX", href: location.href }} />
         <Header />
         <main style={{ paddingTop: "60px" }}>{children}</main>
       </ChakraProvider>
@@ -137,8 +138,8 @@ const MetaData = ({ location }) => (
   <Helmet>
     <meta charSet="utf-8" />
     <title>
-      {location.pathname.replaceAll("/", "").charAt(0).toUpperCase() +
-        location.pathname.replaceAll("/", "").slice(1)}
+      {location.pathname.replace(/\//g, "").charAt(0).toUpperCase() +
+        location.pathname.replace(/\//g, "").slice(1)}
     </title>
     <link rel="canonical" href={location.href} />
   </Helmet>

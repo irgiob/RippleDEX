@@ -123,19 +123,19 @@ These files each have one exported React component that gets converted into the 
 ## Contributors
 
 <a href="https://github.com/irgiob">
-<img style="border-radius: 50%" src="https://avatars.githubusercontent.com/u/53930437?v=4?s=100" width="50px"/>
+<img style="border-radius: 50%;" src="https://avatars.githubusercontent.com/u/53930437?v=4?s=100" width="50px"/>
 </a>
 <a href="https://github.com/fionajoyceline">
-<img style="border-radius: 50%" src="https://avatars.githubusercontent.com/u/86419049?v=4?s=100" width="50px"/>
+<img style="border-radius: 50%;" src="https://avatars.githubusercontent.com/u/86419049?v=4?s=100" width="50px"/>
 </a>
 <a href="https://github.com/Wvww-git">
-<img style="border-radius: 50%" src="https://avatars.githubusercontent.com/u/80228649?v=4?s=100" width="50px"/>
+<img style="border-radius: 50%;" src="https://avatars.githubusercontent.com/u/80228649?v=4?s=100" width="50px"/>
 </a>
 <a href="https://github.com/wilbertcargeson">
-<img style="border-radius: 50%" src="https://avatars.githubusercontent.com/u/58966149?v=4?s=100" width="50px"/>
+<img style="border-radius: 50%;" src="https://avatars.githubusercontent.com/u/58966149?v=4?s=100" width="50px"/>
 </a>
 <a href="https://github.com/StephR1128">
-<img style="border-radius: 50%" src="https://avatars.githubusercontent.com/u/54741960?v=4?s=100" width="50px"/>
+<img style="border-radius: 50%;" src="https://avatars.githubusercontent.com/u/54741960?v=4?s=100" width="50px"/>
 </a>
 <br/>
 
