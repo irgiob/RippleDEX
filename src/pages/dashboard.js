@@ -6,7 +6,15 @@ import ReminderComponent from "../components/dashboard/reminderComponent"
 import DoughnutChart from "../components/dashboard/doughnutChart"
 import SalesFunnel from "../components/dashboard/salesFunnel"
 
-import { Box, Text, Divider, VStack, HStack, Center } from "@chakra-ui/react"
+import {
+  Box,
+  Text,
+  Divider,
+  VStack,
+  HStack,
+  Center,
+  Tooltip,
+} from "@chakra-ui/react"
 
 import { getDealsByOrg } from "../models/Deal"
 
@@ -114,9 +122,16 @@ const DashboardPage = ({ user, setUser, org, setOrg }) => {
           h="100%"
           w="40vw"
         >
-          <Text align={"left"} fontFamily="Raleway-Bold" padding="10px">
-            Sales Funnel ($)
-          </Text>
+          <Tooltip
+            label="Displays the total deal size on each stage"
+            placement="left"
+            hasArrow
+          >
+            <Text align={"bottom"} fontFamily="Raleway-Bold" padding="10px">
+              Sales Funnel
+            </Text>
+          </Tooltip>
+
           <Divider orientation="horizontal" size="3px" />
           <Box border="10px" padding="20px" h="100%">
             {deals.length !== 0 ? (
