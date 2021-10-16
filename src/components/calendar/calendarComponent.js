@@ -169,7 +169,7 @@ const CalendarComponent = ({ user, org }) => {
               id: null,
               forOrganization: org.id,
               name: "New Event",
-              addedBy: null,
+              addedBy: members.filter(member => member.id === user.id)[0],
               contact: null,
               forDeal: null,
               forTask: null,

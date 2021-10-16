@@ -137,22 +137,11 @@ const JoinOrgPopup = props => {
                 </Box>
               )}
               {focusedInvitation !== false && (
-                <>
-                  <ModalHeader
-                    pt="35px"
-                    pl="40px"
-                    pb="20px"
-                    fontFamily="Raleway-Bold"
-                    fontSize="30px"
-                    color="ripple.200"
-                  >
-                    Accept Invitation
-                  </ModalHeader>
-                  <Text fontSize="20px" color="gray" pl="40px">
+                <VStack h="100%" p="20px">
+                  <Text fontSize="20px" color="gray">
                     You are invited to join
                   </Text>
-                  <HStack pt="20px">
-                    <Spacer />
+                  <VStack>
                     <Image
                       boxSize="100px"
                       borderRadius="30px"
@@ -163,92 +152,85 @@ const JoinOrgPopup = props => {
                       }
                       alt="Workspace Image"
                     />
-                    <Box w="50%" maxH="50%">
+                    <VStack>
                       <Text
                         fontFamily="Raleway-Bold"
                         fontSize="25px"
-                        color="black"
-                        pl="40px"
+                        color="gray.500"
                       >
-                        {focusedInvitation?.organization.name} <br />
+                        {focusedInvitation?.organization.name}
                       </Text>
 
                       <Text
                         fontSize="15px"
                         color="gray"
-                        pl="40px"
                         maxH="100px"
                         overflowY="auto"
                       >
-                        {focusedInvitation?.organization.description} <br />
+                        {focusedInvitation?.organization.description}
                       </Text>
-                    </Box>
-                    <Spacer />
-                  </HStack>
-                  <Box>
-                    <HStack pt="10px" m="20px" justifyContent="space-between">
-                      <Spacer />
-                      <Button
-                        w="40%"
-                        bgColor="red.400"
-                        color="white"
-                        fontFamily="Raleway-Bold"
-                        borderRadius="30px"
-                        variant="solid"
-                        size="lg"
-                        _hover={{ transform: "scale(1.05)" }}
-                        onClick={() => {
-                          deleteInvite(focusedInvitation?.id).then(() => {
-                            toast({
-                              title: "Success",
-                              description: "Invite has been declined",
-                              status: "success",
-                              duration: 5000,
-                              isClosable: true,
-                            })
-                            const newInvites = invites.slice()
-                            const index = newInvites.indexOf(focusedInvitation)
-                            if (index > -1) newInvites.splice(index, 1)
-                            setInvites(newInvites)
-                            setFocusedInvitation(false)
+                    </VStack>
+                  </VStack>
+                  <Spacer />
+                  <HStack spacing="10px">
+                    <Button
+                      bgColor="red.400"
+                      color="white"
+                      fontFamily="Raleway-Bold"
+                      borderRadius="30px"
+                      variant="solid"
+                      size="lg"
+                      _hover={{ transform: "scale(1.05)" }}
+                      onClick={() => {
+                        deleteInvite(focusedInvitation?.id).then(() => {
+                          toast({
+                            title: "Success",
+                            description: "Invite has been declined",
+                            status: "success",
+                            duration: 5000,
+                            isClosable: true,
                           })
-                        }}
-                      >
-                        Decline
-                      </Button>
-                      <Button
-                        w="40%"
-                        bgColor="ripple.200"
-                        color="white"
-                        fontFamily="Raleway-Bold"
-                        borderRadius="30px"
-                        variant="solid"
-                        size="lg"
-                        _hover={{ transform: "scale(1.05)" }}
-                        onClick={() => {
-                          addUserToOrganization(
-                            focusedInvitation?.organizationID,
-                            props.userID,
-                            focusedInvitation?.position
-                          ).then(
-                            deleteInvite(focusedInvitation?.id),
-                            toast({
-                              title: "Success",
-                              description: "Organization has been added",
-                              status: "success",
-                              duration: 5000,
-                              isClosable: true,
-                            }),
-                            navigate("/")
-                          )
-                        }}
-                      >
-                        Accept
-                      </Button>
-                      <Spacer />
-                    </HStack>
-                  </Box>
-                </>
+                          const newInvites = invites.slice()
+                          const index = newInvites.indexOf(focusedInvitation)
+                          if (index > -1) newInvites.splice(index, 1)
+                          setInvites(newInvites)
+                          setFocusedInvitation(false)
+                        })
+                      }}
+                    >
+                      Decline
+                    </Button>
+                    <Box />
+                    <Button
+                      bgColor="ripple.200"
+                      color="white"
+                      fontFamily="Raleway-Bold"
+                      borderRadius="30px"
+                      variant="solid"
+                      size="lg"
+                      _hover={{ transform: "scale(1.05)" }}
+                      onClick={() => {
+                        addUserToOrganization(
+                          focusedInvitation?.organizationID,
+                          props.userID,
+                          focusedInvitation?.position
+                        ).then(
+                          deleteInvite(focusedInvitation?.id),
+                          toast({
+                            title: "Success",
+                            description: "Organization has been added",
+                            status: "success",
+                            duration: 5000,
+                            isClosable: true,
+                          }),
+                          navigate("/")
+                        )
+                      }}
+                    >
+                      Accept
+                    </Button>
+                  </HStack>
+                </VStack>
               )}
             </Box>
           </Center>

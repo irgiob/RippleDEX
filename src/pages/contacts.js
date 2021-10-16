@@ -95,7 +95,7 @@ const ContactsPage = ({ user, setUser, org, setOrg, contactID, filter }) => {
     overrides: {
       MuiPaper: {
         root: {
-          "& > div[class^='Component']": {
+          "& div:nth-child(2)": {
             overflowX: "visible !important",
           },
         },

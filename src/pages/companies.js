@@ -98,7 +98,7 @@ const CompaniesPage = ({ user, setUser, org, setOrg, companyID }) => {
     overrides: {
       MuiPaper: {
         root: {
-          "& > div[class^='Component']": {
+          "& div:nth-child(2)": {
             overflowX: "visible !important",
           },
         },

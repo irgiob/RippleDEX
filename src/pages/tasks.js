@@ -549,7 +549,7 @@ const TasksPage = ({ user, setUser, org, setOrg, taskID }) => {
   }
 
   return (
-    <>
+    <Box>
       {loading && (
         <Box
           bgColor="rgba(128, 128, 128, 0.4)"
@@ -624,7 +624,7 @@ const TasksPage = ({ user, setUser, org, setOrg, taskID }) => {
         }}
         org={org}
       />
-    </>
+    </Box>
   )
 }
 

@@ -89,7 +89,7 @@ const InteractionsPage = ({ user, setUser, org, setOrg, interID, filter }) => {
     overrides: {
       MuiPaper: {
         root: {
-          "& > div[class^='Component']": {
+          "& div:nth-child(2)": {
             overflowX: "visible !important",
           },
         },
@@ -433,6 +433,9 @@ const InteractionsPage = ({ user, setUser, org, setOrg, interID, filter }) => {
             {
               title: "Interacted With",
               field: "addedBy",
+              initialEditValue: members.filter(
+                member => member.id === user.id
+              )[0],
               customFilterAndSearch: (term, rowData) =>
                 rowData.addedBy?.label
                   .toLowerCase()
