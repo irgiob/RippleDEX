@@ -66,6 +66,7 @@ const TasksPage = ({ user, setUser, org, setOrg, taskID }) => {
 
       // get deals for org
       const dealList = await getDealsByOrg(org.id)
+      for (const deal of dealList) deal.label = deal.name
       setDeals(dealList)
 
       // get members of org

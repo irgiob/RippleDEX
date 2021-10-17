@@ -254,7 +254,7 @@ const InteractionsPage = ({ user, setUser, org, setOrg, interID, filter }) => {
                     itemRenderer={dealItem}
                     disableCreateItem={false}
                     onCreateItem={() => navigate("/deals")}
-                    value={props.value || selectedDeal}
+                    value={props.value || selectedDeal || undefined}
                     onChange={deal => {
                       props.onChange(deal)
                       setSelectedDeal(deal)
