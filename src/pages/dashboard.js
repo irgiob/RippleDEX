@@ -37,7 +37,7 @@ const DashboardPage = ({ user, setUser, org, setOrg }) => {
   }, [org])
 
   return (
-    <Box h="100%" w="100%" p="1.5em" overflowY="scroll">
+    <Box h="95%" w="100%" p="1.5em" overflowY="scroll">
       <HStack align="start" spacing="1.5em" h="100%">
         <Box h="100%">
           <ReminderComponent user={user} org={org} deals={deals} />
@@ -98,7 +98,7 @@ const DashboardPage = ({ user, setUser, org, setOrg }) => {
               </Text>
               <Divider orientation="horizontal" />
               <Box>
-                <Text fontSize="45px" align="center">
+                <Text fontSize="55px" align="center" mt="10px">
                   {Math.round(
                     (deals.filter(deal => deal.stage.toLowerCase() === "closed")
                       .length /

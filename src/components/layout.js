@@ -50,7 +50,6 @@ const Layout = ({ children, location }) => {
     if (pathname !== "/") {
       onAuthLoad(
         async loggedUser => {
-          console.log(location)
           const user = await getUser(loggedUser.uid, true)
           user.isVerified = loggedUser.emailVerified
           user.signInMethod = loggedUser.providerData[0].providerId
