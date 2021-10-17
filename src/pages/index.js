@@ -11,17 +11,11 @@ import Statistics from "../images/HomePage/Statistics.png"
 import Donut from "../images/HomePage/Donut.png"
 import Spring from "../images/HomePage/Spring.png"
 
-import Analytics from "../images/HomePage/Analytics.png"
-import Chats from "../images/HomePage/Chats.png"
-import Calendar from "../images/HomePage/Calendar.png"
-import Mobile from "../images/HomePage/Mobile.png"
-
 import ContactSS from "../images/Screenshots/contacts.png"
 import DealSS from "../images/Screenshots/deals.png"
 import DashboardSS from "../images/Screenshots/dashboard.png"
 import CalendarSS from "../images/Screenshots/calendar.png"
 import TaskSS from "../images/Screenshots/tasks.png"
-import InteractionSS from "../images/Screenshots/interactions.png"
 
 import AuthPopUp from "../components/auth/authPopup"
 
@@ -47,6 +41,12 @@ const IndexPage = props => {
   const scrollToDiv = ref => window.scrollTo(0, ref.current.offsetTop - 10)
 
   useEffect(() => {
+    // set features on odd lanes to be correct width
+    for (const i of [1, 3])
+      document.getElementById("features").childNodes[i].firstChild.style.width =
+        "500px"
+
+    // navigate to dashboard if already logged in
     onAuthLoad(
       user => navigate("/dashboard"),
       () => {}
@@ -226,9 +226,9 @@ const IndexPage = props => {
                   What's cool about us?
                 </Heading>
                 <Text pb={isLargeSize && "30px"} fontSize="20px">
-                  RippleDEX's features are built with Companies in mind. Your
-                  teams, the tools they need, customer data, are all stored in
-                  one place.
+                  RippleDEX's features are built with closing deals in mind.
+                  Your teams, the tools they need, customer data, are all stored
+                  in one place.
                 </Text>
               </Box>
             </Center>
@@ -236,6 +236,7 @@ const IndexPage = props => {
 
           <Center>
             <VStack
+              id="features"
               spacing={["60px", "100px"]}
               pt="30px"
               maxW={["85vw", "80vw"]}
@@ -295,13 +296,13 @@ const IndexPage = props => {
                       fontFamily="Raleway-Bold"
                       fontSize={["35px", "40px"]}
                     >
-                      Clear Calendar & Notification System
+                      Clear Calendar & Scheduling System
                     </Heading>
                     <Text fontSize="20px">
-                      Tired of spam notifications? Our notifications are fully
-                      customizable depending on your preferences. The system
-                      also includes a daily digest of missed notifications so
-                      you can get back on track easily.
+                      Never forget a client meeting again with our easy-to-use
+                      calendar system. Schedule past and upcoming events with
+                      ease. Our system will specifically remind you of events
+                      related to you so you never miss that important meeting.
                     </Text>
                   </Box>
                 </Center>
@@ -333,11 +334,13 @@ const IndexPage = props => {
                       fontFamily="Raleway-Bold"
                       fontSize={["35px", "40px"]}
                     >
-                      Add Deal Stages
+                      Optimized Deal Pipeline
                     </Heading>
                     <Text fontSize="20px">
-                      Keep track of each deal in your organization. Set stages
-                      to estimate how far along a deal is.
+                      Keep track of all your deals related to a workspace.
+                      Categorize and plan progression of deals based on it's
+                      stage in the deal pipeline and clearly view your
+                      progression through the stages.
                     </Text>
                   </Box>
                 </Center>
@@ -371,9 +374,9 @@ const IndexPage = props => {
                       Draggable Tasks
                     </Heading>
                     <Text fontSize="20px">
-                      RippleDEX allows users to view their tasks in a kanban
-                      board where tasks can be dragged around to update their
-                      status.
+                      Easily manage tasks related to your deals with RippleDEX's
+                      task kanban board, where users can drag tasks around to
+                      update their status.
                     </Text>
                   </Box>
                 </Center>
@@ -406,14 +409,12 @@ const IndexPage = props => {
                     <Text fontSize="20px">
                       Our CRM crunches the numbers and displays highly visual
                       and engaing statistics in real time. Boost productivity by
-                      finding out the best customers to follow up with based on
-                      varying factors.
+                      by seeing metrics about your deals and identify which
+                      areas need the most attention and improvement.
                     </Text>
                   </Box>
                 </Center>
               </Stack>
-
-              <Box h="80px" w="100vw" />
               <Center pb="25px">
                 <VStack>
                   <Text color="gray">© 2021 RippleDEX Team</Text>
