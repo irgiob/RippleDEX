@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react"
 import { updateCompany } from "../../models/Company"
-import { createNewContact, getContactsByOrg } from "../../models/Contact"
+import { createNewContact } from "../../models/Contact"
 
 import {
   Modal,
@@ -45,6 +45,7 @@ const CompanyPopUp = ({
   selected,
   setSelected,
   companies,
+  contacts,
   onUpdate,
   orgID,
 }) => {
@@ -58,7 +59,7 @@ const CompanyPopUp = ({
   const [companyWebsite, setCompanyWebsite] = useState()
   const [companyRelation, setCompanyRelation] = useState()
   const [companyAddress, setCompanyAddress] = useState()
-  const [contacts, setContacts] = useState([])
+  const [companyContacts, setCompanyContacts] = useState([])
   const [newContact, setNewContact] = useState()
 
   const toast = useToast()
@@ -75,13 +76,11 @@ const CompanyPopUp = ({
     setCompanyRelation(selected?.relationship)
     setCompanyAddress(selected?.address)
 
-    const fetchCompanyContacts = async (orgID, companyID) => {
-      var contacts = await getContactsByOrg(orgID)
-      contacts = contacts.filter(contact => contact.company === companyID)
-      setContacts(contacts)
-    }
-    if (selected && selected.id) fetchCompanyContacts(orgID, selected.id)
-  }, [selected, orgID])
+    if (selected && selected.id)
+      setCompanyContacts(
+        contacts.filter(contact => contact.company === selected.id)
+      )
+  }, [selected, contacts])
 
   const handleClick = async () => {
     if (companyContact && companyContact.id === null) {
@@ -324,7 +323,7 @@ const CompanyPopUp = ({
                     <Box pt="45px">
                       <CustomAutoComplete
                         placeholder="Company's Primary Contact"
-                        items={contacts}
+                        items={companyContacts}
                         itemRenderer={contact => (
                           <AutoCompleteListItem
                             name={contact.name}
