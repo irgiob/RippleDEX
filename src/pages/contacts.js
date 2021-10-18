@@ -389,6 +389,7 @@ const ContactsPage = ({ user, setUser, org, setOrg, contactID, filter }) => {
             onRowAdd: newData => {
               const promise = new Promise((resolve, reject) => {
                 setTimeout(async () => {
+                  var newCompany = false
                   if (newData.company && newData.company.id === null) {
                     const companyID = await createNewCompany(
                       org.id,
@@ -400,6 +401,7 @@ const ContactsPage = ({ user, setUser, org, setOrg, contactID, filter }) => {
                       newData.company.profilePicture
                     )
                     if (companyID) newData.company.id = companyID
+                    newCompany = true
                   }
                   const contactID = await createNewContact(
                     org.id,
@@ -411,9 +413,10 @@ const ContactsPage = ({ user, setUser, org, setOrg, contactID, filter }) => {
                     newData.profilePicture || null
                   )
                   if (contactID) {
-                    updateCompany(newData.company.id, {
-                      primaryContact: contactID,
-                    })
+                    if (newCompany)
+                      updateCompany(newData.company.id, {
+                        primaryContact: contactID,
+                      })
                     setContactList([
                       ...contactList,
                       { ...newData, id: contactID },

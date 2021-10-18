@@ -168,7 +168,12 @@ const CalendarComponent = ({ user, org }) => {
           )
         }
         dateClick={info => {
-          if (date && date.getTime() === info.date.getTime())
+          if (date && date.getTime() === info.date.getTime()) {
+            const now = new Date()
+            const start = new Date(date)
+            start.setHours(now.getHours() + 1)
+            const end = new Date(date)
+            end.setHours(now.getHours() + 2)
             setSelected({
               id: null,
               forOrganization: org.id,
@@ -177,13 +182,13 @@ const CalendarComponent = ({ user, org }) => {
               contact: null,
               forDeal: null,
               forTask: null,
-              meetingStart: dateToFirebaseTimestamp(date),
-              meetingEnd: null,
+              meetingStart: dateToFirebaseTimestamp(start),
+              meetingEnd: dateToFirebaseTimestamp(end),
               meetingType: null,
               notes: null,
               remindMe: true,
             })
-          else setDate(info.date)
+          } else setDate(info.date)
         }}
       />
       <InteractionPopUp
