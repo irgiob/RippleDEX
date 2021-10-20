@@ -11,10 +11,11 @@ import Statistics from "../images/HomePage/Statistics.png"
 import Donut from "../images/HomePage/Donut.png"
 import Spring from "../images/HomePage/Spring.png"
 
-import Analytics from "../images/HomePage/Analytics.png"
-import Chats from "../images/HomePage/Chats.png"
-import Calendar from "../images/HomePage/Calendar.png"
-import Mobile from "../images/HomePage/Mobile.png"
+import ContactSS from "../images/Screenshots/contacts.png"
+import DealSS from "../images/Screenshots/deals.png"
+import DashboardSS from "../images/Screenshots/dashboard.png"
+import CalendarSS from "../images/Screenshots/calendar.png"
+import TaskSS from "../images/Screenshots/tasks.png"
 
 import AuthPopUp from "../components/auth/authPopup"
 
@@ -40,6 +41,12 @@ const IndexPage = props => {
   const scrollToDiv = ref => window.scrollTo(0, ref.current.offsetTop - 10)
 
   useEffect(() => {
+    // set features on odd lanes to be correct width
+    for (const i of [1, 3])
+      document.getElementById("features").childNodes[i].firstChild.style.width =
+        "500px"
+
+    // navigate to dashboard if already logged in
     onAuthLoad(
       user => navigate("/dashboard"),
       () => {}
@@ -219,102 +226,202 @@ const IndexPage = props => {
                   What's cool about us?
                 </Heading>
                 <Text pb={isLargeSize && "30px"} fontSize="20px">
-                  RippleDEX's features are built with Companies in mind. Your
-                  teams, the tools they need, customer data, are all stored in
-                  one place.
+                  RippleDEX's features are built with closing deals in mind.
+                  Your teams, the tools they need, customer data, are all stored
+                  in one place.
                 </Text>
               </Box>
             </Center>
           </Stack>
 
-          {/* First two Features */}
+          <Center>
+            <VStack
+              id="features"
+              spacing={["60px", "100px"]}
+              pt="30px"
+              maxW={["85vw", "80vw"]}
+            >
+              {/* First Feature */}
 
-          <Stack
-            direction={["column", "row"]}
-            gridGap={["0px", "70px"]}
-            pb={!isLargeSize && "30px"}
-          >
-            <Center>
-              <Box textAlign="center" maxW="500px">
-                <Image margin="auto" w={["200px", "300px"]} src={Chats} />
-                <Heading
-                  pb="30px"
-                  fontFamily="Raleway-Bold"
-                  fontSize={["30px", "35px"]}
-                >
-                  Save time between clients
-                </Heading>
-                <Text pb="20px" color="gray" fontSize="20px">
-                  RippleDEX allows seamless access to logs kept for each client.
-                  Users won't need to depend on third party apps to pull up
-                  previous interactions and information.
-                </Text>
-              </Box>
-            </Center>
-            <Center>
-              <Box textAlign="center" maxW="500px">
-                <Image margin="auto" w={["200px", "300px"]} src={Calendar} />
-                <Heading
-                  pb="30px"
-                  fontFamily="Raleway-Bold"
-                  fontSize={["30px", "35px"]}
-                >
-                  Clear Calendar & Notification System
-                </Heading>
-                <Text color="gray" fontSize="20px">
-                  Tired of spam notifications? Our notifications are fully
-                  customizable depending on your preferences. The system also
-                  includes a daily digest of missed notifications so you can get
-                  back on track easily.
-                </Text>
-              </Box>
-            </Center>
-          </Stack>
+              <Stack
+                pb={!isLargeSize && "30px"}
+                direction={["column", "row"]}
+                gridGap={["0px", "70px"]}
+              >
+                <Center>
+                  <Box pb={!isLargeSize && "30px"}>
+                    <Image w={["300px", "500px"]} src={ContactSS} />
+                  </Box>
+                </Center>
+                <Center>
+                  <Box textAlign={!isLargeSize && "center"} maxW="500px">
+                    <Heading
+                      pb="30px"
+                      fontFamily="Raleway-Bold"
+                      fontSize={["35px", "40px"]}
+                    >
+                      Save time between clients
+                    </Heading>
+                    <Text fontSize="20px">
+                      RippleDEX allows seamless access to logs kept for each
+                      client. Users won't need to depend on third party apps to
+                      pull up previous interactions and information.
+                    </Text>
+                  </Box>
+                </Center>
+              </Stack>
 
-          {/* Second Feature */}
+              {/* Second Feature */}
 
-          <Stack
-            direction={["column", "row"]}
-            gridGap={["0px", "70px"]}
-            pb={!isLargeSize && "30px"}
-          >
-            <Center>
-              <Box pt={isLargeSize && "30px"} textAlign="center" maxW="500px">
-                <Image margin="auto" w={["200px", "300px"]} src={Analytics} />
-                <Heading
-                  pb="30px"
-                  fontFamily="Raleway-Bold"
-                  fontSize={["30px", "35px"]}
-                >
-                  Business and Sales Analytics
-                </Heading>
-                <Text color="gray" fontSize="20px">
-                  Our CRM crunches the numbers and displays highly visual and
-                  engaing statistics in real time. Boost productivity by finding
-                  out the best customers to follow up with based on varying
-                  factors.
-                </Text>
-              </Box>
-            </Center>
-            <Center>
-              <Box pt={!isLargeSize && "30px"} textAlign="center" maxW="500px">
-                <Image margin="auto" w={["200px", "300px"]} src={Mobile} />
-                <Heading
-                  pb="30px"
-                  fontFamily="Raleway-Bold"
-                  fontSize={["30px", "35px"]}
-                >
-                  Mobile CRM
-                </Heading>
-                <Text color="gray" fontSize="20px">
-                  RippleDEX is fully integrated for mobile use. View data and
-                  receive alerts on the go from your mobile devices.
-                </Text>
-              </Box>
-            </Center>
-          </Stack>
+              <Stack
+                pb={!isLargeSize && "30px"}
+                direction={["column", "row"]}
+                gridGap={["0px", "70px"]}
+              >
+                {!isLargeSize && (
+                  <Center>
+                    <Box pb="30px">
+                      <Image w="300px" src={CalendarSS} />
+                    </Box>
+                  </Center>
+                )}
+                <Center>
+                  <Box
+                    textAlign={!isLargeSize && "center"}
+                    pl={isLargeSize && "30px"}
+                    maxW="500px"
+                  >
+                    <Heading
+                      pb="30px"
+                      fontFamily="Raleway-Bold"
+                      fontSize={["35px", "40px"]}
+                    >
+                      Clear Calendar & Scheduling System
+                    </Heading>
+                    <Text fontSize="20px">
+                      Never forget a client meeting again with our easy-to-use
+                      calendar system. Schedule past and upcoming events with
+                      ease. Our system will specifically remind you of events
+                      related to you so you never miss that important meeting.
+                    </Text>
+                  </Box>
+                </Center>
+                {isLargeSize && (
+                  <Center>
+                    <Box>
+                      <Image w="500px" src={CalendarSS} />
+                    </Box>
+                  </Center>
+                )}
+              </Stack>
 
-          <Box h="100px" w="100vw"></Box>
+              {/* Third Feature */}
+
+              <Stack
+                pb={!isLargeSize && "30px"}
+                direction={["column", "row"]}
+                gridGap={["0px", "70px"]}
+              >
+                <Center>
+                  <Box pb={!isLargeSize && "30px"}>
+                    <Image w={["300px", "500px"]} src={DealSS} />
+                  </Box>
+                </Center>
+                <Center>
+                  <Box textAlign={!isLargeSize && "center"} maxW="500px">
+                    <Heading
+                      pb="30px"
+                      fontFamily="Raleway-Bold"
+                      fontSize={["35px", "40px"]}
+                    >
+                      Optimized Deal Pipeline
+                    </Heading>
+                    <Text fontSize="20px">
+                      Keep track of all your deals related to a workspace.
+                      Categorize and plan progression of deals based on it's
+                      stage in the deal pipeline and clearly view your
+                      progression through the stages.
+                    </Text>
+                  </Box>
+                </Center>
+              </Stack>
+
+              {/* Fourth Feature */}
+
+              <Stack
+                pb={!isLargeSize && "30px"}
+                direction={["column", "row"]}
+                gridGap={["0px", "70px"]}
+              >
+                {!isLargeSize && (
+                  <Center>
+                    <Box pb="30px">
+                      <Image w="300px" src={TaskSS} />
+                    </Box>
+                  </Center>
+                )}
+                <Center>
+                  <Box
+                    textAlign={!isLargeSize && "center"}
+                    pl={isLargeSize && "30px"}
+                    maxW="500px"
+                  >
+                    <Heading
+                      pb="30px"
+                      fontFamily="Raleway-Bold"
+                      fontSize={["35px", "40px"]}
+                    >
+                      Draggable Tasks
+                    </Heading>
+                    <Text fontSize="20px">
+                      Easily manage tasks related to your deals with RippleDEX's
+                      task kanban board, where users can drag tasks around to
+                      update their status.
+                    </Text>
+                  </Box>
+                </Center>
+                {isLargeSize && (
+                  <Center>
+                    <Box>
+                      <Image w="500px" src={TaskSS} />
+                    </Box>
+                  </Center>
+                )}
+              </Stack>
+
+              {/* Fifth feature */}
+
+              <Stack direction={["column", "row"]} gridGap={["0px", "70px"]}>
+                <Center>
+                  <Box pb={!isLargeSize && "30px"}>
+                    <Image w={["300px", "500px"]} src={DashboardSS} />
+                  </Box>
+                </Center>
+                <Center>
+                  <Box textAlign={!isLargeSize && "center"} maxW="500px">
+                    <Heading
+                      pb="30px"
+                      fontFamily="Raleway-Bold"
+                      fontSize={["35px", "40px"]}
+                    >
+                      Business and Sales Analytics
+                    </Heading>
+                    <Text fontSize="20px">
+                      Our CRM crunches the numbers and displays highly visual
+                      and engaing statistics in real time. Boost productivity by
+                      by seeing metrics about your deals and identify which
+                      areas need the most attention and improvement.
+                    </Text>
+                  </Box>
+                </Center>
+              </Stack>
+              <Center pb="25px">
+                <VStack>
+                  <Text color="gray">© 2021 RippleDEX Team</Text>
+                </VStack>
+              </Center>
+            </VStack>
+          </Center>
         </VStack>
       </Center>
     </Layout>

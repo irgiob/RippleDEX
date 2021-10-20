@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react"
-import { FunnelChart } from "react-funnel-pipeline"
-import "react-funnel-pipeline/dist/index.css"
+// import { FunnelChart } from "react-funnel-pipeline"
+import { FunnelChart } from "./custom-react-pipeline-funnel/index.js"
+import "./custom-react-pipeline-funnel/index.css"
 
 /**
  *
@@ -55,6 +56,9 @@ const SalesFunnel = ({ deals }) => {
           : []
       }
       pallette={colors}
+      getToolTip={row => {
+        ""
+      }}
     />
   )
 }

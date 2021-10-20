@@ -102,7 +102,7 @@ const DealsPage = ({ user, setUser, org, setOrg, dealID, filter }) => {
     overrides: {
       MuiPaper: {
         root: {
-          "& > div[class^='Component']": {
+          "& div:nth-child(2)": {
             overflowX: "visible !important",
           },
         },

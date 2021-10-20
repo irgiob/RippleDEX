@@ -50,16 +50,19 @@ const CreateOrgPopup = props => {
       toast({
         duration: 3000,
         render: () => (
-          <Center 
-            h="200vh" w="200vw" 
-            transform="translate(-40%, 25%)" 
+          <Center
+            h="200vh"
+            w="200vw"
+            transform="translate(-40%, 25%)"
             bg="rgba(0,0,0,0.5)"
           >
-            <Box 
-              bg="white" 
-              borderRadius="3xl" 
-              p="2em" pl="4em" 
-              pr="4em" pb="0.75em" 
+            <Box
+              bg="white"
+              borderRadius="3xl"
+              p="2em"
+              pl="4em"
+              pr="4em"
+              pb="0.75em"
               textAlign="center"
             >
               <Text
@@ -72,11 +75,11 @@ const CreateOrgPopup = props => {
                 Workspace Successfully Created!
               </Text>
               <Center>
-                <Image w="10em" src={CreateWorkspace} alignSelf="center"/>
+                <Image w="10em" src={CreateWorkspace} alignSelf="center" />
               </Center>
             </Box>
           </Center>
-        )
+        ),
       })
     } else {
       // Failed to create Organization
@@ -238,6 +241,7 @@ const CreateOrgPopup = props => {
                   onClick={handleSubmit}
                   isLoading={loading}
                   loadingText="Submitting"
+                  disabled={!orgName}
                 >
                   Create workspace
                 </Button>

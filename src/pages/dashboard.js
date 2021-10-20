@@ -6,7 +6,15 @@ import ReminderComponent from "../components/dashboard/reminderComponent"
 import DoughnutChart from "../components/dashboard/doughnutChart"
 import SalesFunnel from "../components/dashboard/salesFunnel"
 
-import { Box, Text, Divider, VStack, HStack, Center } from "@chakra-ui/react"
+import {
+  Box,
+  Text,
+  Divider,
+  VStack,
+  HStack,
+  Center,
+  Tooltip,
+} from "@chakra-ui/react"
 
 import { getDealsByOrg } from "../models/Deal"
 
@@ -29,9 +37,9 @@ const DashboardPage = ({ user, setUser, org, setOrg }) => {
   }, [org])
 
   return (
-    <Box h="calc(100vh - 60px)" w="100%" p="1.5em" overflowY="hidden">
+    <Box h="95%" w="100%" p="1.5em" overflowY="scroll">
       <HStack align="start" spacing="1.5em" h="100%">
-        <Box h="110%">
+        <Box h="100%">
           <ReminderComponent user={user} org={org} deals={deals} />
         </Box>
         <VStack spacing="1.5em" h="100%" width="25vw">
@@ -53,14 +61,15 @@ const DashboardPage = ({ user, setUser, org, setOrg }) => {
               backgroundColor={"rgba(120, 207, 236, 0.1)"}
               borderRadius="10px"
               width="100%"
-              p="0.5em"
+              pb="10px"
+              minH="170px"
             >
-              <Text align={"left"} fontFamily="Raleway-Bold" padding="10px">
+              <Text align={"center"} fontFamily="Raleway-Bold" padding="10px">
                 Total Potential Sales Revenue
               </Text>
               <Divider orientation="horizontal" />
               <Box>
-                <Text fontSize="48px" align="center">
+                <Text fontSize="45px" align="center">
                   $
                   {intToString(
                     deals.reduce((a, b) => a + (b["dealSize"] || 0), 0)
@@ -81,14 +90,15 @@ const DashboardPage = ({ user, setUser, org, setOrg }) => {
               backgroundColor={"rgba(120, 207, 236, 0.1)"}
               borderRadius="10px"
               width="100%"
-              p="0.5em"
+              pb="10px"
+              minH="170px"
             >
-              <Text align={"left"} fontFamily="Raleway-Bold" padding="10px">
+              <Text align={"center"} fontFamily="Raleway-Bold" padding="10px">
                 Conversion Rate
               </Text>
               <Divider orientation="horizontal" />
               <Box>
-                <Text fontSize="64px" align="center">
+                <Text fontSize="55px" align="center" mt="10px">
                   {Math.round(
                     (deals.filter(deal => deal.stage.toLowerCase() === "closed")
                       .length /
@@ -111,12 +121,19 @@ const DashboardPage = ({ user, setUser, org, setOrg }) => {
         <Box
           backgroundColor={"rgba(120, 207, 236, 0.1)"}
           borderRadius="10px"
-          h="100%"
+          minH={["580px", "580px", "580px", "580px", "580px", "830px"]}
           w="40vw"
         >
-          <Text align={"left"} fontFamily="Raleway-Bold" padding="10px">
-            Sales Funnel ($)
+          <Text align={"bottom"} fontFamily="Raleway-Bold" padding="10px">
+            <Tooltip
+              label="Displays the total deal size on each stage"
+              placement="right"
+              hasArrow
+            >
+              Sales Funnel
+            </Tooltip>
           </Text>
+
           <Divider orientation="horizontal" size="3px" />
           <Box border="10px" padding="20px" h="100%">
             {deals.length !== 0 ? (

@@ -66,6 +66,7 @@ const TasksPage = ({ user, setUser, org, setOrg, taskID }) => {
 
       // get deals for org
       const dealList = await getDealsByOrg(org.id)
+      for (const deal of dealList) deal.label = deal.name
       setDeals(dealList)
 
       // get members of org
@@ -120,12 +121,14 @@ const TasksPage = ({ user, setUser, org, setOrg, taskID }) => {
   }
 
   // Update the associated card document when it is moved to the database
-  const updateCardMoveAcrossLanes = async (id, origin, destination) => {
+  const updateCardMoveAcrossLanes = async (id, origin, destination, pos) => {
     await updateTask(id, { status: destination.toLowerCase() })
-    setTasks([
-      ...tasks.filter(task => task.id !== id),
-      { ...tasks.filter(task => task.id === id)[0], status: destination },
-    ])
+    const newTasks = tasks.filter(task => task.id !== id)
+    newTasks.splice(pos, 0, {
+      ...tasks.filter(task => task.id === id)[0],
+      status: destination,
+    })
+    setTasks(newTasks)
   }
 
   // Update the associated lane when it is moved to the database
@@ -549,7 +552,7 @@ const TasksPage = ({ user, setUser, org, setOrg, taskID }) => {
   }
 
   return (
-    <>
+    <Box>
       {loading && (
         <Box
           bgColor="rgba(128, 128, 128, 0.4)"
@@ -580,7 +583,7 @@ const TasksPage = ({ user, setUser, org, setOrg, taskID }) => {
       </Box>
       <Board
         style={{
-          height: "85vh",
+          height: "100%",
           backgroundColor: "transparent",
           padding: "20px",
         }}
@@ -588,7 +591,7 @@ const TasksPage = ({ user, setUser, org, setOrg, taskID }) => {
           borderRadius: "20px",
           backgroundColor: "#f7f7f7",
           paddingTop: "15px",
-          maxHeight: "80vh",
+          height: "100%",
         }}
         tagStyle={{
           paddingTop: "5px",
@@ -624,7 +627,7 @@ const TasksPage = ({ user, setUser, org, setOrg, taskID }) => {
         }}
         org={org}
       />
-    </>
+    </Box>
   )
 }
 

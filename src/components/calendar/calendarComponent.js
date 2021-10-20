@@ -40,18 +40,22 @@ const CalendarComponent = ({ user, org }) => {
     const fetchData = async org => {
       // fetch contacts
       const contactList = await getContactsByOrg(org.id)
+      for (const contact of contactList) contact.label = contact.name
       setContacts(contactList)
 
       // fetch companies
       const companyList = await getCompanyByOrg(org.id)
+      for (const company of companyList) company.label = company.name
       setCompanies(companyList)
 
       // fetch deals
       const dealList = await getDealsByOrg(org.id)
+      for (const deal of dealList) deal.label = deal.name
       setDeals(dealList)
 
       // fetch tasks
       const taskList = await getTasksByOrg(org.id)
+      for (const task of taskList) task.label = task.name
       setTasks(taskList)
 
       // fetch members
@@ -164,22 +168,27 @@ const CalendarComponent = ({ user, org }) => {
           )
         }
         dateClick={info => {
-          if (date && date.getTime() === info.date.getTime())
+          if (date && date.getTime() === info.date.getTime()) {
+            const now = new Date()
+            const start = new Date(date)
+            start.setHours(now.getHours() + 1)
+            const end = new Date(date)
+            end.setHours(now.getHours() + 2)
             setSelected({
               id: null,
               forOrganization: org.id,
               name: "New Event",
-              addedBy: null,
+              addedBy: members.filter(member => member.id === user.id)[0],
               contact: null,
               forDeal: null,
               forTask: null,
-              meetingStart: dateToFirebaseTimestamp(date),
-              meetingEnd: null,
+              meetingStart: dateToFirebaseTimestamp(start),
+              meetingEnd: dateToFirebaseTimestamp(end),
               meetingType: null,
               notes: null,
               remindMe: true,
             })
-          else setDate(info.date)
+          } else setDate(info.date)
         }}
       />
       <InteractionPopUp

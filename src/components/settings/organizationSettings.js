@@ -262,12 +262,12 @@ const MemberTag = ({ member, adminID, loading, removeUser }) => {
         <Avatar
           size="md"
           name={member?.firstName + " " + member?.lastName}
-          src={member?.profilePicture || ProfilePicture}
+          src={member?.profilePicture}
           _hover={{ transform: "scale(1.01)" }}
         >
           <AvatarBadge
             boxSize="20px"
-            borderColor="black"
+            borderColor="white"
             bg={
               member?.isInvisible ||
               Date.now() / 1000 - member?.lastOnline.seconds > 300

@@ -24,7 +24,11 @@ import {
   getCompanyByOrg,
   deleteCompany,
 } from "../models/Company"
-import { createNewContact, updateContact, getContact } from "../models/Contact"
+import {
+  createNewContact,
+  updateContact,
+  getContactsByOrg,
+} from "../models/Contact"
 
 import { createMuiTheme, MuiThemeProvider } from "@material-ui/core"
 
@@ -98,7 +102,7 @@ const CompaniesPage = ({ user, setUser, org, setOrg, companyID }) => {
     overrides: {
       MuiPaper: {
         root: {
-          "& > div[class^='Component']": {
+          "& div:nth-child(2)": {
             overflowX: "visible !important",
           },
         },
@@ -110,19 +114,22 @@ const CompaniesPage = ({ user, setUser, org, setOrg, companyID }) => {
 
   const tableRef = createRef()
   const [companyList, setCompanyList] = useState([])
+  const [contactList, setContactList] = useState([])
   const [selected, setSelected] = useState("")
   const [newContact, setNewContact] = useState()
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    const fetchCompanies = async orgID => {
+    const fetchData = async orgID => {
+      const contacts = await getContactsByOrg(orgID)
+      setContactList(contacts)
+
       const companies = await getCompanyByOrg(orgID)
-      for await (const company of companies) {
-        if (company.primaryContact) {
-          const contact = await getContact(company.primaryContact)
-          company.primaryContact = contact
-        }
-      }
+      for await (const company of companies)
+        if (company.primaryContact)
+          company.primaryContact = contacts.filter(
+            contact => contact.id === company.primaryContact
+          )[0]
       setCompanyList(companies)
 
       // if company passed from previous page, set as selected
@@ -135,7 +142,7 @@ const CompaniesPage = ({ user, setUser, org, setOrg, companyID }) => {
 
       setLoading(false)
     }
-    fetchCompanies(org.id)
+    fetchData(org.id)
   }, [org, companyID])
 
   const currTime = new Date().toLocaleDateString("en-GB")
@@ -504,6 +511,7 @@ const CompaniesPage = ({ user, setUser, org, setOrg, companyID }) => {
         selected={selected}
         setSelected={setSelected}
         companies={companyList}
+        contacts={contactList}
         onUpdate={updatedCompany => {
           setCompanyList([
             ...companyList.filter(company => company.id !== updatedCompany.id),
