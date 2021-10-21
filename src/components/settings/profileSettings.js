@@ -112,6 +112,7 @@ const ProfileSettings = props => {
                     variant="outline"
                     placeholder="First Name"
                     type="text"
+                    data-testid="firstName"
                     value={firstName}
                     onChange={event => setFirstName(event.target.value)}
                   />
@@ -123,6 +124,7 @@ const ProfileSettings = props => {
                   <Input
                     placeholder="Last Name"
                     type="text"
+                    data-testid="lastName"
                     value={lastName}
                     onChange={event => setLastName(event.target.value)}
                   />
@@ -136,6 +138,7 @@ const ProfileSettings = props => {
                       placeholder="Position at Company"
                       type="text"
                       value={position}
+                      data-testid="position"
                       onChange={event => setPosition(event.target.value)}
                     />
                   </Box>
@@ -148,11 +151,12 @@ const ProfileSettings = props => {
                     placeholder="Phone Number"
                     type="text"
                     value={phoneNumber}
+                    data-testid="phoneNumber"
                     onChange={event => setPhoneNumber(event.target.value)}
                   />
                 </Box>
                 {props.user?.signInMethod === "password" && (
-                  <Box textAlign="left" w="300px">
+                  <Box textAlign="left" w="300px" data-testid="changePassword">
                     <ResetPasswordPopup
                       email={props.user?.email}
                       readOnly={true}
@@ -192,6 +196,7 @@ const ProfileSettings = props => {
                     _hover={{ transform: "scale(1.08)" }}
                     buttonMessage="Change Profile Picture"
                     changeUrl={changePhotoUrl}
+                    data-testid="changePicture"
                   />
                   <Circle
                     _hover={{ transform: "scale(1.2)" }}
@@ -212,6 +217,7 @@ const ProfileSettings = props => {
                   variant="solid"
                   size="lg"
                   _hover={{ transform: "scale(1.05)" }}
+                  data-testid="saveChanges"
                   onClick={handleClick}
                 >
                   Save Changes
