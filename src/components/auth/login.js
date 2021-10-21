@@ -93,6 +93,7 @@ const Login = () => {
           placeholder="Email Address"
           type="text"
           name="email"
+          data-testid="email"
           onChange={event => setUserEmail(event.target.value)}
         />
         <Box h="20px" />
@@ -101,6 +102,7 @@ const Login = () => {
             type={show ? "text" : "password"}
             name="password"
             placeholder="Enter a Password"
+            data-testid="password"
             onChange={event => setUserPassword(event.target.value)}
           />
           <Box h="20px" />
@@ -148,6 +150,7 @@ const Login = () => {
             }}
             type="Submit"
             value="Log In"
+            data-testid="button"
             onClick={handleSubmit}
             isLoading={loading}
             loadingText="Logging In"
@@ -172,6 +175,7 @@ const Login = () => {
           }}
           type="Submit"
           value="Log In"
+          data-testid="google"
           onClick={handleGoogleSignIn}
           loadingText="Logging In"
         >

@@ -52,6 +52,8 @@
     "@babel/plugin-transform-modules-commonjs": "^7.15.4",
     "@babel/preset-env": "^7.15.0",
     "@babel/register": "^7.15.3",
+    "@testing-library/jest-dom": "^5.14.1",
+    "@testing-library/react": "^12.1.2",
     "firebase-functions-test": "^0.3.2",
     "jest": "^27.1.0",
     "prettier": "2.3.2"
@@ -67,7 +69,7 @@
     "start": "npm run develop",
     "serve": "gatsby serve",
     "clean": "gatsby clean",
-    "test": "jest"
+    "test": "jest "
   },
   "repository": {
     "type": "git",
