@@ -47,7 +47,7 @@ const Layout = ({ children, location }) => {
   const [org, setOrg] = useState(null)
 
   useEffect(() => {
-    if (pathname !== "/") {
+    if (pathname !== "/" && pathname !== "/about" && pathname !== "/about/") {
       onAuthLoad(
         async loggedUser => {
           const user = await getUser(loggedUser.uid, true)
@@ -72,7 +72,7 @@ const Layout = ({ children, location }) => {
     }
   }, [pathname, toast])
 
-  if (pathname === "/") {
+  if (pathname === "/" || pathname === "/about" || pathname === "/about/") {
     return (
       <ChakraProvider theme={theme}>
         <MetaData location={{ pathname: "RippleDEX", href: location.href }} />
