@@ -21,7 +21,7 @@ const About = props => {
   return (
     <Layout location={props.location}>
       <Box pr="20px" pl="20px">
-        <VStack>
+        <VStack pb="30px">
           <Text
             pt="30px"
             pb="30px"
