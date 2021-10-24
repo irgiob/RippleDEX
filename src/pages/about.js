@@ -47,107 +47,6 @@ const About = props => {
                   <Image borderRadius="50px" w="100px" src={""} />
                 </Box>
                 <Text fontSize="20px" fontFamily="Raleway-Bold">
-                  Irgio Basrewan
-                </Text>
-                <Box>
-                  <Badge
-                    px="10px"
-                    borderRadius="full"
-                    color="ripple.200"
-                    bgColor="trans.100"
-                  >
-                    <Text fontFamily="Nunito-Bold">Full Stack Developer</Text>
-                  </Badge>
-                </Box>
-              </VStack>
-              <Box pt="15px" />
-              <Text color="gray">{""}</Text>
-              <Box pt="15px" />
-              <Box float="right" w="15px">
-                <a
-                  target="_blank"
-                  href="https://www.linkedin.com/in/irgiobasrewan/"
-                >
-                  <Box
-                    transition="0.3s ease-in-out"
-                    _hover={{
-                      cursor: "pointer",
-                      transform: "scale(1.2)",
-                    }}
-                  >
-                    <FaLinkedinIn color="#168aa8" />
-                  </Box>
-                </a>
-              </Box>
-            </Box>
-
-            <Box
-              borderRadius="20px"
-              maxW="300px"
-              p="20px"
-              boxShadow="rgba(99, 99, 99, 0.2) 0px 2px 8px 0px"
-              transition="0.3s ease-in-out"
-              _hover={{
-                transform: "scale(1.02)",
-              }}
-            >
-              <VStack spacing={0}>
-                <Box pb="15px">
-                  <Image borderRadius="50px" w="100px" src={fiona} />
-                </Box>
-                <Text fontSize="20px" fontFamily="Raleway-Bold">
-                  Fiona Joyceline
-                </Text>
-                <Box>
-                  <Badge
-                    px="10px"
-                    borderRadius="full"
-                    color="ripple.200"
-                    bgColor="trans.100"
-                  >
-                    <Text fontFamily="Nunito-Bold">Front End Developer</Text>
-                  </Badge>
-                </Box>
-              </VStack>
-              <Box pt="15px" />
-              <Text color="gray">
-                Designed the website's UI and developed the front end
-                components.
-              </Text>
-              <Box pt="15px" />
-              <Box float="right" w="15px">
-                <a
-                  target="_blank"
-                  href="https://www.linkedin.com/in/fionajoyceline/"
-                >
-                  <Box
-                    transition="0.3s ease-in-out"
-                    _hover={{
-                      cursor: "pointer",
-                      transform: "scale(1.2)",
-                    }}
-                  >
-                    <FaLinkedinIn color="#168aa8" />
-                  </Box>
-                </a>
-              </Box>
-            </Box>
-
-            <Box
-              borderRadius="20px"
-              maxW="300px"
-              p="20px"
-              boxShadow="rgba(99, 99, 99, 0.2) 0px 2px 8px 0px"
-              transition="0.3s ease-in-out"
-              _hover={{
-                transform: "scale(1.02)",
-              }}
-            >
-              <VStack spacing={0}>
-                <Box pb="15px">
-                  <Image borderRadius="50px" w="100px" src={""} />
-                </Box>
-                <Text fontSize="20px" fontFamily="Raleway-Bold">
                   Wedad Amer
                 </Text>
                 <Box>
@@ -162,7 +61,9 @@ const About = props => {
                 </Box>
               </VStack>
               <Box pt="15px" />
-              <Text color="gray">{""}</Text>
+              <Text align="center" color="gray">
+                {""}
+              </Text>
               <Box pt="15px" />
               <Box float="right" w="15px">
                 <a target="_blank" href="">
@@ -179,54 +80,120 @@ const About = props => {
               </Box>
             </Box>
 
-            <Box
-              borderRadius="20px"
-              maxW="300px"
-              p="20px"
-              boxShadow="rgba(99, 99, 99, 0.2) 0px 2px 8px 0px"
-              transition="0.3s ease-in-out"
-              _hover={{
-                transform: "scale(1.02)",
-              }}
+            <a
+              target="_blank"
+              href="https://www.linkedin.com/in/fionajoyceline/"
             >
-              <VStack spacing={0}>
-                <Box pb="15px">
-                  <Image borderRadius="50px" w="100px" src={""} />
-                </Box>
-                <Text fontSize="20px" fontFamily="Raleway-Bold">
-                  Wilbert Cargeson
-                </Text>
-                <Box>
-                  <Badge
-                    px="10px"
-                    borderRadius="full"
-                    color="ripple.200"
-                    bgColor="trans.100"
-                  >
-                    <Text fontFamily="Nunito-Bold">Back End Developer</Text>
-                  </Badge>
-                </Box>
-              </VStack>
-              <Box pt="15px" />
-              <Text color="gray">{""}</Text>
-              <Box pt="15px" />
-              <Box float="right" w="15px">
-                <a
-                  target="_blank"
-                  href="https://www.linkedin.com/in/wilbert-cargeson/"
-                >
-                  <Box
-                    transition="0.3s ease-in-out"
-                    _hover={{
-                      cursor: "pointer",
-                      transform: "scale(1.2)",
-                    }}
-                  >
-                    <FaLinkedinIn color="#168aa8" />
+              <Box
+                borderRadius="20px"
+                maxW="300px"
+                p="20px"
+                boxShadow="rgba(99, 99, 99, 0.2) 0px 2px 8px 0px"
+                transition="0.3s ease-in-out"
+                _hover={{
+                  transform: "scale(1.02)",
+                }}
+              >
+                <VStack spacing={0}>
+                  <Box pb="15px">
+                    <Image borderRadius="50px" w="100px" src={fiona} />
                   </Box>
-                </a>
+                  <Text fontSize="20px" fontFamily="Raleway-Bold">
+                    Fiona Joyceline
+                  </Text>
+                  <Box>
+                    <Badge
+                      px="10px"
+                      borderRadius="full"
+                      color="ripple.200"
+                      bgColor="trans.100"
+                    >
+                      <Text fontFamily="Nunito-Bold">Front End Developer</Text>
+                    </Badge>
+                  </Box>
+                </VStack>
+                <Box pt="15px" />
+                <Text align="center" color="gray">
+                  Designed the website's UI and developed the front end
+                  components.
+                </Text>
+                <Box pt="15px" />
+                <Box float="right" w="15px">
+                  <a
+                    target="_blank"
+                    href="https://www.linkedin.com/in/fionajoyceline/"
+                  >
+                    <Box
+                      transition="0.3s ease-in-out"
+                      _hover={{
+                        cursor: "pointer",
+                        transform: "scale(1.2)",
+                      }}
+                    >
+                      <FaLinkedinIn color="#168aa8" />
+                    </Box>
+                  </a>
+                </Box>
+                <Box h="20px" />
               </Box>
-            </Box>
+            </a>
+
+            <a
+              target="_blank"
+              href="https://www.linkedin.com/in/irgiobasrewan/"
+            >
+              <Box
+                borderRadius="20px"
+                maxW="300px"
+                p="20px"
+                boxShadow="rgba(99, 99, 99, 0.2) 0px 2px 8px 0px"
+                transition="0.3s ease-in-out"
+                _hover={{
+                  transform: "scale(1.02)",
+                }}
+              >
+                <VStack spacing={0}>
+                  <Box pb="15px">
+                    <Image borderRadius="50px" w="100px" src={""} />
+                  </Box>
+                  <Text fontSize="20px" fontFamily="Raleway-Bold">
+                    Irgio Basrewan
+                  </Text>
+                  <Box>
+                    <Badge
+                      px="10px"
+                      borderRadius="full"
+                      color="ripple.200"
+                      bgColor="trans.100"
+                    >
+                      <Text fontFamily="Nunito-Bold">Full Stack Developer</Text>
+                    </Badge>
+                  </Box>
+                </VStack>
+                <Box pt="15px" />
+                <Text align="center" color="gray">
+                  {""}
+                </Text>
+                <Box pt="15px" />
+                <Box float="right" w="15px">
+                  <a
+                    target="_blank"
+                    href="https://www.linkedin.com/in/irgiobasrewan/"
+                  >
+                    <Box
+                      transition="0.3s ease-in-out"
+                      _hover={{
+                        cursor: "pointer",
+                        transform: "scale(1.2)",
+                      }}
+                    >
+                      <FaLinkedinIn color="#168aa8" />
+                    </Box>
+                  </a>
+                </Box>
+                <Box h="20px" />
+              </Box>
+            </a>
 
             <Box
               borderRadius="20px"
@@ -243,7 +210,7 @@ const About = props => {
                   <Image borderRadius="50px" w="100px" src={""} />
                 </Box>
                 <Text fontSize="20px" fontFamily="Raleway-Bold">
-                  Stephanie Rao
+                  Sifan Rao
                 </Text>
                 <Box>
                   <Badge
@@ -257,7 +224,9 @@ const About = props => {
                 </Box>
               </VStack>
               <Box pt="15px" />
-              <Text color="gray">{""}</Text>
+              <Text align="center" color="gray">
+                {""}
+              </Text>
               <Box pt="15px" />
               <Box float="right" w="15px">
                 <a target="_blank" href="">
@@ -273,6 +242,63 @@ const About = props => {
                 </a>
               </Box>
             </Box>
+
+            <a
+              target="_blank"
+              href="https://www.linkedin.com/in/wilbert-cargeson/"
+            >
+              <Box
+                borderRadius="20px"
+                maxW="300px"
+                p="20px"
+                boxShadow="rgba(99, 99, 99, 0.2) 0px 2px 8px 0px"
+                transition="0.3s ease-in-out"
+                _hover={{
+                  transform: "scale(1.02)",
+                }}
+              >
+                <VStack spacing={0}>
+                  <Box pb="15px">
+                    <Image borderRadius="50px" w="100px" src={""} />
+                  </Box>
+                  <Text fontSize="20px" fontFamily="Raleway-Bold">
+                    Wilbert Cargeson
+                  </Text>
+                  <Box>
+                    <Badge
+                      px="10px"
+                      borderRadius="full"
+                      color="ripple.200"
+                      bgColor="trans.100"
+                    >
+                      <Text fontFamily="Nunito-Bold">Back End Developer</Text>
+                    </Badge>
+                  </Box>
+                </VStack>
+                <Box pt="15px" />
+                <Text align="center" color="gray">
+                  {""}
+                </Text>
+                <Box pt="15px" />
+                <Box float="right" w="15px">
+                  <a
+                    target="_blank"
+                    href="https://www.linkedin.com/in/wilbert-cargeson/"
+                  >
+                    <Box
+                      transition="0.3s ease-in-out"
+                      _hover={{
+                        cursor: "pointer",
+                        transform: "scale(1.2)",
+                      }}
+                    >
+                      <FaLinkedinIn color="#168aa8" />
+                    </Box>
+                  </a>
+                </Box>
+                <Box h="20px" />
+              </Box>
+            </a>
           </SimpleGrid>
         </VStack>
       </Box>
