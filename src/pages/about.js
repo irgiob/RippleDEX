@@ -306,4 +306,57 @@ const About = props => {
   )
 }
 
+/**
+ * gets the profile data for a LinkedIn user
+ * @param {String} name the username of the linked in profile
+ * @returns {Object} profile data
+ */
+const getLinkedinProfileData = (name) => {
+	const promise = new Promise((resolve, reject) => {
+		// generate fetch url
+		const callback = "LIBadgeCallback"
+		const baseURL = "https://badges.linkedin.com/profile?"
+		const queryParams = {
+			vanityname: name,
+			trk: "profile-badge",
+			maxsize: "large",
+			locale: "en_US",
+			badgetype: "VERTICAL",
+			badgetheme: "light",
+			uid: Math.round(1000000 * Math.random()),
+			version: "v1",
+		}
+		const url = baseURL + Object.keys(queryParams).map(key => key + "=" + queryParams[key]).join("&")
+
+		// get data from url using jsonp
+		var script = document.createElement('script')
+	    script.src = url
+	    document.body.appendChild(script)
+
+	    // run callback on url load
+	    window[callback] = (badgeHtml, badgeUid) => {
+	    	// clean up created scripts
+	    	delete window[callback]
+        document.body.removeChild(script)
+
+        // parse data from html and return data object
+        const cls = "profile-badge__content-profile-"
+	      var span = document.createElement('span')
+	  		span.innerHTML = badgeHtml
+	  		data = {
+	  			profilePicture: span.getElementsByClassName(cls + "image")[0].src,
+	  			name: span.getElementsByClassName(cls + "name-link")[0].text.replace("\n", "").trim(),
+	  			url: span.getElementsByClassName(cls + "name-link")[0].href.split("?")[0],
+	  			headline: span.getElementsByClassName(cls + "headline")[0].textContent.replace("\n", "").trim(),
+	  			orgs: Array.from(span.getElementsByClassName(cls + "company-school-info-link")).map(el => ({
+	  				name: el.text,
+	  				url: el.href.split("?")[0],
+	  			})),
+	  		}
+	  		resolve(data)
+	    }
+	})
+	return promise
+}
+
 export default About
