@@ -128,6 +128,7 @@ const UploadImageButton = props => {
         size={props.size}
         _hover={props._hover}
         onClick={onOpen}
+        data-testid="changePicture"
       >
         {props.buttonMessage}
       </Button>
@@ -144,6 +145,7 @@ const UploadImageButton = props => {
           <ModalBody>
             <Box left="50%" top="50%">
               <Input
+                data-testid="uploadBox"
                 pt="260px"
                 h="300px"
                 w="400px"
@@ -181,6 +183,7 @@ const UploadImageButton = props => {
             <Box align="center">
               <VStack>
                 <Button
+                  data-testid="Upload button"
                   bgColor="ripple.200"
                   color="white"
                   fontFamily="Raleway-Bold"

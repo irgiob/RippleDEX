@@ -128,6 +128,7 @@ const SignUp = () => {
         placeholder="First Name"
         type="text"
         name="firstName"
+        data-testid="firstName"
         onChange={event => setUserFirstName(event.target.value)}
       />
       <Input
@@ -135,6 +136,7 @@ const SignUp = () => {
         placeholder="Last Name"
         type="text"
         name="lastName"
+        data-testid="lastName"
         onChange={event => setUserLastName(event.target.value)}
       />
       <Input
@@ -142,6 +144,7 @@ const SignUp = () => {
         placeholder="Email Address"
         type="text"
         name="email"
+        data-testid="email"
         onChange={event => setUserEmail(event.target.value)}
       />
       <Box w="100%">
@@ -151,6 +154,7 @@ const SignUp = () => {
             type={show ? "text" : "password"}
             name="password"
             placeholder="Enter a Password"
+            data-testid="password"
             onChange={event => setUserPassword(event.target.value)}
           />
           <InputRightElement w="5rem">
@@ -181,6 +185,7 @@ const SignUp = () => {
           type={show ? "text" : "password"}
           name="passwordCheck"
           placeholder="Retype Password"
+          data-testid="password-retype"
           onChange={event => setPasswordCheck(event.target.value)}
         />
         <InputRightElement w="5rem">
@@ -218,6 +223,7 @@ const SignUp = () => {
         }
         type="Submit"
         value="Sign Up"
+        data-testid="button"
         onClick={handleSubmit}
         isLoading={loading}
         loadingText="Submitting"
@@ -241,6 +247,7 @@ const SignUp = () => {
         }}
         type="Submit"
         value="Log In"
+        data-testid="google"
         onClick={handleGoogleSignIn}
         loadingText="Logging In"
       >

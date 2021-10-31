@@ -158,6 +158,7 @@ const CreateOrgPopup = props => {
                     variant="outline"
                     type="text"
                     name="name"
+                    data-testid="orgName"
                     onChange={event => setOrgName(event.target.value)}
                   />
                 </Box>
@@ -173,6 +174,7 @@ const CreateOrgPopup = props => {
                     variant="outline"
                     type="text"
                     name="description"
+                    data-testid="orgDesc"
                     onChange={event => setOrgDesc(event.target.value)}
                   />
                 </Box>
@@ -242,6 +244,7 @@ const CreateOrgPopup = props => {
                   isLoading={loading}
                   loadingText="Submitting"
                   disabled={!orgName}
+                  data-testid="createButton"
                 >
                   Create workspace
                 </Button>
