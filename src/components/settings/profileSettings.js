@@ -196,7 +196,6 @@ const ProfileSettings = props => {
                     _hover={{ transform: "scale(1.08)" }}
                     buttonMessage="Change Profile Picture"
                     changeUrl={changePhotoUrl}
-                    data-testid="changePicture"
                   />
                   <Circle
                     _hover={{ transform: "scale(1.2)" }}

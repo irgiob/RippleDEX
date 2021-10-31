@@ -26,6 +26,9 @@ const sampleOrg = {
 }
 
 describe("Testing profile components", () => {
+  beforeEach(() => {
+    jest.resetAllMocks()
+  })
   test("Edit profile", async () => {
     const { getByTestId } = render(
       <ProfileSettings
@@ -57,6 +60,44 @@ describe("Testing profile components", () => {
 
     await waitFor(() => {
       expect(updateUser).toBeCalledTimes(1)
+    })
+  })
+
+  test("Change Profile Picture shows upload box", async () => {
+    const { getByTestId } = render(
+      <ProfileSettings
+        isOpen={true}
+        user={sampleUser}
+        org={sampleOrg}
+        setUser={() => {}}
+      />
+    )
+
+    const changePicture = getByTestId("changePicture")
+
+    fireEvent.click(changePicture)
+
+    await waitFor(() => {
+      getByTestId("uploadBox")
+    })
+  })
+
+  test("Reset password will show reset password box", async () => {
+    const { getByTestId } = render(
+      <ProfileSettings
+        isOpen={true}
+        user={sampleUser}
+        org={sampleOrg}
+        setUser={() => {}}
+      />
+    )
+
+    const resetPasswordButton = getByTestId("resetPasswordButton")
+
+    fireEvent.click(resetPasswordButton)
+
+    await waitFor(() => {
+      getByTestId("resetPasswordBox")
     })
   })
 })

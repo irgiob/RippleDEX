@@ -21,7 +21,7 @@ export const ResetPasswordPopup = ({ children, email, readOnly }) => {
     <Popover>
       <PopoverTrigger>{children}</PopoverTrigger>
       <PopoverContent>
-        <PopoverBody>
+        <PopoverBody data-testid="resetPasswordBox">
           <Text color="ripple.200">Reset Password</Text>
           <Input
             mt="0.5em"
@@ -34,6 +34,7 @@ export const ResetPasswordPopup = ({ children, email, readOnly }) => {
             onChange={event => setEmail(event.target.value)}
           />
           <Button
+            data-testid="resetPasswordButton"
             mt="1em"
             disabled={!userEmail}
             bgColor="ripple.200"
