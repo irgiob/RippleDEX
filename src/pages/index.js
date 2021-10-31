@@ -42,9 +42,10 @@ const IndexPage = props => {
 
   useEffect(() => {
     // set features on odd lanes to be correct width
-    for (const i of [1, 3])
+    for (const i of [1, 3]) {
       document.getElementById("features").childNodes[i].firstChild.style.width =
         "500px"
+    }
 
     // navigate to dashboard if already logged in
     onAuthLoad(
@@ -254,7 +255,7 @@ const IndexPage = props => {
                   </Box>
                 </Center>
                 <Center>
-                  <Box textAlign={!isLargeSize && "center"} maxW="500px">
+                  <Box maxW="500px" textAlign="center">
                     <Heading
                       pb="30px"
                       fontFamily="Raleway-Bold"
@@ -287,9 +288,9 @@ const IndexPage = props => {
                 )}
                 <Center>
                   <Box
-                    textAlign={!isLargeSize && "center"}
                     pl={isLargeSize && "30px"}
                     maxW="500px"
+                    textAlign="center"
                   >
                     <Heading
                       pb="30px"
@@ -328,7 +329,7 @@ const IndexPage = props => {
                   </Box>
                 </Center>
                 <Center>
-                  <Box textAlign={!isLargeSize && "center"} maxW="500px">
+                  <Box maxW="500px" textAlign="center">
                     <Heading
                       pb="30px"
                       fontFamily="Raleway-Bold"
@@ -362,9 +363,9 @@ const IndexPage = props => {
                 )}
                 <Center>
                   <Box
-                    textAlign={!isLargeSize && "center"}
                     pl={isLargeSize && "30px"}
                     maxW="500px"
+                    textAlign="center"
                   >
                     <Heading
                       pb="30px"
@@ -398,7 +399,7 @@ const IndexPage = props => {
                   </Box>
                 </Center>
                 <Center>
-                  <Box textAlign={!isLargeSize && "center"} maxW="500px">
+                  <Box maxW="500px" textAlign="center">
                     <Heading
                       pb="30px"
                       fontFamily="Raleway-Bold"
@@ -417,6 +418,17 @@ const IndexPage = props => {
               </Stack>
               <Center pb="25px">
                 <VStack>
+                  <Text
+                    onClick={() => navigate("/about")}
+                    pb="10px"
+                    color="gray"
+                    _hover={{
+                      transform: "scale(1.08)",
+                      cursor: "pointer",
+                    }}
+                  >
+                    About Us
+                  </Text>
                   <Text color="gray">© 2021 RippleDEX Team</Text>
                 </VStack>
               </Center>
