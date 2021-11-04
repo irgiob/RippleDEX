@@ -118,6 +118,7 @@ const TaskPopUp = ({
                 <Input
                   placeholder="Task name"
                   value={name}
+                  data-testid="taskName"
                   onChange={event => setName(event?.target.value)}
                 />
               </Box>
@@ -223,6 +224,7 @@ const TaskPopUp = ({
                 borderRadius="30px"
                 _hover={{ transform: "scale(1.05)" }}
                 padding="20px"
+                data-testid="addButton"
                 onClick={handleClick}
               >
                 Save Changes

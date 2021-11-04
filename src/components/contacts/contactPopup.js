@@ -195,7 +195,7 @@ const ContactPopUp = ({ selected, setSelected, companies, onUpdate }) => {
                     disableCreateItem={true}
                     onCreateItem={() => null}
                     value={contactCompany ? contactCompany : undefined}
-                    data-testid="company"
+                    
                     onChange={setContactCompany}
                     valueInputAttribute="name"
                     size="md"

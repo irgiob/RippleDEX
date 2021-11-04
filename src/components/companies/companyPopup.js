@@ -137,6 +137,7 @@ const CompanyPopUp = ({
               _hover={{
                 transform: "scale(1.05)",
               }}
+              data-testid="openButton"
               onClick={() => setSelected(null)}
             >
               {companyName}
@@ -248,6 +249,7 @@ const CompanyPopUp = ({
                     placeholder="Contact Name"
                     type="text"
                     value={companyName}
+                    data-testid="name"
                     onChange={e => setCompanyName(e.target.value)}
                   />
                   <Text fontSize="15px" color="ripple.200" pt="10px">
@@ -264,6 +266,7 @@ const CompanyPopUp = ({
                             .replace(/\B(?=(\d{3})+(?!\d))/g, ",")
                         : "$"
                     }
+                    data-testid="Annual Revenue"
                     onChange={e => {
                       const parse = val => val.replace(/^\$/, "")
                       setCompanyRevenue(parse(e))
@@ -279,6 +282,7 @@ const CompanyPopUp = ({
                     precision={0}
                     min={0}
                     value={companyPersonnel || 0}
+                    data-testid="Personnel"
                     onChange={e => setCompanyPersonnel(Math.round(e))}
                     variant="outline"
                   >
@@ -294,6 +298,7 @@ const CompanyPopUp = ({
                   <Input
                     value={companyIndustry}
                     placeholder="Company Industry"
+                    data-testid="industry"
                     onChange={e => setCompanyIndustry(e.target.value)}
                     variant="outline"
                   />
@@ -305,6 +310,7 @@ const CompanyPopUp = ({
                     placeholder="Company Relationship"
                     type="text"
                     value={companyRelation}
+                    data-testid="relationship"
                     onChange={e => setCompanyRelation(e.target.value)}
                   />
                 </VStack>
@@ -345,6 +351,7 @@ const CompanyPopUp = ({
                           })
                         }
                         value={companyContact ? companyContact : undefined}
+                        data-testid="primary contact"
                         onChange={setCompanyContact}
                         valueInputAttribute="name"
                         size="md"
@@ -374,6 +381,7 @@ const CompanyPopUp = ({
                       placeholder="Company Website"
                       type="text"
                       value={companyWebsite}
+                      data-testid="web"
                       onChange={e => setCompanyWebsite(e.target.value)}
                     />
                   </Box>
@@ -416,6 +424,7 @@ const CompanyPopUp = ({
                       _hover={{
                         transform: "scale(1.05)",
                       }}
+                      data-testid="addButton"
                       onClick={handleClick}
                     >
                       {selected?.id ? "Save Changes" : "Add Company"}

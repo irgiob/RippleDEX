@@ -143,8 +143,9 @@ const DealPopUp = ({ selected, setSelected, companies, members, onUpdate }) => {
                 _hover={{
                   transform: "scale(1.05)",
                 }}
+                data-testid="dealOpenButton"
                 onClick={() => setSelected(null)}
-                //data-testid="addButton"
+                
               >
                 {dealName}
               </Button>
