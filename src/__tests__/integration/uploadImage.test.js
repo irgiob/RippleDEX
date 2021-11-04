@@ -29,12 +29,23 @@ describe("Testing upload image", () => {
     jest.resetAllMocks()
   })
   test("Upload field available on", async () => {
-    // const { getByTestId } = render(<UploadImageButton />)
-    // uploadFunctions.uploadFile = jest.fn()
-    // const changePicture = getByTestId("changePicture")
-    // fireEvent.click(changePicture)
-    // const uploadBox = getByTestId("uploadBox")
-    // const file = new File(["(⌐□_□)"], "chucknorris.png", { type: "image/jpeg" })
-    // await fireEvent.change(uploadBox, { target: { files: [file] } })
+    const { getByTestId } = render(<UploadImageButton />)
+    uploadFunctions.uploadFile = jest.fn().mockReturnValue({
+      on: function () {
+        return null
+      },
+    })
+    const changePicture = getByTestId("changePicture")
+    fireEvent.click(changePicture)
+    const uploadBox = getByTestId("uploadBox")
+    const file = new File(["(⌐□_□)"], "chucknorris.png", { type: "image/jpeg" })
+    fireEvent.change(uploadBox, { target: { files: [file] } })
+    const button = getByTestId("Upload button")
+
+    await waitFor(() => {
+      expect(button).not.toBeDisabled()
+      fireEvent.click(button)
+      expect(uploadFunctions.uploadFile).toBeCalledTimes(1)
+    })
   })
 })
