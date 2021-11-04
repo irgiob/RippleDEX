@@ -144,6 +144,7 @@ const DealPopUp = ({ selected, setSelected, companies, members, onUpdate }) => {
                   transform: "scale(1.05)",
                 }}
                 onClick={() => setSelected(null)}
+                //data-testid="addButton"
               >
                 {dealName}
               </Button>
@@ -153,6 +154,7 @@ const DealPopUp = ({ selected, setSelected, companies, members, onUpdate }) => {
                     Deal Name
                   </Text>
                   <Input
+                    data-testid="Name"  
                     focusBorderColor="ripple.200"
                     placeholder="Deal name"
                     value={dealName}
@@ -166,6 +168,7 @@ const DealPopUp = ({ selected, setSelected, companies, members, onUpdate }) => {
                     Deal Size
                   </Text>
                   <NumberInput
+                    data-testid="dealSize"
                     precision={2}
                     min={0}
                     placeholder="Deal Size"
@@ -266,6 +269,7 @@ const DealPopUp = ({ selected, setSelected, companies, members, onUpdate }) => {
                       transform: "scale(1.05)",
                     }}
                     padding="20px"
+                    data-testid="addButton"
                   >
                     Save Changes
                   </Button>
