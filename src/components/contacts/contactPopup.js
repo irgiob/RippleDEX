@@ -99,7 +99,7 @@ const ContactPopUp = ({ selected, setSelected, companies, onUpdate }) => {
                 transform: "scale(1.05)",
               }}
               onClick={() => setSelected(null)}
-              
+              data-testid="contactOpenButton"
             >
               {contactName}
             </Button>
@@ -140,14 +140,12 @@ const ContactPopUp = ({ selected, setSelected, companies, onUpdate }) => {
                     Contact Name
                   </Text>
                   <Input
-                    
                     variant="outline"
                     placeholder="Contact Name"
                     type="text"
                     value={contactName}
                     data-testid="contactName"
                     onChange={e => setContactName(e.target.value)}
-                    
                   />
 
                   <Text pt="13px" fontSize="15px" color="ripple.200">
@@ -160,7 +158,6 @@ const ContactPopUp = ({ selected, setSelected, companies, onUpdate }) => {
                     value={contactEmail}
                     data-testid="email"
                     onChange={e => setContactEmail(e.target.value)}
-                    
                   />
                   <Text pt="19px" fontSize="15px" color="ripple.200">
                     Phone Number
@@ -178,7 +175,6 @@ const ContactPopUp = ({ selected, setSelected, companies, onUpdate }) => {
                         setContactNumber(e.target.value)
                     }}
                     variant="outline"
-                    
                   />
                 </VStack>
               </GridItem>
@@ -215,7 +211,6 @@ const ContactPopUp = ({ selected, setSelected, companies, onUpdate }) => {
                     value={contactPosition}
                     data-testid="Position at Company"
                     onChange={e => setContactPosition(e.target.value)}
-                    
                   />
                   <Text pt="20px" fontSize="15px" color="ripple.200">
                     Details
@@ -227,7 +222,6 @@ const ContactPopUp = ({ selected, setSelected, companies, onUpdate }) => {
                     value={contactMemo}
                     data-testid="memo"
                     onChange={e => setContactMemo(e.target.value)}
-                    
                   />
                   <Box pt="30px" align="end">
                     <Button
