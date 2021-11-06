@@ -8,19 +8,20 @@ import Login from "../../components/auth/login"
 jest.mock("../../models/Interaction")
 jest.mock("../../models/Contact")
 
-const selected = {
+
+const selected= {
   id: "12345",
-  contact: "1234",
-  addedBy: "12345",
-  forDeal: "1111",
-  forTask: "2222",
-  forOrganization: "3333",
-  meetingStart: null,
-  meetingEnd: null,
-  meetingType: "test",
-  notes: "test", // Or create structure so people can add comments?
-  name: "test",
-  remindMe: false,
+  registeredBy: "1234",
+  name: "companyName",
+  description: null,
+  website: "companyWeb",
+  personnel: null,
+  annualRevenue: 100.0,
+  address: null,
+  relationship: null,
+  primaryContact: "1234",
+  industry: "industry",
+  profilePicture: null,
 }
 
 const sampleContact = {
@@ -33,6 +34,24 @@ const sampleContact = {
     notes: null,
   }
 
+  const companyList =[
+    {
+      id: "12345",
+      registeredBy: "1234",
+      name: "companyName",
+      description: null,
+      website: "companyWeb",
+      personnel: null,
+      annualRevenue: 0.0,
+      address: null,
+      relationship: null,
+      primaryContact: "1234",
+      industry: "industry",
+      profilePicture: null,
+    }
+  ]
+
+
 describe("Integration testing for interaction components", () => {
   afterEach(() => {
     jest.resetAllMocks()
@@ -44,7 +63,7 @@ describe("Integration testing for interaction components", () => {
       <InteractionPopUp
         selected={selected}
         setSelected={() => {}}
-        companies={{}}
+        companies={companyList}
         afterUpdate={() => {}}
         contacts={sampleContact}
         tasks={{}}
@@ -57,12 +76,12 @@ describe("Integration testing for interaction components", () => {
 
     fireEvent.click(PopupButton)
 
-    const nameInput = getByTestId("tName")
+    const nameInput = getByTestId("Name")
     const typeInput = getByTestId("type")
     const timeInput = getByTestId("time")
     const button = getByTestId("addButton")
 
-    expect(nameInput.value).toBe("Test")
+    expect(nameInput.value).toBe("companyName")
     expect(typeInput.value).toBe("")
     expect(timeInput.value).toBe("")
 
@@ -72,7 +91,7 @@ describe("Integration testing for interaction components", () => {
 
     expect(nameInput.value).toBe("test")
     expect(typeInput.value).toBe("test")
-    expect(time.value).toBe("413")
+    expect(timeInput.value).toBe("413")
 
     fireEvent.click(button)
 
