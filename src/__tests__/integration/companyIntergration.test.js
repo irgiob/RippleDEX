@@ -6,23 +6,20 @@ import * as companyFunctions from "../../models/Company"
 
 jest.mock("../../models/Company")
 
-
-const selected= {
+const selected = {
   id: "12345",
-  registeredBy: "1234",
-  name: "companyName",
-  description: null,
+  name: "name",
+  registeredBy: "orgID",
+  description: "companyDesc",
   website: "companyWeb",
-  personnel: null,
-  annualRevenue: 0.0,
-  address: null,
-  relationship: null,
-  primaryContact: "1234",
-  industry: "industry",
-  profilePicture: null,
+  personnel: "personnel",
+  annualRevenue: "annualRevenue",
+  address: "companyAddress",
+  relationship: "relationship",
+  primaryContact: "primaryContact",
 }
 
-const sampleContact = {
+const sampleContact = [{
     registeredBy: "sampleOrg",
     name: "sample contact",
     company: "12345",
@@ -30,7 +27,21 @@ const sampleContact = {
     phoneNumber: "1234567",
     position: null,
     notes: null,
-  }
+  }]
+
+  const sampleCompany = [{
+    registeredBy: "orgID",
+    name: "companyName",
+    description: "companyDesc",
+    website: "companyWeb",
+    personnel: "personnel",
+    annualRevenue: "annualRevenue",
+    address: "companyAddress",
+    relationship: "relationship",
+    primaryContact: "primaryContact",
+  }]
+
+
 
 describe("Integration testing for company components", () => {
     afterEach(() => {
@@ -48,29 +59,29 @@ describe("Integration testing for company components", () => {
           companies={{}}
           members={{}}
           deals={{}}
-          contacts={{}}
+          contacts={sampleContact}
           orgID={{}}
           afterUpdate={() => {}}/>)
 
-      const PopupButton = getByTestId("OpenButton")
+      const PopupButton = getByTestId("openButton")
 
       fireEvent.click(PopupButton)
        
       const nameInput = getByTestId("name")
       const revenueInput = getByTestId("Annual Revenue")
-      const personnelInput = getByTestId("Personne")
+      const personnelInput = getByTestId("Personnel")
       const industryInput = getByTestId("industry")
       const relationshipInput = getByTestId("relationship")
-      const contactInput = getByTestId("primary contact")
+      //const contactInput = getByTestId("primary contact")
       const webInput = getByTestId("web")
       const addButton = getByTestId("addButton")
 
-      expect(nameInput.value).toBe("")
+      expect(nameInput.value).toBe("name")
       expect(revenueInput.value).toBe("")
       expect(personnelInput.value).toBe("")
       expect(industryInput.value).toBe("")
       expect(relationshipInput.value).toBe("")
-      expect(contactInput.value).toBe("")
+      //expect(contactInput.value).toBe("")
       expect(webInput.value).toBe("")
 
 

@@ -5,31 +5,36 @@ import { createNewDeal } from "../../models/Deal"
 import DealPopUp from "../../components/deals/dealPopup"
 import Login from "../../components/auth/login"
 import * as dealFunctions from "../../models/Deal"
+import {
+  Timestamp,
+} from "firebase/firestore"
 
 
 jest.mock("../../models/Deal")
 
-const date = new Date()
+const date = new Date(Timestamp.now())
 const selected= {
   id: "12345",
-  forOrganization: '1234',
-  name: "test",
-  dealSize: 1.0,
+  forOrganizaiton: "orgID",
+  name: "dealName",
+  description: "dealDesc",
+  dealSize: 10.0,
   closeDate: date,
-  recordedBy: "1234",
-  contacts: "1234",
-  company: "1234",
-  stage: "test",
-  notes: null,
+  recordedBy: "userID",
+  contacts: [],
+  stage: "stage",
+  notes: "dealNote",
 }
+
+
 
 describe("Integration testing for deal components", () => {
     afterEach(() => {
       jest.resetAllMocks()
     })
 
+
     test("Pressing 'Add' button will allow bring out fields for input", async() =>{
-      dealFunctions.createNewDeal = jest.fn().mockReturnValue({})
       dealFunctions.updateDeal = jest.fn().mockReturnValue({})
 
       const { getByTestId } = render(
