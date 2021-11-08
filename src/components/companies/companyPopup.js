@@ -266,14 +266,13 @@ const CompanyPopUp = ({
                             .replace(/\B(?=(\d{3})+(?!\d))/g, ",")
                         : "$"
                     }
-                    data-testid="Annual Revenue"
                     onChange={e => {
                       const parse = val => val.replace(/^\$/, "")
                       setCompanyRevenue(parse(e))
                     }}
                     variant="outline"
                   >
-                    <NumberInputField />
+                    <NumberInputField data-testid="Annual Revenue" />
                   </NumberInput>
                   <Text fontSize="15px" color="ripple.200" pt="10px">
                     Personnel
@@ -282,11 +281,10 @@ const CompanyPopUp = ({
                     precision={0}
                     min={0}
                     value={companyPersonnel || 0}
-                    data-testid="Personnel"
                     onChange={e => setCompanyPersonnel(Math.round(e))}
                     variant="outline"
                   >
-                    <NumberInputField />
+                    <NumberInputField data-testid="Personnel" />
                     <NumberInputStepper>
                       <NumberIncrementStepper />
                       <NumberDecrementStepper />

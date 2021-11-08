@@ -145,7 +145,6 @@ const DealPopUp = ({ selected, setSelected, companies, members, onUpdate }) => {
                 }}
                 data-testid="dealOpenButton"
                 onClick={() => setSelected(null)}
-                
               >
                 {dealName}
               </Button>
@@ -155,7 +154,7 @@ const DealPopUp = ({ selected, setSelected, companies, members, onUpdate }) => {
                     Deal Name
                   </Text>
                   <Input
-                    data-testid="Name"  
+                    data-testid="name"
                     focusBorderColor="ripple.200"
                     placeholder="Deal name"
                     value={dealName}
@@ -177,7 +176,7 @@ const DealPopUp = ({ selected, setSelected, companies, members, onUpdate }) => {
                     onChange={e => setDealSize(parse(e))}
                     focusBorderColor="ripple.200"
                   >
-                    <NumberInputField />
+                    <NumberInputField data-testid="dealSizeField" />
                   </NumberInput>
                 </Box>
                 <Box w="100%">

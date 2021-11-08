@@ -12,17 +12,12 @@ jest.mock("../../utils/AuthFunctions")
 
 const selected = {
   id: "12345",
-  address: null,
-  annualRevenue: null,
-  description: null,
-  industry: null,
-  name: "Test",
-  personnel: null,
-  primaryContact: { name: "Your New Contact" },
-  profilePicture: null,
-  registeredBy: "12345",
-  relationship: null,
-  website: null,
+  name: "alice",
+  email: "test@test.com",
+  phoneNumber: "213456789",
+  position: "test",
+  profilePicture: "",
+  notes: "",
 }
 
 describe("Integration testing for contact components", () => {
@@ -36,7 +31,7 @@ describe("Integration testing for contact components", () => {
       <ContactPopUp
         selected={selected}
         setSelected={() => {}}
-        companies={{}}
+        companies={[]}
         onUpdate={() => {}}
       />
     )
@@ -52,11 +47,11 @@ describe("Integration testing for contact components", () => {
     const memoInput = getByTestId("memo")
     const button = getByTestId("addButton")
 
-    expect(nameInput.value).toBe("Test")
-    expect(emailInput.value).toBe("")
-    expect(phoneNumberInput.value).toBe("")
-    expect(positionInput.value).toBe("")
-    expect(memoInput.value).toBe("")
+    expect(nameInput.value).toBe("alice")
+    expect(emailInput.value).toBe("test@test.com")
+    expect(phoneNumberInput.value).toBe(selected.phoneNumber)
+    expect(positionInput.value).toBe(selected.position)
+    expect(memoInput.value).toBe(selected.notes)
 
     fireEvent.change(nameInput, { target: { value: "test" } })
     fireEvent.change(emailInput, { target: { value: "test@test.com" } })
