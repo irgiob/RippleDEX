@@ -99,6 +99,7 @@ const ContactPopUp = ({ selected, setSelected, companies, onUpdate }) => {
                 transform: "scale(1.05)",
               }}
               onClick={() => setSelected(null)}
+              data-testid="contactOpenButton"
             >
               {contactName}
             </Button>
@@ -143,6 +144,7 @@ const ContactPopUp = ({ selected, setSelected, companies, onUpdate }) => {
                     placeholder="Contact Name"
                     type="text"
                     value={contactName}
+                    data-testid="contactName"
                     onChange={e => setContactName(e.target.value)}
                   />
 
@@ -154,6 +156,7 @@ const ContactPopUp = ({ selected, setSelected, companies, onUpdate }) => {
                     placeholder="Contact Email"
                     type="text"
                     value={contactEmail}
+                    data-testid="email"
                     onChange={e => setContactEmail(e.target.value)}
                   />
                   <Text pt="19px" fontSize="15px" color="ripple.200">
@@ -162,6 +165,7 @@ const ContactPopUp = ({ selected, setSelected, companies, onUpdate }) => {
                   <Input
                     value={contactNumber}
                     placeholder="Contact Phone Number"
+                    data-testid="phoneNumber"
                     onChange={e => {
                       if (
                         e.target.value.match(
@@ -191,6 +195,7 @@ const ContactPopUp = ({ selected, setSelected, companies, onUpdate }) => {
                     disableCreateItem={true}
                     onCreateItem={() => null}
                     value={contactCompany ? contactCompany : undefined}
+                    
                     onChange={setContactCompany}
                     valueInputAttribute="name"
                     size="md"
@@ -204,6 +209,7 @@ const ContactPopUp = ({ selected, setSelected, companies, onUpdate }) => {
                     placeholder="Contact Position"
                     type="text"
                     value={contactPosition}
+                    data-testid="Position at Company"
                     onChange={e => setContactPosition(e.target.value)}
                   />
                   <Text pt="20px" fontSize="15px" color="ripple.200">
@@ -214,6 +220,7 @@ const ContactPopUp = ({ selected, setSelected, companies, onUpdate }) => {
                     h="15vh"
                     placeholder="Notes"
                     value={contactMemo}
+                    data-testid="memo"
                     onChange={e => setContactMemo(e.target.value)}
                   />
                   <Box pt="30px" align="end">
@@ -228,6 +235,7 @@ const ContactPopUp = ({ selected, setSelected, companies, onUpdate }) => {
                         transform: "scale(1.05)",
                       }}
                       onClick={handleClick}
+                      data-testid="addButton"
                     >
                       {selected?.id ? "Save Changes" : "Create Contact"}
                     </Button>

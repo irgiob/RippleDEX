@@ -214,6 +214,7 @@ const InteractionPopUp = ({
                 color="ripple.200"
                 fontFamily="Raleway-Bold"
                 _hover={{ transform: "scale(1.05)" }}
+                data-testid="interactionOpenButton"
                 onClick={() => setSelected(null)}
               >
                 {title ? title : "Interaction"}
@@ -228,6 +229,7 @@ const InteractionPopUp = ({
                   <Input
                     placeholder="Event title"
                     value={title}
+                    data-testid="Name"
                     onChange={event => setTitle(event.target.value)}
                   />
                 </Box>
@@ -238,6 +240,7 @@ const InteractionPopUp = ({
                   <Input
                     placeholder="Meeting type"
                     value={type}
+                    data-testid="type"
                     onChange={event => setType(event.target.value)}
                   />
                 </Box>
@@ -269,6 +272,7 @@ const InteractionPopUp = ({
                       <CustomDatePicker times={times} setTimes={setTimes}>
                         <Input
                           placeholder="Select meeting time"
+                          data-testid="time"
                           value={times ? displayDates(times) : null}
                           isReadOnly
                         />
@@ -417,6 +421,7 @@ const InteractionPopUp = ({
                       borderRadius="30px"
                       _hover={{ transform: "scale(1.05)" }}
                       padding="20px"
+                      data-testid="addButton"
                       onClick={handleClick}
                     >
                       {selected?.id ? "Save Changes" : "Add Meeting"}

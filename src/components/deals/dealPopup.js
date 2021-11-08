@@ -143,6 +143,7 @@ const DealPopUp = ({ selected, setSelected, companies, members, onUpdate }) => {
                 _hover={{
                   transform: "scale(1.05)",
                 }}
+                data-testid="dealOpenButton"
                 onClick={() => setSelected(null)}
               >
                 {dealName}
@@ -153,6 +154,7 @@ const DealPopUp = ({ selected, setSelected, companies, members, onUpdate }) => {
                     Deal Name
                   </Text>
                   <Input
+                    data-testid="name"
                     focusBorderColor="ripple.200"
                     placeholder="Deal name"
                     value={dealName}
@@ -166,6 +168,7 @@ const DealPopUp = ({ selected, setSelected, companies, members, onUpdate }) => {
                     Deal Size
                   </Text>
                   <NumberInput
+                    data-testid="dealSize"
                     precision={2}
                     min={0}
                     placeholder="Deal Size"
@@ -173,7 +176,7 @@ const DealPopUp = ({ selected, setSelected, companies, members, onUpdate }) => {
                     onChange={e => setDealSize(parse(e))}
                     focusBorderColor="ripple.200"
                   >
-                    <NumberInputField />
+                    <NumberInputField data-testid="dealSizeField" />
                   </NumberInput>
                 </Box>
                 <Box w="100%">
@@ -266,6 +269,7 @@ const DealPopUp = ({ selected, setSelected, companies, members, onUpdate }) => {
                       transform: "scale(1.05)",
                     }}
                     padding="20px"
+                    data-testid="addButton"
                   >
                     Save Changes
                   </Button>
